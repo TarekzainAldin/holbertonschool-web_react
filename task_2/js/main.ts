@@ -1,46 +1,72 @@
-// Define the Director and Teacher types
-interface Director {
-    workDirectorTasks: () => void;
-    salary: number;
+export interface DirectorInterface {
+    workFromHome(): string;
+    getCoffeeBreak(): string;
+    workDirectorTasks(): string;
 }
 
-interface Teacher {
-    workTeacherTasks: () => void;
-    salary: number;
+export interface TeacherInterface {
+    workFromHome(): string;
+    getCoffeeBreak(): string;
+    workTeacherTasks(): string;
 }
 
-// Union type for Employee
-type Employee = Director | Teacher;
+export class Director implements DirectorInterface {
+    workFromHome(): string {
+        return 'Working from home'
+    }
 
-// Create a function to create an Employee based on salary
-function createEmployee(salary: number): Employee {
-    if (salary > 500) {
-        return {
-            salary,
-            workDirectorTasks: () => console.log('Getting to director tasks')
-        };
-    } else {
-        return {
-            salary,
-            workTeacherTasks: () => console.log('Getting to work')
-        };
+    getCoffeeBreak(): string {
+        return 'Getting a coffee break'
+    }
+
+    workDirectorTasks(): string {
+        return 'Getting to director tasks'
     }
 }
 
-// Type predicate to check if employee is a Director
-function isDirector(employee: Employee): employee is Director {
-    return (employee as Director).workDirectorTasks !== undefined;
+export class Teacher implements TeacherInterface {
+    workFromHome(): string {
+        return 'Cannot work from home'
+    }
+
+    getCoffeeBreak(): string {
+        return 'Cannot have a break'
+    }
+
+    workTeacherTasks(): string {
+        return 'Getting to work'
+    }
 }
 
-// Execute the work based on the employee type
-function executeWork(employee: Employee): void {
+export function createEmployee(salary: number | string): Director | Teacher {
+    if (typeof salary === 'number' && salary < 500) {
+        return new Teacher();
+    }
+    else {
+        return new Director();
+    }
+}
+
+export function isDirector(employee: DirectorInterface | TeacherInterface): employee is Director {
+    return employee instanceof Director;
+}
+
+export function executeWork(employee: DirectorInterface | TeacherInterface): string {
     if (isDirector(employee)) {
-        employee.workDirectorTasks();
-    } else {
-        (employee as Teacher).workTeacherTasks();
+        return employee.workDirectorTasks();
+    }
+    else {
+        return employee.workTeacherTasks();
     }
 }
 
-// Testing the solution
-executeWork(createEmployee(200));   // Output: Getting to work
-executeWork(createEmployee(1000));  // Output: Getting to director tasks
+export type Subjects = 'Math' | 'History';
+
+export function teachClass(todayClass: Subjects): string {
+    if (todayClass === 'Math') {
+        return 'Teaching Math';
+    }
+    else if (todayClass === 'History') {
+        return 'Teaching History';
+    }
+}
