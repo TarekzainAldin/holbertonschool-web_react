@@ -42,3 +42,4 @@ export const StudentClass: StudentConstructor = class StudentClass implements St
         return this.firstName;
     }
 }
+
