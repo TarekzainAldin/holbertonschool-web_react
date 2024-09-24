@@ -1,22 +1,35 @@
 var student1 = {
-    firstName: 'tarek',
-    lastName: 'zainaldin',
-    age: 26,
-    location: 'laval, fr'
+    firstName: 'James',
+    lastName: 'Joyce',
+    age: 90,
+    location: 'Europe'
 };
 var student2 = {
-    firstName: 'ammar',
-    lastName: 'zain aldin ',
-    age: 22,
-    location: 'laval , fr'
+    firstName: 'Jordan',
+    lastName: 'Peterson',
+    age: 57,
+    location: 'Canada'
 };
 var studentsList = [student1, student2];
+var labels = ['firstName', 'location'];
 var table = document.createElement('table');
+var tbody = document.createElement('tbody');
+var thead = document.createElement('thead');
 document.body.appendChild(table);
-studentsList.forEach(function (student) {
-    var newRow = table.insertRow();
-    var newRowFirstName = newRow.insertCell();
-    var newRowLocation = newRow.insertCell();
-    newRowFirstName.innerHTML = student.firstName;
-    newRowLocation.innerHTML = student.location;
-});
+table.appendChild(thead);
+table.appendChild(tbody);
+for (var i = 0; i < labels.length; i++) {
+    var th = document.createElement('th');
+    th.appendChild(document.createTextNode("" + labels[i]));
+    thead.appendChild(th);
+}
+for (var i = 0; i < studentsList.length; i++) {
+    var tr = document.createElement('tr');
+    tbody.appendChild(tr);
+    var values = [studentsList[i].firstName, studentsList[i].location];
+    for (var j = 0; j < values.length; j++) {
+        var td = document.createElement('td');
+        td.appendChild(document.createTextNode("" + values[j]));
+        tr.appendChild(td);
+    }
+}
