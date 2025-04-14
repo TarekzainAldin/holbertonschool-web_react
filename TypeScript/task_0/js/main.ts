@@ -1,50 +1,50 @@
-interface Student {
-    firstName: string;
-    lastName: string;
-    age: number;
-    location: string;
-  }
-
-  const student1: Student = {
-    firstName: 'John',
-    lastName: 'Doe',
-    age: 20,
-    location: 'New York',
-  };
+window.onload = () => {
+    interface Student {
+      firstName: string;
+      lastName: string;
+      age: number;
+      location: string;
+    }
   
-  const student2: Student = {
-    firstName: 'Jane',
-    lastName: 'Smith',
-    age: 22,
-    location: 'Los Angeles',
-  };
+    const student1: Student = {
+      firstName: "Tarek",
+      lastName: "ziad",
+      age: 25,
+      location: "syria "
+    };
   
- const studentsList: Student[] = [student1, student2];
+    const student2: Student = {
+      firstName: "Sara",
+      lastName: "Mohamed",
+      age: 23,
+      location: "damas"
+    };
   
-
- function renderTable() {
-    const table = document.createElement('table');
-    table.setAttribute('border', '1');
+    const studentsList: Student[] = [student1, student2];
   
-    // create the header row table 
-    const headerRow = table.insertRow();
-    const header1 = headerRow.insertCell();
-    header1.textContent = 'First Name';
-    const header2 = headerRow.insertCell();
-    header2.textContent = 'Location';
+    // Create table
+    const table = document.createElement("table");
+    const headerRow = document.createElement("tr");
+    const nameHeader = document.createElement("th");
+    nameHeader.textContent = "First Name";
+    const locationHeader = document.createElement("th");
+    locationHeader.textContent = "Location";
+    headerRow.appendChild(nameHeader);
+    headerRow.appendChild(locationHeader);
+    table.appendChild(headerRow);
   
-    // adding rows contant to the table 
-    studentsList.forEach(student => {
-      const row = table.insertRow();
-      const cell1 = row.insertCell();
-      cell1.textContent = student.firstName;
-      const cell2 = row.insertCell();
-      cell2.textContent = student.location;
+    // Add rows for each student
+    studentsList.forEach((student) => {
+      const row = document.createElement("tr");
+      const nameCell = document.createElement("td");
+      nameCell.textContent = student.firstName;
+      const locationCell = document.createElement("td");
+      locationCell.textContent = student.location;
+      row.appendChild(nameCell);
+      row.appendChild(locationCell);
+      table.appendChild(row);
     });
   
-    // Adding the table on the page html 
     document.body.appendChild(table);
-  }
-  
-  renderTable();
+  };
   
