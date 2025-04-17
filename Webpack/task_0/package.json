@@ -8,12 +8,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "webpack": "^5.99.5",
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
     "jquery": "^3.7.1"
-  }
+  },
+  "description": ""
 }
