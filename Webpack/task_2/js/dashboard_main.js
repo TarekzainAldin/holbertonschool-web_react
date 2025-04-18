@@ -1,20 +1,18 @@
 import '../css/main.css';
+import $ from 'jquery';
+import _ from 'lodash';
 
-const logo = document.createElement('div');
-logo.id = 'logo';
-document.body.appendChild(logo);
+$('body').append('<p>Holberton Dashboard</p>');
+$('body').append('<p>Dashboard data for the students</p>');
+$('body').append('<button>Click here to get started</button>');
+$('body').append('<p id="count"></p>');
+$('body').append('<p>Copyright - Holberton School</p>');
+$('body').prepend('<div id="logo"></div>');
 
-const button = document.createElement('button');
-button.textContent = 'Click me';
+let count = 0;
+const updateCounter = () => {
+  count++;
+  $('#count').text(`${count} clicks on the button`);
+};
 
-const counter = document.createElement('span');
-counter.className = 'counter';
-counter.textContent = '0';
-
-button.appendChild(counter);
-document.body.appendChild(button);
-
-button.addEventListener('click', () => {
-  let count = parseInt(counter.textContent);
-  counter.textContent = count + 1;
-});
+$('button').on('click', _.debounce(updateCounter, 500));

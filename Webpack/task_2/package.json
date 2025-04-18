@@ -1,16 +1,25 @@
 {
-  "name": "task_2",
+  "name": "task_1",
   "version": "1.0.0",
-  "description": "Webpack config for CSS and image",
+  "description": "",
+  "main": "index.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jquery": "^3.7.1",
+    "lodash": "^4.17.21"
+  },
   "devDependencies": {
-    "css-loader": "^6.8.1",
+    "css-loader": "^7.1.2",
     "file-loader": "^6.2.0",
-    "image-webpack-loader": "^8.1.0",
-    "style-loader": "^3.3.3",
-    "webpack": "^5.90.0",
-    "webpack-cli": "^5.1.4"
+    "image-webpack-loader": "^8.0.1",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.99.5",
+    "webpack-cli": "^6.0.1"
   }
 }
