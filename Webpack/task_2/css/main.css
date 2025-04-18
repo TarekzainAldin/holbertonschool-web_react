@@ -1,13 +1,19 @@
 #logo {
-    width: 200px;
-    height: 200px;
-    background-image: url('../assets/holberton-logo.jpg');
-    background-size: 200px 200px;
-  }
-  
-  #count {
-    display: inline;
-    margin-left: 10px;
-    font-weight: bold;
-  }
-  
+  width: 200px;
+  height: 200px;
+  background-image: url('../assets/holberton-logo.jpg');
+  background-size: 200px 200px;
+  background-repeat: no-repeat;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  position: relative;
+}
+
+.counter {
+  font-weight: bold;
+  margin-left: 10px;
+}
