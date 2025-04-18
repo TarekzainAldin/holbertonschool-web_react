@@ -1,4 +1,4 @@
-Webpack
+WebPack 
 Resources
 Read or watch:
 
