@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "jest"
   },
   "dependencies": {
     "react": "^19.0.0",
@@ -18,11 +19,12 @@
     "@babel/preset-react": "^7.26.3",
     "@eslint/js": "^9.22.0",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^14.3.1",
+    "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
+    "babel-jest": "^29.7.0",
     "eslint": "^9.22.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
@@ -33,13 +35,16 @@
     "vite": "^6.3.1"
   },
   "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/setupTests.js"
+    ],
     "testEnvironment": "jsdom",
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/fileTransformer.js",
-      "^.+\\.(css|less|scss)$": "identity-obj-proxy"
+      "\\.(css|less)$": "identity-obj-proxy"
     },
-    "setupFilesAfterEnv": [
-      "./setupTests.js"
-    ]
+    "transform": {
+      "^.+\\.[jt]sx?$": "babel-jest",
+      "^.+\\.(jpg|jpeg|png)$": "<rootDir>/fileTransformer.js"
+    }
   }
 }
