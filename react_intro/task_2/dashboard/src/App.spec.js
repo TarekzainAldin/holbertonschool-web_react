@@ -2,17 +2,21 @@ import { render, screen } from "@testing-library/react";
 import App from "./App";
 
 describe("App component", () => {
-  test("renders h1 with text School dashboard", () => {
+  beforeEach(() => {
     render(<App />);
+  });
+
+  test("renders h1 with text School dashboard", () => {
     const heading = screen.getByRole("heading", { name: /school dashboard/i });
     expect(heading).toBeInTheDocument();
   });
 
-  test("renders correct text in body and footer", () => {
-    render(<App />);
+  test("renders correct text in body", () => {
     const bodyText = screen.getByText(/login to access the full dashboard/i);
     expect(bodyText).toBeInTheDocument();
+  });
 
+  test("renders correct footer text", () => {
     const currentYear = new Date().getFullYear();
     const footerText = screen.getByText(
       new RegExp(`Copyright ${currentYear} - holberton School`, "i")
@@ -21,28 +25,32 @@ describe("App component", () => {
   });
 
   test("renders the logo image", () => {
-    render(<App />);
     const image = screen.getByAltText(/holberton logo/i);
     expect(image).toBeInTheDocument();
   });
 
-  test("renders 2 input elements (email and password)", () => {
-    render(<App />);
-    const emailInput = screen.getByLabelText(/email/i);
+  test("renders email and password input fields", () => {
+    const emailInput = screen.getByRole("textbox", { name: /email/i });
     const passwordInput = screen.getByLabelText(/password/i);
+    
     expect(emailInput).toBeInTheDocument();
+    expect(emailInput).toHaveAttribute("type", "email");
+    
     expect(passwordInput).toBeInTheDocument();
+    expect(passwordInput).toHaveAttribute("type", "password");
   });
 
-  test("renders 2 label elements with the text Email and Password", () => {
-    render(<App />);
-    const labels = screen.getAllByText(/email|password/i);
-    expect(labels.length).toBe(2);
+  test("renders Email and Password labels", () => {
+    const emailLabel = screen.getByText(/email:/i);
+    const passwordLabel = screen.getByText(/password:/i);
+    
+    expect(emailLabel).toBeInTheDocument();
+    expect(passwordLabel).toBeInTheDocument();
   });
 
-  test('renders a button with the text "OK"', () => {
-    render(<App />);
+  test('renders an OK button', () => {
     const button = screen.getByRole("button", { name: /^ok$/i });
     expect(button).toBeInTheDocument();
+    expect(button).toHaveTextContent(/ok/i);
   });
 });
