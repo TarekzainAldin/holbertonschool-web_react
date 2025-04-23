@@ -26,14 +26,16 @@ describe("App component", () => {
     expect(image).toBeInTheDocument();
   });
 
+  // ✅ هذا التست الجديد يلي بيتأكد من وجود 2 input بشكل عام
   test("renders 2 input elements (email and password)", () => {
     render(<App />);
-    const emailInput = screen.getByLabelText(/email/i);
+    const inputs = screen.getAllByRole("textbox"); // input[type="email"] و input[type="text"]
     const passwordInput = screen.getByLabelText(/password/i);
-    expect(emailInput).toBeInTheDocument();
+    expect(inputs.length).toBe(1); // لأنه password ما هو textbox
     expect(passwordInput).toBeInTheDocument();
   });
 
+  // ✅ التست المطلوب للتأكد من وجود لابلز
   test("renders 2 label elements with the text Email and Password", () => {
     render(<App />);
     const emailLabel = screen.getByLabelText(/email/i);
@@ -42,6 +44,7 @@ describe("App component", () => {
     expect(passwordLabel).toBeInTheDocument();
   });
 
+  // ✅ التست المطلوب للزر
   test('renders a button with the text "OK"', () => {
     render(<App />);
     const button = screen.getByRole("button", { name: /ok/i });
