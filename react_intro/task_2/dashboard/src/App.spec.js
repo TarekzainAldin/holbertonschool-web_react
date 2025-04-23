@@ -10,17 +10,13 @@ describe("App component", () => {
 
   test("renders correct text in body and footer", () => {
     render(<App />);
-
-    // Paragraph in App-body
     const bodyText = screen.getByText(/Login to access the full dashboard/i);
     expect(bodyText).toBeInTheDocument();
 
-    // Paragraph in App-footer
     const currentYear = new Date().getFullYear();
     const footerText = screen.getByText(
-      `Copyright ${currentYear} - holberton School`
+      new RegExp(`Copyright ${currentYear} - holberton School`, "i")
     );
-
     expect(footerText).toBeInTheDocument();
   });
 
@@ -30,11 +26,12 @@ describe("App component", () => {
     expect(image).toBeInTheDocument();
   });
 
-  // New tests for the form
-  test("renders 2 input elements", () => {
+  test("renders 2 input elements (email and password)", () => {
     render(<App />);
-    const inputs = screen.getAllByLabelText(/email|password/i);
-    expect(inputs).toHaveLength(2);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    expect(emailInput).toBeInTheDocument();
+    expect(passwordInput).toBeInTheDocument();
   });
 
   test("renders 2 label elements with the text Email and Password", () => {

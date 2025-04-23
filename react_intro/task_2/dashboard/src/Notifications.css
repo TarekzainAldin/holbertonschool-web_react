@@ -1,6 +1,18 @@
-.notifications {
+/* .notifications {
     border: 2px dashed red;
     padding: 10px;
     margin-bottom: 20px;
+  }
+   */
+   .notifications {
+    background-color: #f8f8f8;
+    padding: 10px;
+    border: 1px dashed #ec4c4c;
+    margin: 10px;
+  }
+  
+  .notifications p {
+    font-size: 16px;
+    color: #333;
   }
   
