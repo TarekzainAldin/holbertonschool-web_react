@@ -48,4 +48,3 @@ describe("App component", () => {
     expect(button).toBeInTheDocument();
   });
 });
-
