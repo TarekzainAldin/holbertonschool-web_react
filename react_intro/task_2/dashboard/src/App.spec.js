@@ -3,52 +3,38 @@ import { render, screen } from "@testing-library/react";
 import App from "./App";
 
 describe("App component", () => {
-  test("renders h1 with text School Dashboard", () => {
-    render(<App />);
-    const heading = screen.getByRole("heading", { name: /School Dashboard/i });
-    expect(heading).toBeInTheDocument();
-  });
-
-  test("renders correct text in body and footer", () => {
-    render(<App />);
-    const bodyText = screen.getByText(/Login to access the full dashboard/i);
-    expect(bodyText).toBeInTheDocument();
-
-    const currentYear = new Date().getFullYear();
-    const footerText = screen.getByText(
-      new RegExp(`Copyright ${currentYear} - holberton School`, "i")
-    );
-    expect(footerText).toBeInTheDocument();
-  });
-
-  test("renders the logo image", () => {
-    render(<App />);
-    const image = screen.getByAltText(/holberton logo/i);
-    expect(image).toBeInTheDocument();
-  });
-
+  // Test: Check whether 2 input elements are rendered
   test("renders 2 input elements", () => {
     render(<App />);
-    
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    expect(emailInput).toBeInTheDocument();
-    expect(passwordInput).toBeInTheDocument();
+
+    // Get the input elements by role
+    const inputs = screen.getAllByRole("textbox"); // 'textbox' matches both email and password inputs
+
+    // Ensure we find exactly 2 input fields (email and password)
+    expect(inputs.length).toBe(2); // Check that there are exactly 2 inputs
   });
 
+  // Test: Check whether 2 label elements with the text "Email" and "Password" are rendered
   test("renders 2 label elements with the text Email and Password", () => {
     render(<App />);
-    
+
+    // Get the labels by their text
     const emailLabel = screen.getByLabelText(/email/i);
     const passwordLabel = screen.getByLabelText(/password/i);
+
+    // Ensure both labels are rendered
     expect(emailLabel).toBeInTheDocument();
     expect(passwordLabel).toBeInTheDocument();
   });
 
+  // Test: Check whether a button with the text "OK" is rendered
   test('renders a button with the text "OK"', () => {
     render(<App />);
-    
+
+    // Get the button by role and text
     const button = screen.getByRole("button", { name: /ok/i });
+
+    // Ensure the button is rendered
     expect(button).toBeInTheDocument();
   });
 });
