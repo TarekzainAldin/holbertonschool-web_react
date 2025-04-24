@@ -31,20 +31,25 @@ describe("App component", () => {
     render(<App />);
     
     // Get all input elements
-    const inputs = screen.getAllByRole("textbox"); // Should return text input for email
-    const passwordInput = screen.getByLabelText(/password/i); // Explicitly get the password input
+    const inputs = screen.getAllByRole("textbox");
+    console.log("Inputs found:", inputs); // Debugging: Log inputs found
     
-    // Ensure that there are exactly 2 inputs (email and password)
-    expect(inputs.length).toBe(1);  // There should be only 1 input of type 'textbox' (email)
-    expect(passwordInput).toBeInTheDocument(); // Ensure the password input is present
+    const passwordInput = screen.getByLabelText(/password/i);
+    console.log("Password input:", passwordInput); // Debugging: Log password input
+    
+    // Ensure there are exactly 2 input fields (email and password)
+    expect(inputs.length).toBe(1);  // There should be only 1 text input (email)
+    expect(passwordInput).toBeInTheDocument(); // Ensure the password input is found
   });
 
   test("renders 2 label elements with the text Email and Password", () => {
     render(<App />);
     
-    // Get labels by their text, case-insensitive matching for "email" and "password"
+    // Get label elements by their text
     const emailLabel = screen.getByLabelText(/email/i);
     const passwordLabel = screen.getByLabelText(/password/i);
+    console.log("Email label:", emailLabel); // Debugging: Log email label found
+    console.log("Password label:", passwordLabel); // Debugging: Log password label found
     
     // Ensure both labels are present
     expect(emailLabel).toBeInTheDocument();
@@ -56,6 +61,7 @@ describe("App component", () => {
     
     // Get button element with case-insensitive matching for "OK"
     const button = screen.getByRole("button", { name: /ok/i });
+    console.log("Button:", button); // Debugging: Log the button found
     
     // Ensure the button is present in the document
     expect(button).toBeInTheDocument();
