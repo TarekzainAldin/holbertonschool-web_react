@@ -3,22 +3,20 @@ import { render, screen } from "@testing-library/react";
 import App from "./App";
 
 describe("App component", () => {
-  // Test: Check whether 2 input elements are rendered
   test("renders 2 input elements", () => {
     render(<App />);
 
-    // Get all input elements by their role
-    const inputs = screen.getAllByRole("textbox"); // This matches both text and password fields
-
+    // Get all inputs by role "textbox" (email and password)
+    const inputs = screen.getAllByRole("textbox");
+    
     // Ensure exactly 2 inputs are rendered (email and password)
-    expect(inputs.length).toBe(2); // We should have 2 inputs
+    expect(inputs.length).toBe(2);
   });
 
-  // Test: Check whether 2 label elements with the text Email and Password are rendered
   test("renders 2 label elements with the text Email and Password", () => {
     render(<App />);
 
-    // Get the labels by their text content
+    // Get the label elements by their text content
     const emailLabel = screen.getByLabelText(/email/i);
     const passwordLabel = screen.getByLabelText(/password/i);
 
@@ -27,11 +25,10 @@ describe("App component", () => {
     expect(passwordLabel).toBeInTheDocument();
   });
 
-  // Test: Check whether a button with the text "OK" is rendered
   test('renders a button with the text "OK"', () => {
     render(<App />);
 
-    // Get the button by its role and text
+    // Get the button by role and name
     const button = screen.getByRole("button", { name: /ok/i });
 
     // Ensure the button is present in the document
