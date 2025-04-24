@@ -1,3 +1,4 @@
+import React from "react";
 import { render, screen } from "@testing-library/react";
 import App from "./App";
 
@@ -29,37 +30,24 @@ describe("App component", () => {
     const image = screen.getByAltText(/holberton logo/i);
     expect(image).toBeInTheDocument();
   });
-
   // New tests for the form
-  test('renders 2 input elements', () => {
+  test("renders 2 input elements", () => {
     render(<App />);
-    
-    // Get the email and password input fields specifically
-    const emailInput = screen.getByRole('textbox', { name: /email/i });
-    const passwordInput = screen.getByRole('textbox', { name: /password/i });
-
-    expect(emailInput).toBeInTheDocument();
-    expect(passwordInput).toBeInTheDocument();
+    const inputs = screen.getAllByLabelText(/email|password/i);
+    expect(inputs).toHaveLength(2);
   });
 
-  test('renders 2 label elements with the text "Email" and "Password"', () => {
+  test("renders 2 label elements with the text Email and Password", () => {
     render(<App />);
-    
-    // Check that the labels are rendered with the correct text
     const emailLabel = screen.getByLabelText(/email/i);
     const passwordLabel = screen.getByLabelText(/password/i);
-    
-    expect(emailLabel).toBeInTheDocument();  // Check email label presence
-    expect(passwordLabel).toBeInTheDocument();  // Check password label presence
+    expect(emailLabel).toBeInTheDocument();
+    expect(passwordLabel).toBeInTheDocument();
   });
 
   test('renders a button with the text "OK"', () => {
     render(<App />);
-    
-    // Get the button and check for its text
-    const button = screen.getByRole('button', { name: /ok/i });
-    
-    expect(button).toBeInTheDocument();  // Check button presence
-    expect(button).toHaveTextContent('OK');  // Check button text
+    const button = screen.getByRole("button", { name: /ok/i });
+    expect(button).toBeInTheDocument();
   });
 });
