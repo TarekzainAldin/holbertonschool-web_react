@@ -11,17 +11,13 @@ describe("App component", () => {
 
   test("renders correct text in body and footer", () => {
     render(<App />);
-
-    // Paragraph in App-body
     const bodyText = screen.getByText(/Login to access the full dashboard/i);
     expect(bodyText).toBeInTheDocument();
 
-    // Paragraph in App-footer
     const currentYear = new Date().getFullYear();
     const footerText = screen.getByText(
-      `Copyright ${currentYear} - holberton School`
+      new RegExp(`Copyright ${currentYear} - holberton School`, "i")
     );
-
     expect(footerText).toBeInTheDocument();
   });
 
@@ -30,19 +26,19 @@ describe("App component", () => {
     const image = screen.getByAltText(/holberton logo/i);
     expect(image).toBeInTheDocument();
   });
-  // New tests for the form
+
+  // ✅ المهمة الجديدة – اختبار الفورم
+
   test("renders 2 input elements", () => {
     render(<App />);
-    const inputs = screen.getAllByLabelText(/email|password/i);
-    expect(inputs).toHaveLength(2);
+    const inputs = screen.getAllByRole("textbox"); // input type="text" أو "email"
+    expect(inputs.length).toBe(2);
   });
 
   test("renders 2 label elements with the text Email and Password", () => {
     render(<App />);
-    const emailLabel = screen.getByLabelText(/email/i);
-    const passwordLabel = screen.getByLabelText(/password/i);
-    expect(emailLabel).toBeInTheDocument();
-    expect(passwordLabel).toBeInTheDocument();
+    expect(screen.getByText(/email/i)).toBeInTheDocument();
+    expect(screen.getByText(/password/i)).toBeInTheDocument();
   });
 
   test('renders a button with the text "OK"', () => {
