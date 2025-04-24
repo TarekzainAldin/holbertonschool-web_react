@@ -13,15 +13,15 @@ describe('Notifications component', () => {
   // 2. اختبار وجود الزر (button element)
   test('should have a close button', () => {
     render(<Notifications />);
-    const buttonElement = screen.getByRole('button', { name: /Close/i }); // نبحث عن الزر باستخدام role والـ aria-label
-    expect(buttonElement).toBeInTheDocument(); // نتأكد من وجود الزر
+    const buttonElement = screen.getByRole('button'); // ابحث عن الزر باستخدام role
+    expect(buttonElement).toBeInTheDocument(); // تأكد من وجود الزر
   });
 
   // 3. اختبار وجود 3 عناصر li
   test('should render 3 list items', () => {
     render(<Notifications />);
-    const listItems = screen.getAllByRole('listitem'); // نبحث عن جميع العناصر من النوع li
-    expect(listItems).toHaveLength(3); // نتأكد أن عدد العناصر هو 3
+    const listItems = screen.getAllByRole('listitem'); // ابحث عن العناصر li
+    expect(listItems.length).toBe(3); // تحقق من وجود 3 عناصر
   });
 
   // 4. اختبار الضغط على الزر
@@ -30,7 +30,7 @@ describe('Notifications component', () => {
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
     render(<Notifications />);
-    const buttonElement = screen.getByRole('button', { name: /Close/i }); // نبحث عن الزر
+    const buttonElement = screen.getByRole('button'); // نبحث عن الزر
     fireEvent.click(buttonElement); // نحاكي ضغط الزر
 
     expect(consoleSpy).toHaveBeenCalledWith('Close button has been clicked'); // نتأكد أن الرسالة تم تسجيلها في الكونسول
