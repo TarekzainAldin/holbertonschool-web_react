@@ -7,22 +7,22 @@ describe("App component", () => {
   test("renders 2 input elements", () => {
     render(<App />);
 
-    // Get the input elements by role
-    const inputs = screen.getAllByRole("textbox"); // 'textbox' matches both email and password inputs
+    // Get all input elements by their role
+    const inputs = screen.getAllByRole("textbox"); // This matches both text and password fields
 
-    // Ensure we find exactly 2 input fields (email and password)
-    expect(inputs.length).toBe(2); // Check that there are exactly 2 inputs
+    // Ensure exactly 2 inputs are rendered (email and password)
+    expect(inputs.length).toBe(2); // We should have 2 inputs
   });
 
-  // Test: Check whether 2 label elements with the text "Email" and "Password" are rendered
+  // Test: Check whether 2 label elements with the text Email and Password are rendered
   test("renders 2 label elements with the text Email and Password", () => {
     render(<App />);
 
-    // Get the labels by their text
+    // Get the labels by their text content
     const emailLabel = screen.getByLabelText(/email/i);
     const passwordLabel = screen.getByLabelText(/password/i);
 
-    // Ensure both labels are rendered
+    // Ensure both labels exist in the document
     expect(emailLabel).toBeInTheDocument();
     expect(passwordLabel).toBeInTheDocument();
   });
@@ -31,10 +31,10 @@ describe("App component", () => {
   test('renders a button with the text "OK"', () => {
     render(<App />);
 
-    // Get the button by role and text
+    // Get the button by its role and text
     const button = screen.getByRole("button", { name: /ok/i });
 
-    // Ensure the button is rendered
+    // Ensure the button is present in the document
     expect(button).toBeInTheDocument();
   });
 });
