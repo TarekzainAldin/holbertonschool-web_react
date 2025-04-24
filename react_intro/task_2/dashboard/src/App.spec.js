@@ -29,24 +29,35 @@ describe("App component", () => {
 
   test("renders 2 input elements", () => {
     render(<App />);
-    // Get all input elements by role
-    const inputs = screen.getAllByRole("textbox"); // This should include the text input
+    
+    // Get all input elements
+    const inputs = screen.getAllByRole("textbox"); // Should return text input for email
     const passwordInput = screen.getByLabelText(/password/i); // Explicitly get the password input
-    expect(inputs.length + (passwordInput ? 1 : 0)).toBe(2); // Should ensure there are exactly 2 inputs (email + password)
+    
+    // Ensure that there are exactly 2 inputs (email and password)
+    expect(inputs.length).toBe(1);  // There should be only 1 input of type 'textbox' (email)
+    expect(passwordInput).toBeInTheDocument(); // Ensure the password input is present
   });
 
   test("renders 2 label elements with the text Email and Password", () => {
     render(<App />);
-    // Check for email and password labels using case-insensitive matching
+    
+    // Get labels by their text, case-insensitive matching for "email" and "password"
     const emailLabel = screen.getByLabelText(/email/i);
     const passwordLabel = screen.getByLabelText(/password/i);
+    
+    // Ensure both labels are present
     expect(emailLabel).toBeInTheDocument();
     expect(passwordLabel).toBeInTheDocument();
   });
 
   test('renders a button with the text "OK"', () => {
     render(<App />);
-    const button = screen.getByRole("button", { name: /ok/i }); // Button text is case-insensitive
+    
+    // Get button element with case-insensitive matching for "OK"
+    const button = screen.getByRole("button", { name: /ok/i });
+    
+    // Ensure the button is present in the document
     expect(button).toBeInTheDocument();
   });
 });
