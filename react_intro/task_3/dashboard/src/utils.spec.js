@@ -7,11 +7,11 @@ describe('Utils functions', () => {
   });
 
   test('getFooterCopy returns correct string when true', () => {
-    expect(getFooterCopy(true)).toBe('holberton School'); // Use lowercase "h"
+    expect(getFooterCopy(true)).toBe('Holberton School'); // Correct casing
   });
   
   test('getFooterCopy returns correct string when false', () => {
-    expect(getFooterCopy(false)).toBe('Holberton School main dashboard');
+    expect(getFooterCopy(false)).toBe('Holberton School main dashboard'); // Correct casing
   });
 
   test('getLatestNotification returns expected HTML string', () => {
@@ -20,4 +20,5 @@ describe('Utils functions', () => {
     expect(notification).toMatch(/complete by EOD/i);
   });
 });
+
 
