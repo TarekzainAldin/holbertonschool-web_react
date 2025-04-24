@@ -16,7 +16,7 @@ describe("App component", () => {
 
     const currentYear = new Date().getFullYear();
     const footerText = screen.getByText(
-      new RegExp(`Copyright ${currentYear} - holberton School`, "i")
+      `Copyright ${currentYear} - holberton School`
     );
     expect(footerText).toBeInTheDocument();
   });
@@ -27,18 +27,21 @@ describe("App component", () => {
     expect(image).toBeInTheDocument();
   });
 
-  // ✅ المهمة الجديدة – اختبار الفورم
-
+  // ✅ التعديل هنا: نستخدم getByLabelText بدل role
   test("renders 2 input elements", () => {
     render(<App />);
-    const inputs = screen.getAllByRole("textbox"); // input type="text" أو "email"
-    expect(inputs.length).toBe(2);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    expect(emailInput).toBeInTheDocument();
+    expect(passwordInput).toBeInTheDocument();
   });
 
   test("renders 2 label elements with the text Email and Password", () => {
     render(<App />);
-    expect(screen.getByText(/email/i)).toBeInTheDocument();
-    expect(screen.getByText(/password/i)).toBeInTheDocument();
+    const emailLabel = screen.getByText(/email/i);
+    const passwordLabel = screen.getByText(/password/i);
+    expect(emailLabel).toBeInTheDocument();
+    expect(passwordLabel).toBeInTheDocument();
   });
 
   test('renders a button with the text "OK"', () => {
