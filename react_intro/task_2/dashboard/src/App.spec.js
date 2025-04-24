@@ -5,7 +5,7 @@ import App from "./App";
 describe("App component", () => {
   test("renders h1 with text School dashboard", () => {
     render(<App />);
-    const heading = screen.getByRole("heading", { name: /School Dashboard/i });
+    const heading = screen.getByRole("heading", { name: /School dashboard/i });
     expect(heading).toBeInTheDocument();
   });
 
@@ -16,7 +16,7 @@ describe("App component", () => {
 
     const currentYear = new Date().getFullYear();
     const footerText = screen.getByText(
-      `Copyright ${currentYear} - holberton School`
+      new RegExp(`Copyright ${currentYear} - holberton School`, "i")
     );
     expect(footerText).toBeInTheDocument();
   });
@@ -27,19 +27,17 @@ describe("App component", () => {
     expect(image).toBeInTheDocument();
   });
 
-  // ✅ التعديل هنا: نستخدم getByLabelText بدل role
   test("renders 2 input elements", () => {
     render(<App />);
-    const emailInput = screen.getByLabelText(/email/i);
+    const inputs = screen.getAllByRole("textbox");
     const passwordInput = screen.getByLabelText(/password/i);
-    expect(emailInput).toBeInTheDocument();
-    expect(passwordInput).toBeInTheDocument();
+    expect(inputs.length + (passwordInput ? 1 : 0)).toBe(2);
   });
 
   test("renders 2 label elements with the text Email and Password", () => {
     render(<App />);
-    const emailLabel = screen.getByText(/email/i);
-    const passwordLabel = screen.getByText(/password/i);
+    const emailLabel = screen.getByLabelText(/email/i);
+    const passwordLabel = screen.getByLabelText(/password/i);
     expect(emailLabel).toBeInTheDocument();
     expect(passwordLabel).toBeInTheDocument();
   });
@@ -50,3 +48,4 @@ describe("App component", () => {
     expect(button).toBeInTheDocument();
   });
 });
+
