@@ -13,7 +13,7 @@ describe('Notifications component', () => {
   // 2. اختبار وجود الزر (button element)
   test('should have a close button', () => {
     render(<Notifications />);
-    const buttonElement = screen.getByRole('button'); // ابحث عن الزر باستخدام role
+    const buttonElement = screen.getByRole('button', { name: /close/i }); // ابحث عن الزر باستخدام aria-label
     expect(buttonElement).toBeInTheDocument(); // تأكد من وجود الزر
   });
 
@@ -30,7 +30,7 @@ describe('Notifications component', () => {
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
     render(<Notifications />);
-    const buttonElement = screen.getByRole('button'); // نبحث عن الزر
+    const buttonElement = screen.getByRole('button', { name: /close/i }); // نبحث عن الزر باستخدام aria-label
     fireEvent.click(buttonElement); // نحاكي ضغط الزر
 
     expect(consoleSpy).toHaveBeenCalledWith('Close button has been clicked'); // نتأكد أن الرسالة تم تسجيلها في الكونسول
