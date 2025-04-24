@@ -20,3 +20,4 @@ describe('Utils functions', () => {
     expect(notification).toMatch(/complete by EOD/i);
   });
 });
+
