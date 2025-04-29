@@ -1,28 +1,35 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import Login from './Login'; // Adjust the import path as needed
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import Login from './Login';
 
 describe('Login Component', () => {
   it('should contain 2 labels, 2 inputs, and 1 button', () => {
     render(<Login />);
-    
-    const labels = screen.getAllByLabelText(/username|password/i);  // Assuming the labels have text like "username" and "password"
+
+    // Match labels for email and password
+    const labels = screen.getAllByText(/email|password/i);
     expect(labels).toHaveLength(2);
-    
-    const inputs = screen.getAllByRole('textbox');  // For text inputs (username and password)
+
+    // Get inputs (email is "textbox", password via label)
+    const emailInput = screen.getByRole('textbox', { name: /email/i });
+    const passwordInput = screen.getByLabelText(/password/i);
+    const inputs = [emailInput, passwordInput];
     expect(inputs).toHaveLength(2);
-    
-    const button = screen.getByRole('button', { name: /submit/i });  // Assuming the button has text like "submit"
+
+    // Check the OK button
+    const button = screen.getByRole('button', { name: /ok/i });
     expect(button).toBeInTheDocument();
   });
 
-  it('should focus input when related label is clicked', () => {
+  it('should focus input when related label is clicked', async () => {
     render(<Login />);
-    
-    const label = screen.getByLabelText(/username/i); // Assuming the label text is "username"
-    const input = screen.getByLabelText(/username/i); // Same for input
-    
-    fireEvent.click(label);  // Simulate clicking the label
-    
-    expect(input).toHaveFocus(); // Check if input gets focused
+    const user = userEvent.setup();
+
+    const label = screen.getByText(/email/i);
+    const input = screen.getByLabelText(/email/i);
+
+    await user.click(label);
+
+    expect(input).toHaveFocus();
   });
 });
