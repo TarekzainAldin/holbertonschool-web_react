@@ -1,0 +1,11 @@
+.App-Footer {
+    padding: 1rem;
+    border-top: 1px solid #ccc;
+    text-align: center;
+    font-style: italic;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    margin-top: auto; /* هذا السطر سيجعل الفوتر يبقى في أسفل الصفحة */
+   
+  }

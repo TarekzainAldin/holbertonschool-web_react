@@ -1,0 +1,7 @@
+.App-body {
+    flex-grow: 1; /* يجعل هذا الجزء يشغل المساحة المتبقية في الصفحة */
+    padding: 2rem;
+    background-color: #f4f4f4;
+    margin-bottom: 2rem; /* يساعد في تحديد المسافة بين المكونات والفوتر */
+  }
+  
