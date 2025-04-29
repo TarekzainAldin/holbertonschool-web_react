@@ -1,8 +1,18 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Header from './Header';
 
-test('renders the header with title and logo', () => {
-  render(<Header />);
-  expect(screen.getByText(/School dashboard/i)).toBeInTheDocument();
-  expect(screen.getByRole('img', { name: /holberton logo/i })).toBeInTheDocument();
+describe('Header component', () => {
+  test('renders Holberton logo', () => {
+    render(<Header />);
+    const logo = screen.getByRole('img', { name: /holberton logo/i });
+    expect(logo).toBeInTheDocument();
+  });
+
+  test('renders the heading h1 with correct text', () => {
+    render(<Header />);
+    const heading = screen.getByRole('heading', { level: 1, name: /school dashboard/i });
+    expect(heading).toBeInTheDocument();
+  });
 });
+

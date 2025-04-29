@@ -1,7 +1,12 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Footer from './Footer';
 
-test('renders footer with copyright', () => {
-  render(<Footer />);
-  expect(screen.getByText(/Copyright/i)).toBeInTheDocument();
+describe('Footer component', () => {
+  test('renders copyright with current year when isIndex=true', () => {
+    render(<Footer />);
+    const currentYear = new Date().getFullYear();
+    const expectedText = `Copyright ${currentYear} - Holberton School`;
+    expect(screen.getByText(expectedText)).toBeInTheDocument();
+  });
 });
