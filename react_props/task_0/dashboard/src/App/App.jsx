@@ -1,3 +1,4 @@
+import React from "react";
 import "./App.css";
 import Notifications from "../Notifications/Notifications";
 import Header from "../Header/Header";
@@ -10,7 +11,6 @@ function App() {
       <div className="root-notifications">
         <Notifications />
       </div>
-
       <Header />
       <Login />
       <Footer />
