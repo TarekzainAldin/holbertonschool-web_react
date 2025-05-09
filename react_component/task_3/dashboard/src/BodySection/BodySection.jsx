@@ -11,12 +11,12 @@ class BodySection extends Component {
         {children}
       </div>
     );
-    }
   }
-BodySection.prototype ={
-    title:PropTypes.string,
-    children:PropTypes.node,
+}
 
+BodySection.propTypes = {
+  title: PropTypes.string,
+  children: PropTypes.node,
 };
+
 export default BodySection;
-    
