@@ -1,31 +1,37 @@
-// NotificationItem.spec.js
-import React from 'react';
-// استيراد أدوات الاختبار من مكتبة React Testing Library
-import { render, screen, fireEvent } from '@testing-library/react';
-import NotificationItem from './NotificationItem';
+import NotificationItem from "./NotificationItem";
+import { render, screen, fireEvent } from "@testing-library/react";
 
-describe('NotificationItem Component', () => {
-  it('يستدعي دالة markAsRead بالمعرف الصحيح عند الضغط', () => {
-    // إنشاء دالة وهمية لتتبع استدعاء markAsRead
-    const mockMarkAsRead = jest.fn();
+test("Check whether the li element has the color blue, and the the attribute data-notification-type set to default", () => {
+  render(<NotificationItem type="default" value="Test notification" />);
+  const li = screen.getByText("Test notification");
 
-    // عرض المكون في بيئة الاختبار مع تمرير الخصائص
-    render(
-      <NotificationItem
-        id={5}
-        type="default"
-        value="Test notification"
-        markAsRead={mockMarkAsRead}
-      />
-    );
+  expect(li).toBeInTheDocument();
+  expect(li).toHaveAttribute("data-notification-type", "default");
+  expect(li).toHaveStyle("color: blue");
+});
 
-    // إيجاد عنصر <li> اللي يحتوي على النص
-    const listItem = screen.getByText('Test notification');
+test("Check whether the li element has the color red, and the the attribute data-notification-type set to urgent", () => {
+  render(<NotificationItem type="urgent" value="Test urgent notification" />);
+  const li = screen.getByText("Test urgent notification");
 
-    // محاكاة الضغط على العنصر
-    fireEvent.click(listItem);
+  expect(li).toBeInTheDocument();
+  expect(li).toHaveAttribute("data-notification-type", "urgent");
+  expect(li).toHaveStyle("color: red");
+});
 
-    // التحقق من أن الدالة استُدعيت بالمعرّف الصحيح
-    expect(mockMarkAsRead).toHaveBeenCalledWith(5);
-  });
+test("calls markAsRead with correct id on click", () => {
+  const mockMarkAsRead = jest.fn();
+  render(
+    <NotificationItem
+      id={42}
+      type="default"
+      value="Clickable notification"
+      markAsRead={mockMarkAsRead}
+    />
+  );
+
+  const li = screen.getByText("Clickable notification");
+  fireEvent.click(li);
+
+  expect(mockMarkAsRead).toHaveBeenCalledWith(42);
 });
