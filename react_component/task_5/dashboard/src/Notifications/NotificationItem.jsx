@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-class NotificationItem extends React.Component {
+class NotificationItem extends React.PureComponent {
   render() {
     const { type, html, value, id, markAsRead } = this.props;
     const style = { color: type === "urgent" ? "red" : "blue" };
