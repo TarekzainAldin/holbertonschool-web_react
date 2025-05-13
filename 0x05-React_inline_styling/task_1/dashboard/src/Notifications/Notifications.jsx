@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import PropTypes from 'prop-types';
 import NotificationItem from './NotificationItem';
-import NotificationItemShape from './NotificationItemShape';
+import NotificationItemShape from './NotificationItem';
 
 class Notifications extends React.Component {
   static propTypes = {
