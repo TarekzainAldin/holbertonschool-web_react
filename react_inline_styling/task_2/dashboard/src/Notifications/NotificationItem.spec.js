@@ -1,14 +1,15 @@
-import NotificationItem from "./NotificationItem";
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+import NotificationItem from "./NotificationItem";
 import { StyleSheetTestUtils } from "aphrodite";
 
+// Disable Aphrodite style injection before all tests
 beforeAll(() => {
-  // Désactive l'injection de styles Aphrodite pendant les tests
   StyleSheetTestUtils.suppressStyleInjection();
 });
 
+// Re-enable Aphrodite style injection after all tests
 afterAll(() => {
-  // Réactive les styles après les tests
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
@@ -18,16 +19,14 @@ test('li has attribute data-notification-type="default"', () => {
 
   expect(li).toBeInTheDocument();
   expect(li).toHaveAttribute("data-notification-type", "default");
-  // Aphrodite supprime les styles, donc on ne teste plus la couleur ici
 });
 
 test('li has attribute data-notification-type="urgent"', () => {
   render(<NotificationItem type="urgent" value="Test urgent notification" />);
   const li = screen.getByText("Test urgent notification");
 
-  //expect(li).toBeInTheDocument();
-  //expect(li).toHaveAttribute('data-notification-type', 'urgent');
-  // Aphrodite supprime les styles, donc on ne teste plus la couleur ici
+  expect(li).toBeInTheDocument();
+  expect(li).toHaveAttribute("data-notification-type", "urgent");
 });
 
 test("calls markAsRead with correct id on click", () => {
