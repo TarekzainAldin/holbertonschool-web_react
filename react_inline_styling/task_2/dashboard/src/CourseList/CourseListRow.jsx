@@ -1,36 +1,51 @@
 import React from "react";
+import { StyleSheet, css } from "aphrodite";
 
-const CourseListRow = ({
+export default function CourseListRow({
   isHeader = false,
   textFirstCell = "",
   textSecondCell = null,
-}) => {
-  const headerRowStyle = { backgroundColor: "#deb5b545" };
-  const defaultRowStyle = { backgroundColor: "#f5f5f5ab" };
-  const rowStyle = isHeader ? headerRowStyle : defaultRowStyle;
-
-  if (isHeader) {
-    if (textSecondCell === null) {
-      return (
-        <tr style={rowStyle}>
-          <th colSpan="2">{textFirstCell}</th>
-        </tr>
-      );
-    }
-    return (
-      <tr style={rowStyle}>
-        <th>{textFirstCell}</th>
-        <th>{textSecondCell}</th>
-      </tr>
-    );
-  }
+}) {
+  const rowClass = isHeader ? css(styles.headerRow) : css(styles.row);
 
   return (
-    <tr style={rowStyle}>
-      <td>{textFirstCell}</td>
-      <td>{textSecondCell}</td>
+    <tr className={rowClass}>
+      {isHeader ? (
+        textSecondCell === null ? (
+          <th colSpan="2" className={css(styles.headerCell)}>
+            {textFirstCell}
+          </th>
+        ) : (
+          <>
+            <th className={css(styles.headerCell, styles.thLeft)}>
+              {textFirstCell}
+            </th>
+            <th className={css(styles.headerCell)}>{textSecondCell}</th>
+          </>
+        )
+      ) : (
+        <>
+          <td>{textFirstCell}</td>
+          <td>{textSecondCell}</td>
+        </>
+      )}
     </tr>
   );
-};
+}
 
-export default CourseListRow;
+const styles = StyleSheet.create({
+  row: {
+    backgroundColor: "rgba(245, 245, 245, 0.67)",
+  },
+  headerRow: {
+    backgroundColor: "rgba(222, 181, 181, 0.27)",
+  },
+  headerCell: {
+    fontWeight: "bold",
+    textAlign: "left",
+    borderBottom: "1px solid #ccc",
+  },
+  thLeft: {
+    width: "70%",
+  },
+});
