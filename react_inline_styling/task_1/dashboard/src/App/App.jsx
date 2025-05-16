@@ -70,7 +70,7 @@ class App extends React.Component {
               <p>Holberton School News goes here</p>
             </BodySection>
           </div>
-          <Footer />
+          <Footer/>
         </div>
       </React.Fragment>
     )
