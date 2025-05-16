@@ -1,24 +1,43 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import Login from "./Login";
+import { StyleSheetTestUtils } from 'aphrodite';
 
-describe("Login component", () => {
-  test("renders 2 labels, 2 inputs, and 1 button", () => {
-    render(<Login />);
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const button = screen.getByRole("button", { name: /ok/i });
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
-    expect(emailInput).toBeInTheDocument();
-    expect(passwordInput).toBeInTheDocument();
-    expect(button).toBeInTheDocument();
-  });
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
-  test("label is correctly associated with input", () => {
-    render(<Login />);
-    const emailLabel = screen.getByText(/email/i);
-    expect(emailLabel).toHaveAttribute("for", "email");
-    const emailInput = screen.getByLabelText(/email/i);
-    expect(emailInput).toHaveAttribute("id", "email");
-  });
+test('the text content within the 2 p elements in the app-body and app-footer divs matches', () => {
+  render(<Login />);
+  const divbody = screen.getByText(/Login to access the full dashboard/i);
+
+  expect(divbody).toBeInTheDocument();
+});
+
+test('renders 2 input elements', () => {
+  render(<Login />);
+  const labelemail = screen.getByLabelText(/Email/i);
+  const labelpassword = screen.getByLabelText(/Password/i);
+
+  expect(labelemail).toBeInTheDocument();
+  expect(labelpassword).toBeInTheDocument();
+});
+
+test('renders 2 label elements with the text Email and Password', () => {
+  render(<Login />);
+  const labelemail = screen.getByLabelText(/email/i);
+  const labelpassword = screen.getByLabelText(/password/i);
+
+  expect(labelemail).toBeInTheDocument();
+  expect(labelpassword).toBeInTheDocument();
+});
+
+test('renders a button with the text OK', () => {
+  render(<Login />);
+  const button = screen.getByRole('button', { name: /ok/i });
+
+  expect(button).toBeInTheDocument();
 });

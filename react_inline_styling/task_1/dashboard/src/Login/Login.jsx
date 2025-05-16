@@ -1,36 +1,35 @@
-import React from "react";
-import { StyleSheet, css } from "aphrodite";
+import React from 'react'
+import WithLogging from '../HOC/WithLogging'
+import { StyleSheet, css } from 'aphrodite';
 
 class Login extends React.Component {
-  render() {
-    return (
-      <div className={css(styles.body)}>
-        <p>Login to access the full dashboard</p>
-        <label htmlFor="email">
-          Email:
-          <input id="email" type="email" className={css(styles.input)} />
-        </label>
-        <label htmlFor="password">
-          Password:
-          <input id="password" type="password" className={css(styles.input)} />
-        </label>
-        <button className={css(styles.button)}>OK</button>
-      </div>
-    );
-  }
+    render() {
+        return (
+        <div className={css(styles.bodystyle)}>
+            <p>Login to access the full dashboard</p>
+            <label htmlFor="email">Email:
+                <input className={css(styles.bodyinput)} id="email" type="email" />
+            </label>
+            <label htmlFor="password">Password:
+                <input className={css(styles.bodyinput)} id="password" type="password" />
+            </label>
+            <button>OK</button>
+        </div>
+        )
+    }
 }
 
 const styles = StyleSheet.create({
-  body: {
-    textAlign: "center",
-  },
-  input: {
-    margin: "5px",
-    padding: "10px",
-  },
-  button: {
-    padding: "10px",
-  },
-});
+    bodystyle: {
+        display: 'block',
+        justifyContent: 'flex-start',
+        padding: '0.5rem',
+        flex: '1',
+    },
+    bodyinput: {
+        margin: '0 0.5rem 0',
+    },
+})
 
-export default Login;
+const LoginWithLogging = WithLogging(Login);
+export default LoginWithLogging;

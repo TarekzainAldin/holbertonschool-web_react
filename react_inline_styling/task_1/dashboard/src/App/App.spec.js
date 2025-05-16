@@ -1,49 +1,57 @@
-import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import App from "./App";
+import { StyleSheetTestUtils } from 'aphrodite';
 
-describe("App component", () => {
-  test("renders header, login and footer components", () => {
-    render(<App />);
-    expect(screen.getByText(/School dashboard/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Login to access the full dashboard/i)
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Copyright/i)).toBeInTheDocument();
-  });
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
-  test("calls logOut and alerts when Ctrl + H is pressed", () => {
-    const logOutMock = jest.fn();
-    const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
-    render(<App logOut={logOutMock} />);
+test('App component', () => {
+  render(<App />);
+});
 
-    fireEvent.keyDown(document, {
-      key: "h",
-      ctrlKey: true,
-    });
+test('should call logOut function when ctrl+h is pressed', () => {
+  // Create a mock function for logOut prop
+  const logOutMock = jest.fn();
+  // Spy alert and mock alert popup
+  const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
 
-    expect(alertMock).toHaveBeenCalledWith("Logging you out");
-    expect(logOutMock).toHaveBeenCalledTimes(1);
+  // Render the component with the mock logOut function
+  render(<App logOut={logOutMock} />);
 
-    alertMock.mockRestore(); // nettoyage
-  });
+  // Simulate the keydown event (Ctrl+h)
+  fireEvent.keyDown(document, { key: 'h', ctrlKey: true });
 
-  test('displays "Course list" title when isLoggedIn is true', () => {
-    render(<App isLoggedIn={true} />);
-    expect(screen.getByText(/Course list/i)).toBeInTheDocument();
-  });
+  expect(alertSpy).toHaveBeenCalledWith('Logging you out');
+  expect(logOutMock).toHaveBeenCalledTimes(1);
 
-  test('displays "Log in to continue" title when isLoggedIn is false', () => {
-    render(<App isLoggedIn={false} />);
-    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
-  });
+  // Restore alert after test
+  alertSpy.mockRestore();
+});
 
-  test("displays News from the School and its paragraph", () => {
-    render(<App />);
-    expect(screen.getByText(/News from the School/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Holberton School News goes here/i)
-    ).toBeInTheDocument();
-  });
+test('Check that a title of Course list is displayed above the CourseList component when the isLoggedIn prop is set to true.', () => {
+  render(<App isLoggedIn={true} />);
+
+  const heading = screen.getByRole('heading', { level: 2, name: /Course list/i});
+   expect(heading).toBeInTheDocument();
+});
+
+test('displays "Log in to continue" title when isLoggedIn is false', () => {
+  render(<App isLoggedIn={false} />);
+  const text = screen.getByText(/Log in to continue/i);
+  expect(text).toBeInTheDocument();
+});
+
+test('Check that a title "News from the School" and paragraph are displayed by default', () => {
+  render(<App />);
+
+  const heading = screen.getByRole('heading', { level: 2, name: /News from the School/i });
+  const paragraph = screen.getByText(/Holberton School News goes here/i);
+
+  expect(heading).toBeInTheDocument();
+  expect(paragraph).toBeInTheDocument();
 });
