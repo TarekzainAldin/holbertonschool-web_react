@@ -1,20 +1,18 @@
+// task_0/dashboard/src/Notifications/Notifications.spec.js
 import { render, screen, fireEvent } from "@testing-library/react";
 import Notifications from "./Notifications";
-import { getLatestNotification } from "../utils/utils.js";
-import { cleanup } from "@testing-library/react";
 
-describe("Notifications", () => {
-  const mockNotifications = [
-    { id: 1, type: "default", value: "New course available" },
-    { id: 2, type: "urgent", value: "New resume available" },
-    {
-      id: 3,
-      type: "urgent",
-      html: { __html: "<strong>Urgent requirement</strong> - complete by EOD" },
-    },
-  ];
+const mockNotifications = [
+  { id: 1, type: "default", value: "New course available" },
+  { id: 2, type: "urgent", value: "New resume available" },
+  {
+    id: 3,
+    type: "urgent",
+    html: { __html: "<strong>Urgent requirement</strong> - complete by EOD" },
+  },
+];
 
-  // اختبار التأكد من استدعاء handleDisplayDrawer عند الضغط على عنوان الإشعارات
+describe("Notifications component", () => {
   test("Clicking on menu item calls handleDisplayDrawer", () => {
     const handleDisplayDrawer = jest.fn();
     render(
@@ -24,12 +22,10 @@ describe("Notifications", () => {
         handleDisplayDrawer={handleDisplayDrawer}
       />
     );
-    const menuItem = screen.getByTestId("menu-item");
-    fireEvent.click(menuItem);
+    fireEvent.click(screen.getByTestId("menu-item"));
     expect(handleDisplayDrawer).toHaveBeenCalled();
   });
 
-  // اختبار التأكد من استدعاء handleHideDrawer عند الضغط على زر الإغلاق
   test("Clicking on close button calls handleHideDrawer", () => {
     const handleHideDrawer = jest.fn();
     render(
@@ -39,14 +35,28 @@ describe("Notifications", () => {
         handleHideDrawer={handleHideDrawer}
       />
     );
-    const closeButton = screen.getByRole("button", { name: /close/i });
-    fireEvent.click(closeButton);
+    fireEvent.click(screen.getByRole("button", { name: /close/i }));
     expect(handleHideDrawer).toHaveBeenCalled();
   });
 
-  // (اختبارات إضافية حسب الحاجة...)
-});
+  test("Notifications panel is not displayed when displayDrawer is false", () => {
+    render(
+      <Notifications
+        notifications={mockNotifications}
+        displayDrawer={false}
+      />
+    );
+    expect(screen.queryByTestId("notifications-panel")).not.toBeInTheDocument();
+  });
 
-afterEach(() => {
-  cleanup();
+  test("Notifications panel is displayed with notifications when displayDrawer is true", () => {
+    render(
+      <Notifications
+        notifications={mockNotifications}
+        displayDrawer={true}
+      />
+    );
+    expect(screen.getByTestId("notifications-panel")).toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+  });
 });
