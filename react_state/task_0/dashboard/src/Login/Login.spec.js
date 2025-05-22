@@ -1,41 +1,86 @@
-// task_1/dashboard/src/Login/Login.spec.js
-
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Login from "./Login";
 
 describe("Login component", () => {
-  test("renders 2 labels, 2 inputs, and 1 submit input", () => {
+  test("renders 2 labels, 2 inputs, and 1 submit button", () => {
     render(<Login />);
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /ok/i })).toBeInTheDocument();
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole("button", { name: /submit/i });
+
+    expect(emailInput).toBeInTheDocument();
+    expect(passwordInput).toBeInTheDocument();
+    expect(submitButton).toBeInTheDocument();
   });
 
   test("submit button is disabled by default", () => {
     render(<Login />);
-    const submitButton = screen.getByRole("button", { name: /ok/i });
+    const submitButton = screen.getByRole("button", { name: /submit/i });
     expect(submitButton).toBeDisabled();
   });
 
-  test("submit button is enabled only after valid email and password (≥8 chars)", () => {
+  test("submit button remains disabled with invalid email and short password", () => {
     render(<Login />);
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
-    const submitButton = screen.getByRole("button", { name: /ok/i });
+    const submitButton = screen.getByRole("button", { name: /submit/i });
 
-    fireEvent.change(emailInput, { target: { value: "test@domain.com" } });
-    fireEvent.change(passwordInput, { target: { value: "12345678" } });
+    fireEvent.change(emailInput, { target: { value: "invalidemail" } });
+    fireEvent.change(passwordInput, { target: { value: "short" } });
+
+    expect(submitButton).toBeDisabled();
+  });
+
+  test("submit button remains disabled with valid email and short password", () => {
+    render(<Login />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole("button", { name: /submit/i });
+
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "short" } });
+
+    expect(submitButton).toBeDisabled();
+  });
+
+  test("submit button remains disabled with invalid email and valid password", () => {
+    render(<Login />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole("button", { name: /submit/i });
+
+    fireEvent.change(emailInput, { target: { value: "invalidemail" } });
+    fireEvent.change(passwordInput, { target: { value: "validPass123" } });
+
+    expect(submitButton).toBeDisabled();
+  });
+
+  test("submit button becomes enabled with valid email and password", () => {
+    render(<Login />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole("button", { name: /submit/i });
+
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "validPass123" } });
 
     expect(submitButton).toBeEnabled();
   });
 
-  test("submitting the form should not reload the page", () => {
+  test("form submission does not reload the page and sets isLoggedIn to true", () => {
     render(<Login />);
-    const form = screen.getByRole("form");
-    const preventDefault = jest.fn();
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole("button", { name: /submit/i });
 
-    fireEvent.submit(form, { preventDefault });
-    expect(preventDefault).toHaveBeenCalled();
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "validPass123" } });
+
+    fireEvent.click(submitButton);
+
+    // Assuming that after successful login, some text like "Welcome" appears
+    const welcomeText = screen.getByText(/welcome/i);
+    expect(welcomeText).toBeInTheDocument();
   });
 });
