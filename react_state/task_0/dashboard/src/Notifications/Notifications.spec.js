@@ -1,5 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Notifications from "./Notifications";
+import { getLatestNotification } from "../utils/utils.js";
+import { cleanup } from "@testing-library/react";
 
 describe("Notifications", () => {
   const mockNotifications = [
@@ -12,7 +14,7 @@ describe("Notifications", () => {
     },
   ];
 
-  // اختبار استدعاء الدالة عند الضغط على عنوان "Your notifications"
+  // اختبار التأكد من استدعاء handleDisplayDrawer عند الضغط على عنوان الإشعارات
   test("Clicking on menu item calls handleDisplayDrawer", () => {
     const handleDisplayDrawer = jest.fn();
     render(
@@ -22,12 +24,12 @@ describe("Notifications", () => {
         handleDisplayDrawer={handleDisplayDrawer}
       />
     );
-
-    fireEvent.click(screen.getByTestId("menu-item"));
+    const menuItem = screen.getByTestId("menu-item");
+    fireEvent.click(menuItem);
     expect(handleDisplayDrawer).toHaveBeenCalled();
   });
 
-  // اختبار استدعاء الدالة عند الضغط على زر الإغلاق
+  // اختبار التأكد من استدعاء handleHideDrawer عند الضغط على زر الإغلاق
   test("Clicking on close button calls handleHideDrawer", () => {
     const handleHideDrawer = jest.fn();
     render(
@@ -37,8 +39,14 @@ describe("Notifications", () => {
         handleHideDrawer={handleHideDrawer}
       />
     );
-
-    fireEvent.click(screen.getByRole("button", { name: /close/i }));
+    const closeButton = screen.getByRole("button", { name: /close/i });
+    fireEvent.click(closeButton);
     expect(handleHideDrawer).toHaveBeenCalled();
   });
+
+  // (اختبارات إضافية حسب الحاجة...)
+});
+
+afterEach(() => {
+  cleanup();
 });
