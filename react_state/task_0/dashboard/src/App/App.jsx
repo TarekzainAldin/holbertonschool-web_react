@@ -1,28 +1,25 @@
 import React from "react";
-import { StyleSheet, css } from "aphrodite";
 import Notifications from "../Notifications/Notifications";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import Login from "../Login/Login";
-import PropTypes from "prop-types";
 import CourseList from "../CourseList/CourseList";
-import { getLatestNotification } from "../utils/utils";
 import BodySection from "../BodySection/BodySection";
 import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
+import PropTypes from "prop-types";
+import { StyleSheet, css } from "aphrodite";
+import { getLatestNotification } from "../utils/utils";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-
-    // الحالة المحلية
     this.state = {
       displayDrawer: false,
     };
 
-    // ربط الدوال
-    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
     this.handleHideDrawer = this.handleHideDrawer.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   static defaultProps = {
@@ -50,12 +47,10 @@ class App extends React.Component {
     }
   }
 
-  // عرض لوحة الإشعارات
   handleDisplayDrawer() {
     this.setState({ displayDrawer: true });
   }
 
-  // إخفاء لوحة الإشعارات
   handleHideDrawer() {
     this.setState({ displayDrawer: false });
   }
@@ -121,8 +116,5 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
 });
-
-
-
 
 export default App;

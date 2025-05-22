@@ -48,7 +48,10 @@ class Notifications extends React.Component {
                 </p>
                 <button
                   className={css(styles.closeBtn)}
-                  onClick={handleHideDrawer}
+                  onClick={() => {
+                    console.log("Close button has been clicked");
+                    handleHideDrawer();
+                  }}
                   aria-label="Close"
                 >
                   <img
@@ -154,7 +157,7 @@ Notifications.propTypes = {
 };
 
 Notifications.defaultProps = {
-  displayDrawer: true,
+  displayDrawer: false,
   notifications: [],
   handleDisplayDrawer: () => {},
   handleHideDrawer: () => {},
