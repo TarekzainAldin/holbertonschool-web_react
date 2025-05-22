@@ -1,3 +1,5 @@
+// task_1/dashboard/src/Login/Login.jsx
+
 import React from "react";
 import { StyleSheet, css } from "aphrodite";
 
@@ -7,45 +9,36 @@ class Login extends React.Component {
     this.state = {
       email: "",
       password: "",
-      enableSubmit: false,
       isLoggedIn: false,
+      enableSubmit: false,
     };
-
-    this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
-    this.handleChangeEmail = this.handleChangeEmail.bind(this);
-    this.handleChangePassword = this.handleChangePassword.bind(this);
   }
 
-  validateForm(email, password) {
-    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const passwordValid = password.length >= 8;
-    return emailValid && passwordValid;
-  }
-
-  handleChangeEmail(event) {
-    const email = event.target.value;
-    const { password } = this.state;
-    this.setState({
-      email,
-      enableSubmit: this.validateForm(email, password),
-    });
-  }
-
-  handleChangePassword(event) {
-    const password = event.target.value;
-    const { email } = this.state;
-    this.setState({
-      password,
-      enableSubmit: this.validateForm(email, password),
-    });
-  }
-
-  handleLoginSubmit(event) {
-    event.preventDefault();
+  handleLoginSubmit = (e) => {
+    e.preventDefault();
     this.setState({ isLoggedIn: true });
-  }
+  };
+
+  handleChangeEmail = (e) => {
+    const email = e.target.value;
+    this.setState({ email }, this.updateSubmitState);
+  };
+
+  handleChangePassword = (e) => {
+    const password = e.target.value;
+    this.setState({ password }, this.updateSubmitState);
+  };
+
+  updateSubmitState = () => {
+    const { email, password } = this.state;
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isValidPassword = password.length >= 8;
+    this.setState({ enableSubmit: isValidEmail && isValidPassword });
+  };
 
   render() {
+    const { email, password, enableSubmit } = this.state;
+
     return (
       <div className={css(styles.body)}>
         <p>Login to access the full dashboard</p>
@@ -55,9 +48,9 @@ class Login extends React.Component {
             <input
               id="email"
               type="email"
-              className={css(styles.input)}
-              value={this.state.email}
+              value={email}
               onChange={this.handleChangeEmail}
+              className={css(styles.input)}
             />
           </div>
           <div className={css(styles.inputGroup)}>
@@ -65,17 +58,17 @@ class Login extends React.Component {
             <input
               id="password"
               type="password"
-              className={css(styles.input)}
-              value={this.state.password}
+              value={password}
               onChange={this.handleChangePassword}
+              className={css(styles.input)}
             />
           </div>
           <div className={css(styles.buttonWrapper)}>
             <input
               type="submit"
               value="OK"
+              disabled={!enableSubmit}
               className={css(styles.button)}
-              disabled={!this.state.enableSubmit}
             />
           </div>
         </form>
