@@ -1,119 +1,66 @@
-// task_1/dashboard/src/Login/Login.jsx
-
-import React from "react";
-import { StyleSheet, css } from "aphrodite";
+import React from 'react';
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
-      password: "",
       isLoggedIn: false,
+      email: '',
+      password: '',
       enableSubmit: false,
     };
   }
 
-  handleLoginSubmit = (e) => {
-    e.preventDefault();
-    this.setState({ isLoggedIn: true });
-  };
+  handleChangeEmail = (event) => {
+    const email = event.target.value;
+    this.setState({ email }, this.validateForm);
+  }
 
-  handleChangeEmail = (e) => {
-    const email = e.target.value;
-    this.setState({ email }, this.updateSubmitState);
-  };
+  handleChangePassword = (event) => {
+    const password = event.target.value;
+    this.setState({ password }, this.validateForm);
+  }
 
-  handleChangePassword = (e) => {
-    const password = e.target.value;
-    this.setState({ password }, this.updateSubmitState);
-  };
-
-  updateSubmitState = () => {
+  validateForm = () => {
     const { email, password } = this.state;
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     const isValidPassword = password.length >= 8;
+
     this.setState({ enableSubmit: isValidEmail && isValidPassword });
-  };
+  }
+
+  handleLoginSubmit = (event) => {
+    event.preventDefault(); // prevent reload
+    this.setState({ isLoggedIn: true });
+  }
 
   render() {
     const { email, password, enableSubmit } = this.state;
 
     return (
-      <div className={css(styles.body)}>
-        <p>Login to access the full dashboard</p>
-        <form onSubmit={this.handleLoginSubmit}>
-          <div className={css(styles.inputGroup)}>
-            <label htmlFor="email">Email:</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={this.handleChangeEmail}
-              className={css(styles.input)}
-            />
-          </div>
-          <div className={css(styles.inputGroup)}>
-            <label htmlFor="password">Password:</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={this.handleChangePassword}
-              className={css(styles.input)}
-            />
-          </div>
-          <div className={css(styles.buttonWrapper)}>
-            <input
-              type="submit"
-              value="OK"
-              disabled={!enableSubmit}
-              className={css(styles.button)}
-            />
-          </div>
-        </form>
-      </div>
+      <form onSubmit={this.handleLoginSubmit}>
+        <label htmlFor="email">Email:</label>
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={this.handleChangeEmail}
+        />
+        <label htmlFor="password">Password:</label>
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={this.handleChangePassword}
+        />
+        <input
+          type="submit"
+          value="OK"
+          disabled={!enableSubmit}
+        />
+      </form>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  body: {
-    padding: "30px",
-    "@media (max-width: 900px)": {
-      padding: "20px",
-    },
-  },
-  inputGroup: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: "1em",
-    "@media (max-width: 900px)": {
-      flexDirection: "column",
-      alignItems: "flex-start",
-    },
-  },
-  input: {
-    marginLeft: "10px",
-    "@media (max-width: 900px)": {
-      marginLeft: "0",
-      marginTop: "5px",
-      width: "100%",
-    },
-  },
-  buttonWrapper: {
-    "@media (max-width: 900px)": {
-      display: "flex",
-      justifyContent: "flex-start",
-    },
-  },
-  button: {
-    marginLeft: "10px",
-    "@media (max-width: 900px)": {
-      marginLeft: "0",
-    },
-  },
-});
 
 export default Login;
