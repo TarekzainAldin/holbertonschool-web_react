@@ -5,10 +5,10 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoggedIn: false,
       email: "",
       password: "",
       enableSubmit: false,
+      isLoggedIn: false,
     };
 
     this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
@@ -16,36 +16,36 @@ class Login extends React.Component {
     this.handleChangePassword = this.handleChangePassword.bind(this);
   }
 
-  handleLoginSubmit(event) {
-    event.preventDefault(); // يمنع إعادة تحميل الصفحة
-    this.setState({ isLoggedIn: true });
+  validateForm(email, password) {
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const passwordValid = password.length >= 8;
+    return emailValid && passwordValid;
   }
 
   handleChangeEmail(event) {
     const email = event.target.value;
-    this.setState({ email }, this.validateForm);
+    const { password } = this.state;
+    this.setState({
+      email,
+      enableSubmit: this.validateForm(email, password),
+    });
   }
 
   handleChangePassword(event) {
     const password = event.target.value;
-    this.setState({ password }, this.validateForm);
-  }
-
-  validateForm() {
-    const { email, password } = this.state;
-    // تعبير منتظم بسيط لفحص صحة الإيميل
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const isEmailValid = emailRegex.test(email);
-    const isPasswordValid = password.length >= 8;
-
+    const { email } = this.state;
     this.setState({
-      enableSubmit: email !== "" && password !== "" && isEmailValid && isPasswordValid,
+      password,
+      enableSubmit: this.validateForm(email, password),
     });
   }
 
-  render() {
-    const { email, password, enableSubmit } = this.state;
+  handleLoginSubmit(event) {
+    event.preventDefault();
+    this.setState({ isLoggedIn: true });
+  }
 
+  render() {
     return (
       <div className={css(styles.body)}>
         <p>Login to access the full dashboard</p>
@@ -56,7 +56,7 @@ class Login extends React.Component {
               id="email"
               type="email"
               className={css(styles.input)}
-              value={email}
+              value={this.state.email}
               onChange={this.handleChangeEmail}
             />
           </div>
@@ -66,7 +66,7 @@ class Login extends React.Component {
               id="password"
               type="password"
               className={css(styles.input)}
-              value={password}
+              value={this.state.password}
               onChange={this.handleChangePassword}
             />
           </div>
@@ -75,7 +75,7 @@ class Login extends React.Component {
               type="submit"
               value="OK"
               className={css(styles.button)}
-              disabled={!enableSubmit}
+              disabled={!this.state.enableSubmit}
             />
           </div>
         </form>

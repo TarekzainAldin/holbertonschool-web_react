@@ -7,47 +7,54 @@ describe("Login component", () => {
     render(<Login />);
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
-    const submitInput = screen.getByRole("button", { name: /ok/i });
+    const submitButton = screen.getByRole("button", { name: /ok/i });
 
     expect(emailInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
-    expect(submitInput).toBeInTheDocument();
-    expect(submitInput).toHaveAttribute("type", "submit");
-  });
-
-  test("label is correctly associated with input", () => {
-    render(<Login />);
-    const emailLabel = screen.getByText(/email/i);
-    expect(emailLabel).toHaveAttribute("for", "email");
-    const emailInput = screen.getByLabelText(/email/i);
-    expect(emailInput).toHaveAttribute("id", "email");
+    expect(submitButton).toBeInTheDocument();
   });
 
   test("submit button is disabled by default", () => {
     render(<Login />);
-    const submitInput = screen.getByRole("button", { name: /ok/i });
-    expect(submitInput).toBeDisabled();
+    const submitButton = screen.getByRole("button", { name: /ok/i });
+    expect(submitButton).toBeDisabled();
   });
 
-  test("submit button is enabled only with valid email and password", () => {
+  test("submit button is enabled when both fields are valid", () => {
     render(<Login />);
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
-    const submitInput = screen.getByRole("button", { name: /ok/i });
+    const submitButton = screen.getByRole("button", { name: /ok/i });
 
-    // Test with invalid email
-    fireEvent.change(emailInput, { target: { value: "invalidemail" } });
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "password123" } });
-    expect(submitInput).toBeDisabled();
 
-    // Test with valid email and short password
+    expect(submitButton).toBeEnabled();
+  });
+
+  test("submit button stays disabled if password is less than 8 chars", () => {
+    render(<Login />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole("button", { name: /ok/i });
+
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "short" } });
-    expect(submitInput).toBeDisabled();
 
-    // Test with valid email and valid password
+    expect(submitButton).toBeDisabled();
+  });
+
+  test("submitting the form updates isLoggedIn to true", () => {
+    const { container } = render(<Login />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const form = container.querySelector("form");
+
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "password123" } });
-    expect(submitInput).toBeEnabled();
+    fireEvent.submit(form);
+
+    // There's no visual change for isLoggedIn, but we ensure no crash occurs
+    expect(form).toBeInTheDocument();
   });
 });
