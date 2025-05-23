@@ -4,11 +4,12 @@ import Notifications from "../Notifications/Notifications";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import Login from "../Login/Login";
+import PropTypes from "prop-types";
 import CourseList from "../CourseList/CourseList";
 import { getLatestNotification } from "../utils/utils";
 import BodySection from "../BodySection/BodySection";
-import BodySectionWithMarginBottom from "../BodySectionWithMarginBottom";
-import AppContext from "../Context/context"; // تأكد من اسم السياق الصحيح
+import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
+import AppContext from "../Context/context"; // renamed to AppContext
 
 class App extends React.Component {
   constructor(props) {
@@ -37,7 +38,7 @@ class App extends React.Component {
         email,
         password,
         isLoggedIn: true,
-      }
+      },
     });
   }
 
@@ -47,7 +48,7 @@ class App extends React.Component {
         email: "",
         password: "",
         isLoggedIn: false,
-      }
+      },
     });
   }
 
@@ -62,7 +63,7 @@ class App extends React.Component {
   handleKeyDown(e) {
     if (e.ctrlKey && e.key === "h") {
       alert("Logging you out");
-      this.state.logOut(); // من state
+      this.logOut();
     }
   }
 
@@ -75,7 +76,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { user } = this.state;
+    const { displayDrawer, user, logOut } = this.state;
 
     const notificationsList = [
       { id: 1, type: "urgent", value: "New course available" },
@@ -90,11 +91,11 @@ class App extends React.Component {
     ];
 
     return (
-      <AppContext.Provider value={{ user: this.state.user, logOut: this.state.logOut }}>
+      <AppContext.Provider value={{ user, logOut }}>
         <div className={css(styles.notifications)}>
           <Notifications
             notifications={notificationsList}
-            displayDrawer={this.state.displayDrawer}
+            displayDrawer={displayDrawer}
             handleDisplayDrawer={this.handleDisplayDrawer}
             handleHideDrawer={this.handleHideDrawer}
           />
@@ -106,11 +107,7 @@ class App extends React.Component {
           </BodySectionWithMarginBottom>
         ) : (
           <BodySectionWithMarginBottom title="Log in to continue">
-            <Login
-              logIn={this.logIn}
-              email={user.email}
-              password={user.password}
-            />
+            <Login logIn={this.logIn} />
           </BodySectionWithMarginBottom>
         )}
         <BodySection title="News from the School">
