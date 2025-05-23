@@ -1,58 +1,64 @@
-// task_2/dashboard/src/App/App.jsx
+// task_2/dashboard/src/Login/Login.spec.js
 import React from 'react';
-import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
-import Login from '../Login/Login';
-import CourseList from '../CourseList/CourseList';
-import Notifications from '../Notifications/Notifications';
-import { newContext, user, logOut } from '../Context/context';
+import { shallow } from 'enzyme';
+import Login from './Login';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      user,
-      logOut: this.logOut,
-    };
-  }
+describe('<Login />', () => {
+  let wrapper;
+  const mockLogIn = jest.fn();
 
-  logIn = (email, password) => {
-    this.setState({
-      user: {
-        email,
-        password,
-        isLoggedIn: true,
-      },
+  beforeEach(() => {
+    wrapper = shallow(<Login logIn={mockLogIn} />);
+  });
+
+  it('Submit button is disabled by default', () => {
+    expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(true);
+  });
+
+  it('Submit button becomes enabled with valid inputs', () => {
+    wrapper.find('#email').simulate('change', {
+      target: { value: 'test@example.com' },
     });
-  };
-
-  logOut = () => {
-    this.setState({
-      user: {
-        email: '',
-        password: '',
-        isLoggedIn: false,
-      },
+    wrapper.find('#password').simulate('change', {
+      target: { value: 'password123' },
     });
-  };
+    wrapper.update();
+    expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(false);
+  });
 
-  render() {
-    const { user } = this.state;
-    return (
-      <newContext.Provider value={{ user, logOut: this.logOut }}>
-        <div className="App">
-          <Notifications />
-          <Header />
-          {user.isLoggedIn ? (
-            <CourseList />
-          ) : (
-            <Login logIn={this.logIn} />
-          )}
-          <Footer />
-        </div>
-      </newContext.Provider>
-    );
-  }
-}
+  it('Submit button stays disabled for invalid email', () => {
+    wrapper.find('#email').simulate('change', {
+      target: { value: 'invalid-email' },
+    });
+    wrapper.find('#password').simulate('change', {
+      target: { value: 'password123' },
+    });
+    wrapper.update();
+    expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(true);
+  });
 
-export default App;
+  it('Submit button stays disabled for short password', () => {
+    wrapper.find('#email').simulate('change', {
+      target: { value: 'test@example.com' },
+    });
+    wrapper.find('#password').simulate('change', {
+      target: { value: 'short' },
+    });
+    wrapper.update();
+    expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(true);
+  });
+
+  it('Calls logIn with email and password on submit', () => {
+    const email = 'test@example.com';
+    const password = 'password123';
+    wrapper.find('#email').simulate('change', {
+      target: { value: email },
+    });
+    wrapper.find('#password').simulate('change', {
+      target: { value: password },
+    });
+    wrapper.update();
+    wrapper.find('form').simulate('submit', { preventDefault: () => {} });
+    expect(mockLogIn).toHaveBeenCalledWith(email, password);
+  });
+});
