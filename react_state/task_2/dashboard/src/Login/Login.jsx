@@ -5,8 +5,8 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: props.email || '',
-      password: props.password || '',
+      email: '',
+      password: '',
       enableSubmit: false,
     };
   }
@@ -41,10 +41,24 @@ class Login extends React.Component {
     return (
       <form onSubmit={this.handleLoginSubmit}>
         <label htmlFor="email">Email:</label>
-        <input id="email" type="email" value={email} onChange={this.handleChangeEmail} />
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={this.handleChangeEmail}
+        />
         <label htmlFor="password">Password:</label>
-        <input id="password" type="password" value={password} onChange={this.handleChangePassword} />
-        <input type="submit" value="OK" disabled={!enableSubmit} />
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={this.handleChangePassword}
+        />
+        <input
+          type="submit"
+          value="OK"
+          disabled={!enableSubmit}
+        />
       </form>
     );
   }
@@ -52,14 +66,10 @@ class Login extends React.Component {
 
 Login.propTypes = {
   logIn: PropTypes.func,
-  email: PropTypes.string,
-  password: PropTypes.string,
 };
 
 Login.defaultProps = {
   logIn: () => {},
-  email: '',
-  password: '',
 };
 
 export default Login;

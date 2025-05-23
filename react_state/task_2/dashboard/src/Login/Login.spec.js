@@ -4,10 +4,10 @@ import Login from './Login';
 
 describe('<Login />', () => {
   let wrapper;
-  const mockLogIn = jest.fn();
+  const logInMock = jest.fn();
 
   beforeEach(() => {
-    wrapper = shallow(<Login logIn={mockLogIn} />);
+    wrapper = shallow(<Login logIn={logInMock} />);
   });
 
   it('Submit button is disabled by default', () => {
@@ -22,11 +22,28 @@ describe('<Login />', () => {
     expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(false);
   });
 
-  it('Calls logIn with correct credentials on submit', () => {
+  it('Submit button stays disabled for invalid email', () => {
+    wrapper.find('#email').simulate('change', { target: { value: 'invalid-email' } });
+    wrapper.find('#password').simulate('change', { target: { value: 'password123' } });
+
+    wrapper.update();
+    expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(true);
+  });
+
+  it('Submit button stays disabled for short password', () => {
+    wrapper.find('#email').simulate('change', { target: { value: 'test@example.com' } });
+    wrapper.find('#password').simulate('change', { target: { value: 'short' } });
+
+    wrapper.update();
+    expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(true);
+  });
+
+  it('logIn is called with correct arguments on submit', () => {
     wrapper.find('#email').simulate('change', { target: { value: 'test@example.com' } });
     wrapper.find('#password').simulate('change', { target: { value: 'password123' } });
+
     wrapper.find('form').simulate('submit', { preventDefault: () => {} });
 
-    expect(mockLogIn).toHaveBeenCalledWith('test@example.com', 'password123');
+    expect(logInMock).toHaveBeenCalledWith('test@example.com', 'password123');
   });
 });
