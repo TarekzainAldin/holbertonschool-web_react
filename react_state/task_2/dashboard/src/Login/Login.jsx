@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 class Login extends React.Component {
   constructor(props) {
@@ -25,14 +24,16 @@ class Login extends React.Component {
     const { email, password } = this.state;
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     const isValidPassword = password.length >= 8;
-
     this.setState({ enableSubmit: isValidEmail && isValidPassword });
   };
 
   handleLoginSubmit = (event) => {
     event.preventDefault();
     const { email, password } = this.state;
-    this.props.logIn(email, password);
+    const { logIn } = this.props;
+    if (logIn) {
+      logIn(email, password);
+    }
   };
 
   render() {
@@ -63,10 +64,6 @@ class Login extends React.Component {
     );
   }
 }
-
-Login.propTypes = {
-  logIn: PropTypes.func,
-};
 
 Login.defaultProps = {
   logIn: () => {},

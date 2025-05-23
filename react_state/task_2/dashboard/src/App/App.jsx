@@ -1,33 +1,21 @@
-import React from "react";
-import { StyleSheet, css } from "aphrodite";
-import Notifications from "../Notifications/Notifications";
-import Header from "../Header/Header";
-import Footer from "../Footer/Footer";
-import Login from "../Login/Login";
-import CourseList from "../CourseList/CourseList";
-import { getLatestNotification } from "../utils/utils";
-import BodySection from "../BodySection/BodySection";
-import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
-import AppContext from "../Context/context";
+import React from 'react';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
+import Notifications from '../Notifications/Notifications';
+import Login from '../Login/Login';
+import CourseList from '../CourseList/CourseList';
+import newContext, { user as defaultUser, logOut as defaultLogOut } from '../Context/context';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.logIn = this.logIn.bind(this);
-    this.logOut = this.logOut.bind(this);
-
     this.state = {
-      displayDrawer: false,
-      user: {
-        email: '',
-        password: '',
-        isLoggedIn: false,
-      },
+      user: defaultUser,
       logOut: this.logOut,
     };
   }
 
-  logIn(email, password) {
+  logIn = (email, password) => {
     this.setState({
       user: {
         email,
@@ -35,9 +23,9 @@ class App extends React.Component {
         isLoggedIn: true,
       },
     });
-  }
+  };
 
-  logOut() {
+  logOut = () => {
     this.setState({
       user: {
         email: '',
@@ -45,90 +33,24 @@ class App extends React.Component {
         isLoggedIn: false,
       },
     });
-  }
-
-  handleKeyDown = (e) => {
-    if (e.ctrlKey && e.key === 'h') {
-      alert('Logging you out');
-      this.state.logOut();
-    }
   };
-
-  handleDisplayDrawer = () => {
-    this.setState({ displayDrawer: true });
-  };
-
-  handleHideDrawer = () => {
-    this.setState({ displayDrawer: false });
-  };
-
-  componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-  }
 
   render() {
-    const { displayDrawer, user } = this.state;
-
-    const notificationsList = [
-      { id: 1, type: "urgent", value: "New course available" },
-      { id: 2, type: "urgent", value: "New resume available" },
-      { id: 3, type: "urgent", html: { __html: getLatestNotification() } },
-    ];
-
-    const coursesList = [
-      { id: 1, name: "ES6", credit: 60 },
-      { id: 2, name: "Webpack", credit: 20 },
-      { id: 3, name: "React", credit: 40 },
-    ];
+    const { user } = this.state;
 
     return (
-      <AppContext.Provider value={{ user, logOut: this.logOut }}>
-        <div className={css(styles.notifications)}>
-          <Notifications
-            notifications={notificationsList}
-            displayDrawer={displayDrawer}
-            handleDisplayDrawer={this.handleDisplayDrawer}
-            handleHideDrawer={this.handleHideDrawer}
-          />
-        </div>
+      <newContext.Provider value={{ user, logOut: this.logOut }}>
+        <Notifications />
         <Header />
         {user.isLoggedIn ? (
-          <BodySectionWithMarginBottom title="Course list">
-            <CourseList courses={coursesList} />
-          </BodySectionWithMarginBottom>
+          <CourseList />
         ) : (
-          <BodySectionWithMarginBottom title="Log in to continue">
-            <Login logIn={this.logIn} />
-          </BodySectionWithMarginBottom>
+          <Login logIn={this.logIn} />
         )}
-        <BodySection title="News from the School">
-          <p>Holberton School News goes here</p>
-        </BodySection>
-        <footer className={css(styles.footer)}>
-          <p>Copyright 2025 - Holberton School</p>
-        </footer>
-      </AppContext.Provider>
+        <Footer />
+      </newContext.Provider>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  notifications: {
-    position: "relative",
-  },
-  footer: {
-    padding: "1rem",
-    borderTop: "1px solid #ccc",
-    textAlign: "center",
-    fontStyle: "italic",
-    position: "fixed",
-    width: "100%",
-    bottom: 0,
-  },
-});
 
 export default App;
