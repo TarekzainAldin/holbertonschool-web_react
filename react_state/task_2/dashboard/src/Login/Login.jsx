@@ -25,13 +25,14 @@ class Login extends React.Component {
     const { email, password } = this.state;
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     const isValidPassword = password.length >= 8;
+
     this.setState({ enableSubmit: isValidEmail && isValidPassword });
   };
 
   handleLoginSubmit = (event) => {
     event.preventDefault();
     const { email, password } = this.state;
-    this.props.logIn(email, password); // use prop!
+    this.props.logIn(email, password);
   };
 
   render() {
@@ -40,36 +41,23 @@ class Login extends React.Component {
     return (
       <form onSubmit={this.handleLoginSubmit}>
         <label htmlFor="email">Email:</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={this.handleChangeEmail}
-        />
+        <input id="email" type="email" value={email} onChange={this.handleChangeEmail} />
         <label htmlFor="password">Password:</label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={this.handleChangePassword}
-        />
-        <input
-          type="submit"
-          value="OK"
-          disabled={!enableSubmit}
-        />
+        <input id="password" type="password" value={password} onChange={this.handleChangePassword} />
+        <input type="submit" value="OK" disabled={!enableSubmit} />
       </form>
     );
   }
 }
 
 Login.propTypes = {
-  logIn: PropTypes.func.isRequired,
+  logIn: PropTypes.func,
   email: PropTypes.string,
   password: PropTypes.string,
 };
 
 Login.defaultProps = {
+  logIn: () => {},
   email: '',
   password: '',
 };
