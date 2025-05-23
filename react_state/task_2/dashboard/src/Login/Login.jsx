@@ -1,6 +1,4 @@
-// task_2/dashboard/src/Login/Login.jsx
 import React from 'react';
-import WithLogging from '../HOC/WithLogging';
 import { StyleSheet, css } from 'aphrodite';
 
 class Login extends React.Component {
@@ -11,37 +9,44 @@ class Login extends React.Component {
       password: props.password || '',
       enableSubmit: false,
     };
+
+    this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
+    this.handleChangeEmail = this.handleChangeEmail.bind(this);
+    this.handleChangePassword = this.handleChangePassword.bind(this);
   }
 
-  handleLoginSubmit = (event) => {
-    event.preventDefault();
-    const { email, password } = this.state;
-    this.props.logIn(email, password);
-  };
-
-  handleChangeEmail = (event) => {
-    const email = event.target.value;
-    const { password } = this.state;
-    const enableSubmit = this.validateForm(email, password);
-    this.setState({ email, enableSubmit });
-  };
-
-  handleChangePassword = (event) => {
-    const password = event.target.value;
-    const { email } = this.state;
-    const enableSubmit = this.validateForm(email, password);
-    this.setState({ password, enableSubmit });
-  };
-
-  validateForm = (email, password) => {
+  validateForm(email, password) {
     const isValidEmail = /\S+@\S+\.\S+/.test(email);
     const isValidPassword = password.length >= 8;
     return isValidEmail && isValidPassword;
-  };
+  }
+
+  handleLoginSubmit(event) {
+    event.preventDefault();
+    const { email, password } = this.state;
+    this.props.logIn(email, password);
+  }
+
+  handleChangeEmail(event) {
+    const email = event.target.value;
+    const { password } = this.state;
+    this.setState({
+      email,
+      enableSubmit: this.validateForm(email, password),
+    });
+  }
+
+  handleChangePassword(event) {
+    const password = event.target.value;
+    const { email } = this.state;
+    this.setState({
+      password,
+      enableSubmit: this.validateForm(email, password),
+    });
+  }
 
   render() {
     const { email, password, enableSubmit } = this.state;
-
     return (
       <div className={css(styles.bodystyle)}>
         <p>Login to access the full dashboard</p>
@@ -66,12 +71,7 @@ class Login extends React.Component {
               onChange={this.handleChangePassword}
             />
           </label>
-          <input
-            className={css(styles.button)}
-            type="submit"
-            value="OK"
-            disabled={!enableSubmit}
-          />
+          <input type="submit" value="OK" disabled={!enableSubmit} />
         </form>
       </div>
     );
@@ -81,31 +81,11 @@ class Login extends React.Component {
 const styles = StyleSheet.create({
   bodystyle: {
     display: 'block',
-    justifyContent: 'flex-start',
     padding: '0.5rem',
-    flex: '1',
-    '@media (max-width: 900px)': {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-    },
   },
   bodyinput: {
     margin: '0 0.5rem 0',
-    '@media (max-width: 900px)': {
-      border: 'none',
-      outline: 'none',
-    },
-  },
-  button: {
-    marginTop: '1rem',
-    display: 'inline-block',
-    width: 'auto',
-    '@media (max-width: 900px)': {
-      width: 'fit-content',
-    },
   },
 });
 
-const LoginWithLogging = WithLogging(Login);
-export default LoginWithLogging;
+export default Login;
