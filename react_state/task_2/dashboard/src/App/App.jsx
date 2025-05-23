@@ -9,7 +9,7 @@ import CourseList from '../CourseList/CourseList';
 import PropTypes from 'prop-types';
 import { getLatestNotification } from '../utils/utils';
 import { StyleSheet, css } from 'aphrodite';
-import newContext from '../Context/context';
+import AppContext from '../Context/context';
 
 class App extends React.Component {
   constructor(props) {

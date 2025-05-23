@@ -105,4 +105,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WithLogging(Login);
+const LoginWithLogging = WithLogging(Login);
+export default LoginWithLogging;
