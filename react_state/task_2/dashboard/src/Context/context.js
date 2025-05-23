@@ -1,4 +1,3 @@
-// task_2/dashboard/src/Context/context.js
 import React from 'react';
 
 export const user = {
@@ -9,7 +8,9 @@ export const user = {
 
 export const logOut = () => {};
 
-export const newContext = React.createContext({
+const newContext = React.createContext({
   user,
   logOut,
 });
+
+export default newContext;
