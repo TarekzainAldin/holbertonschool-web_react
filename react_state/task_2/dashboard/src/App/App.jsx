@@ -1,3 +1,4 @@
+// task_2/dashboard/src/App/App.jsx
 import React from 'react';
 import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
@@ -23,15 +24,9 @@ class App extends React.Component {
       },
       logOut: this.logOut,
     };
-
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
-    this.handleHideDrawer = this.handleHideDrawer.bind(this);
-    this.logIn = this.logIn.bind(this);
-    this.logOut = this.logOut.bind(this);
   }
 
-  logIn(email, password) {
+  logIn = (email, password) => {
     this.setState({
       user: {
         email,
@@ -39,9 +34,9 @@ class App extends React.Component {
         isLoggedIn: true,
       },
     });
-  }
+  };
 
-  logOut() {
+  logOut = () => {
     this.setState({
       user: {
         email: '',
@@ -49,7 +44,22 @@ class App extends React.Component {
         isLoggedIn: false,
       },
     });
-  }
+  };
+
+  handleKeyDown = (event) => {
+    if (event.ctrlKey && event.key === 'h') {
+      alert('Logging you out');
+      this.state.logOut();
+    }
+  };
+
+  handleDisplayDrawer = () => {
+    this.setState({ displayDrawer: true });
+  };
+
+  handleHideDrawer = () => {
+    this.setState({ displayDrawer: false });
+  };
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
@@ -59,67 +69,54 @@ class App extends React.Component {
     document.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  handleKeyDown(event) {
-    if (event.ctrlKey && event.key === 'h') {
-      alert('Logging you out');
-      this.logOut();
-    }
-  }
-
-  handleDisplayDrawer() {
-    this.setState({ displayDrawer: true });
-  }
-
-  handleHideDrawer() {
-    this.setState({ displayDrawer: false });
-  }
-
   render() {
+    const { user, displayDrawer } = this.state;
+
+    const coursesList = [
+      { id: 1, name: 'ES6', credit: 60 },
+      { id: 2, name: 'Webpack', credit: 20 },
+      { id: 3, name: 'React', credit: 40 },
+    ];
+
     const notificationsList = [
       { id: 1, type: 'default', value: 'New course available' },
       { id: 2, type: 'urgent', value: 'New resume available' },
       { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
     ];
 
-    const coursesList = [
-      { id: 1, name: 'ES6', credit: '60' },
-      { id: 2, name: 'Webpack', credit: '20' },
-      { id: 3, name: 'React', credit: '40' },
-    ];
-
     return (
-      <newContext.Provider value={{ user: this.state.user, logOut: this.state.logOut }}>
+      <AppContext.Provider value={{ user, logOut: this.logOut }}>
         <div className={css(styles.app)}>
           <div className={css(styles.notifications)}>
             <Notifications
               notifications={notificationsList}
-              displayDrawer={this.state.displayDrawer}
+              displayDrawer={displayDrawer}
               handleDisplayDrawer={this.handleDisplayDrawer}
               handleHideDrawer={this.handleHideDrawer}
             />
           </div>
           <Header />
           <div className={css(styles.body)}>
-            {this.state.user.isLoggedIn ? (
-              <BodySectionWithMarginBottom title='Course list'>
+            {user.isLoggedIn ? (
+              <BodySectionWithMarginBottom title="Course list">
                 <CourseList courses={coursesList} />
               </BodySectionWithMarginBottom>
             ) : (
-              <BodySectionWithMarginBottom title='Log in to continue'>
+              <BodySectionWithMarginBottom title="Log in to continue">
                 <Login
                   logIn={this.logIn}
-                  email={this.state.user.email}
-                  password={this.state.user.password}
+                  email={user.email}
+                  password={user.password}
                 />
               </BodySectionWithMarginBottom>
             )}
-            <BodySection title='News from the School'>
+            <BodySection title="News from the School">
               <p>Holberton School News goes here</p>
             </BodySection>
           </div>
           <Footer />
         </div>
-      </newContext.Provider>
+      </AppContext.Provider>
     );
   }
 }
