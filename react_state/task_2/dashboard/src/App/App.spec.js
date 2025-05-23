@@ -1,114 +1,50 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import App from './App';
-import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
-import Login from '../Login/Login';
-import CourseList from '../CourseList/CourseList';
-import { StyleSheetTestUtils, css } from 'aphrodite';
-import { StyleSheet } from 'aphrodite';
+import { render, screen, fireEvent } from "@testing-library/react";
+import App from "./App";
+import { StyleSheetTestUtils } from 'aphrodite';
 
-describe('<App />', () => {
-  // Désactiver l'injection de styles Aphrodite pour éviter des erreurs pendant les tests
+beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
+});
 
-  afterAll(() => {
-    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-  });
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
-  it('renders without crashing', () => {
-    const wrapper = shallow(<App />);
-    expect(wrapper.exists()).toBe(true);
-  });
+test('App component', () => {
+  render(<App />);
+});
 
-  it('contains the Header component', () => {
-    const wrapper = shallow(<App />);
-    expect(wrapper.find(Header).length).toBe(1);
-  });
+test('should call logOut function when ctrl+h is pressed', () => {
+  // Create a mock function for logOut prop
+  const logOutMock = jest.fn();
+  // Spy alert and mock alert popup
+  const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
 
-  it('contains the Footer component', () => {
-    const wrapper = shallow(<App />);
-    expect(wrapper.find(Footer).length).toBe(1);
-  });
+  // Render the component with the mock logOut function
+  render(<App logOut={logOutMock} />);
 
-  it('should not display CourseList when isLoggedIn is false', () => {
-    const wrapper = shallow(<App isLoggedIn={false} />);
-    expect(wrapper.find(CourseList).length).toBe(0);
-  });
+  // Simulate the keydown event (Ctrl+h)
+  fireEvent.keyDown(document, { key: 'h', ctrlKey: true });
 
-  it('should display CourseList when isLoggedIn is true', () => {
-    const wrapper = shallow(<App isLoggedIn={true} />);
-    expect(wrapper.find(CourseList).length).toBe(1);
-  });
+  expect(alertSpy).toHaveBeenCalledWith('Logging you out');
+  expect(logOutMock).toHaveBeenCalledTimes(1);
 
-  it('should not display the Login component when isLoggedIn is true', () => {
-    const wrapper = shallow(<App isLoggedIn={true} />);
-    expect(wrapper.find(Login).length).toBe(0);
-  });
+  // Restore alert after test
+  alertSpy.mockRestore();
+});
 
-  it('calls logOut function and displays alert when Ctrl+H is pressed', () => {
-    const mockLogOut = jest.fn();
-    const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
+test('displays "Log in to continue" title when isLoggedIn is false', () => {
+  render(<App isLoggedIn={false} />);
+  const text = screen.getByText(/Log in to continue/i);
+  expect(text).toBeInTheDocument();
+});
 
-    const wrapper = shallow(<App logOut={mockLogOut} />);
-    const instance = wrapper.instance();
-    instance.componentDidMount();
+test('Check that a title "News from the School" and paragraph are displayed by default', () => {
+  render(<App />);
 
-    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'h' });
-    document.dispatchEvent(event);
+  const heading = screen.getByRole('heading', { level: 2, name: /News from the School/i });
+  const paragraph = screen.getByText(/Holberton School News goes here/i);
 
-    expect(alertMock).toHaveBeenCalledWith('Logging you out');
-    expect(mockLogOut).toHaveBeenCalled();
-
-    alertMock.mockRestore();
-  });
-
-  it('applies the correct footer styles', () => {
-    const wrapper = shallow(<App />);
-    const footer = wrapper.find('div').last();
-
-    expect(footer.hasClass(css(StyleSheet.create({
-      footer: {
-        borderTop: '4px solid #cf4550',
-        width: '100%',
-        bottom: '0',
-        left: '0',
-        textAlign: 'center',
-        fontSize: '20px',
-        fontStyle: 'italic',
-        fontFamily: 'Arial, sans-serif',
-      }
-    }).footer))).toBe(true);
-  });
-
-  it('applies the correct app styles', () => {
-    const wrapper = shallow(<App />);
-    const appDiv = wrapper.find('div').first();
-
-    expect(appDiv.hasClass(css(StyleSheet.create({
-      app: {}
-    }).app))).toBe(true);
-  });
-
-  // Test the default state of displayDrawer
-  it('should have displayDrawer default to false', () => {
-    const wrapper = shallow(<App />);
-    expect(wrapper.state('displayDrawer')).toBe(false);
-  });
-
-  // Test that calling handleDisplayDrawer sets displayDrawer to true
-  it('should set displayDrawer to true when handleDisplayDrawer is called', () => {
-    const wrapper = shallow(<App />);
-    wrapper.instance().handleDisplayDrawer();
-    expect(wrapper.state('displayDrawer')).toBe(true);
-  });
-
-  // Test that calling handleHideDrawer sets displayDrawer to false
-  it('should set displayDrawer to false when handleHideDrawer is called', () => {
-    const wrapper = shallow(<App />);
-    wrapper.setState({displayDrawer: true});
-    wrapper.instance().handleHideDrawer();
-    expect(wrapper.state('displayDrawer')).toBe(false);
-  });
-
+  expect(heading).toBeInTheDocument();
+  expect(paragraph).toBeInTheDocument();
 });

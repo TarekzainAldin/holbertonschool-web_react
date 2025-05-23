@@ -1,64 +1,150 @@
-// task_2/dashboard/src/Login/Login.spec.js
-import React from 'react';
-import { shallow } from 'enzyme';
-import Login from './Login';
+import React from 'react'
+import Notifications from '../Notifications/Notifications'
+import Header from '../Header/Header'
+import Footer from '../Footer/Footer'
+import Login from '../Login/Login'
+import BodySection from '../BodySection/BodySection'
+import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom'
+import CourseList from '../CourseList/CourseList'
+import PropTypes from 'prop-types'
+import { getLatestNotification } from '../utils/utils'
+import { StyleSheet, css } from 'aphrodite';
+import newContext from '../Context/context'
 
-describe('<Login />', () => {
-  let wrapper;
-  const mockLogIn = jest.fn();
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      displayDrawer: false,
+      user: {
+        email: '',
+        password: '',
+        isLoggedIn: false,
+      },
+      logOut: newContext.logOut,
+    }
+    // This binding is necessary to make `this` work in the callback
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
+    this.handleHideDrawer = this.handleHideDrawer.bind(this);
+    this.logIn = this.logIn.bind(this);
+    this.logOut = this.logOut.bind(this);
+  }
 
-  beforeEach(() => {
-    wrapper = shallow(<Login logIn={mockLogIn} />);
-  });
+  logOut() {
+    this.setState({
+      user: {
+        email: '',
+        password: '',
+        isLoggedIn: false,
+      }
+    })
+  }
 
-  it('Submit button is disabled by default', () => {
-    expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(true);
-  });
+  logIn(email, password) {
+    this.setState({
+      user: {
+        email: email,
+        password: password,
+        isLoggedIn: true,
+      }
+    })
+  }
 
-  it('Submit button becomes enabled with valid inputs', () => {
-    wrapper.find('#email').simulate('change', {
-      target: { value: 'test@example.com' },
-    });
-    wrapper.find('#password').simulate('change', {
-      target: { value: 'password123' },
-    });
-    wrapper.update();
-    expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(false);
-  });
+  componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
 
-  it('Submit button stays disabled for invalid email', () => {
-    wrapper.find('#email').simulate('change', {
-      target: { value: 'invalid-email' },
-    });
-    wrapper.find('#password').simulate('change', {
-      target: { value: 'password123' },
-    });
-    wrapper.update();
-    expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(true);
-  });
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
 
-  it('Submit button stays disabled for short password', () => {
-    wrapper.find('#email').simulate('change', {
-      target: { value: 'test@example.com' },
-    });
-    wrapper.find('#password').simulate('change', {
-      target: { value: 'short' },
-    });
-    wrapper.update();
-    expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(true);
-  });
+  handleDisplayDrawer = () => {
+    this.setState({ displayDrawer: true });
+  }
 
-  it('Calls logIn with email and password on submit', () => {
-    const email = 'test@example.com';
-    const password = 'password123';
-    wrapper.find('#email').simulate('change', {
-      target: { value: email },
-    });
-    wrapper.find('#password').simulate('change', {
-      target: { value: password },
-    });
-    wrapper.update();
-    wrapper.find('form').simulate('submit', { preventDefault: () => {} });
-    expect(mockLogIn).toHaveBeenCalledWith(email, password);
-  });
-});
+  handleHideDrawer = () => {
+    this.setState({ displayDrawer: false });
+  }
+
+  handleKeyDown = (event) => {
+    if (event.ctrlKey && event.key === 'h') {
+      alert('Logging you out');
+      this.props.logOut();
+    }
+  }
+
+  render() {
+    const notificationsList = [
+      { id: 1, type: 'default', value: 'New course available' },
+        { id: 2, type: 'urgent', value: 'New resume available' },
+        { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
+      ];
+      const coursesList = [
+        { id: 1, name: 'ES6', credit: '60' },
+        { id: 2, name: 'Webpack', credit: '20' },
+        { id: 3, name: 'React', credit: '40' },
+      ];
+
+      return (
+        <newContext.Provider value={{ user: this.state.user, logOut: this.logOut }}>
+          <React.Fragment>
+            <div className={css(styles.app)}>
+              <div className={css(styles.notifications)}>
+                <Notifications notifications={notificationsList}
+                displayDrawer={this.state.displayDrawer}
+                handleDisplayDrawer={this.handleDisplayDrawer}
+                handleHideDrawer={this.handleHideDrawer} />
+              </div>
+              <Header />
+              <div className={css(styles.body)}>
+                {this.state.user.isLoggedIn ? (
+                  <BodySectionWithMarginBottom title='Course list'>
+                    <CourseList courses={coursesList} />
+                  </BodySectionWithMarginBottom>
+                  ) : (
+                  <BodySectionWithMarginBottom title='Log in to continue'>
+                    <Login
+                    logIn={this.logIn}
+                    email={this.state.user.email}
+                    password={this.state.user.password} />
+                  </BodySectionWithMarginBottom>
+                )}
+                <BodySection title='News from the School'>
+                  <p>Holberton School News goes here</p>
+                </BodySection>
+              </div>
+              <Footer />
+            </div>
+          </React.Fragment>
+        </newContext.Provider>
+      )
+  }
+}
+
+const styles = StyleSheet.create({
+  app: {
+    margin: '0',
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  body: {
+    flex: '1',
+  },
+  notifications: {
+    display: 'flex',
+    position: 'absolute',
+    flexDirection: 'column',
+    right: '0',
+    paddingRight: '1rem',
+    minWidth: '30rem',
+  }
+})
+
+App.PropTypes = {
+  handleDisplayDrawer: PropTypes.func,
+  handleHideDrawer: PropTypes.func,
+};
+
+export default App
