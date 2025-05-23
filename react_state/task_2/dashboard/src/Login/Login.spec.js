@@ -1,3 +1,4 @@
+// task_2/dashboard/src/Login/Login.spec.js
 import React from 'react';
 import { shallow } from 'enzyme';
 import Login from './Login';
@@ -21,9 +22,7 @@ describe('<Login />', () => {
     wrapper.find('#password').simulate('change', {
       target: { value: 'password123' },
     });
-
     wrapper.update();
-
     expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(false);
   });
 
@@ -34,9 +33,7 @@ describe('<Login />', () => {
     wrapper.find('#password').simulate('change', {
       target: { value: 'password123' },
     });
-
     wrapper.update();
-
     expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(true);
   });
 
@@ -47,25 +44,21 @@ describe('<Login />', () => {
     wrapper.find('#password').simulate('change', {
       target: { value: 'short' },
     });
-
     wrapper.update();
-
     expect(wrapper.find('input[type="submit"]').prop('disabled')).toBe(true);
   });
 
-  it('Calls logIn with email and password upon form submission', () => {
+  it('Calls logIn with email and password on submit', () => {
     const email = 'test@example.com';
     const password = 'password123';
-
     wrapper.find('#email').simulate('change', {
       target: { value: email },
     });
     wrapper.find('#password').simulate('change', {
       target: { value: password },
     });
-
+    wrapper.update();
     wrapper.find('form').simulate('submit', { preventDefault: () => {} });
-
     expect(mockLogIn).toHaveBeenCalledWith(email, password);
   });
 });

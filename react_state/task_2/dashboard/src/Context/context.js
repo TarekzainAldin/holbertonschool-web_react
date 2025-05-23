@@ -1,3 +1,4 @@
+// task_2/dashboard/src/Context/context.js
 import React from 'react';
 
 export const user = {
@@ -6,8 +7,9 @@ export const user = {
   isLoggedIn: false,
 };
 
- export const logOut = () => {};
+export const logOut = () => {};
 
-const AppContext = React.createContext({ user, logOut });
-
-export default AppContext;
+export const newContext = React.createContext({
+  user,
+  logOut,
+});

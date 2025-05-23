@@ -1,3 +1,4 @@
+// task_2/dashboard/src/Login/Login.jsx
 import React from 'react';
 
 class Login extends React.Component {
@@ -30,10 +31,7 @@ class Login extends React.Component {
   handleLoginSubmit = (event) => {
     event.preventDefault();
     const { email, password } = this.state;
-    const { logIn } = this.props;
-    if (logIn) {
-      logIn(email, password);
-    }
+    this.props.logIn(email, password);
   };
 
   render() {
@@ -55,18 +53,10 @@ class Login extends React.Component {
           value={password}
           onChange={this.handleChangePassword}
         />
-        <input
-          type="submit"
-          value="OK"
-          disabled={!enableSubmit}
-        />
+        <input type="submit" value="OK" disabled={!enableSubmit} />
       </form>
     );
   }
 }
-
-Login.defaultProps = {
-  logIn: () => {},
-};
 
 export default Login;
