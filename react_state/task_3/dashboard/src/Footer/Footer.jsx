@@ -6,7 +6,7 @@ function Footer({ isIndex }) {
   const { user } = useContext(AppContext);
 
   return (
-    <footer>
+    <footer className='App-Footer'>
       <p>
         Copyright {getFullYear()} - {getFooterCopy(isIndex)}
       </p>

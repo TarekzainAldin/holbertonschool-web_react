@@ -7,7 +7,7 @@ import Login from '../Login/Login';
 import CourseList from '../CourseList/CourseList';
 import { getLatestNotification } from '../utils/utils';
 import BodySection from '../BodySection/BodySection';
-import BodySectionWithMarginBottom from '../BodySectionWithMarginBottom/BodySectionWithMarginBottom';
+import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
 import AppContext, { user as defaultUser } from '../Context/context';
 
 const notificationsList = [
