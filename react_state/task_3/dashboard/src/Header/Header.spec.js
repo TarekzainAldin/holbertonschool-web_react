@@ -1,7 +1,15 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import Header from "./Header";
+import { StyleSheetTestUtils } from "aphrodite";
+// Empêche l'injection des styles dans le DOM lors des tests
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 describe("Header component", () => {
   test("renders Holberton logo", () => {
     render(<Header />);
