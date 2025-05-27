@@ -1,3 +1,5 @@
+// src/BodySection/BodySection.spec.js
+
 import React from "react";
 import { shallow } from "enzyme";
 import BodySection from "./BodySection";
@@ -13,10 +15,11 @@ describe("<BodySection />", () => {
     );
   });
 
-  it("should render one h2 element that includes the text test title", () => {
+  it("renders one h2 element that includes the text 'test title'", () => {
     expect(wrapper.contains(<h2>test title</h2>)).toBe(true);
   });
-  it("should render one p element that includes the text test children node", () => {
+
+  it("renders children properly", () => {
     expect(wrapper.contains(<p>test children node</p>)).toBe(true);
   });
 });
