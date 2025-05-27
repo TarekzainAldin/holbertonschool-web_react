@@ -1,91 +1,49 @@
-// task_0/dashboard/src/Notifications/Notifications.jsx
-import React from "react";
-import PropTypes from "prop-types";
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import NotificationItem from './NotificationItem';
+import { StyleSheet, css } from 'aphrodite';
 
-class Notifications extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    return (
-      nextProps.notifications.length !== this.props.notifications.length ||
-      nextProps.displayDrawer !== this.props.displayDrawer
-    );
-  }
-
-  markAsRead(id) {
-    console.log(`Notification ${id} has been marked as read`);
-  }
-
+class Notifications extends PureComponent {
   render() {
     const {
       displayDrawer,
       notifications,
       handleDisplayDrawer,
       handleHideDrawer,
+      markNotificationAsRead
     } = this.props;
 
     return (
       <>
-        <div
-          data-testid="menu-item"
-          onClick={handleDisplayDrawer}
-          style={{ cursor: "pointer", position: "fixed", top: 0, right: 0, margin: "1rem" }}
-        >
+        <div className={css(styles.menuItem)} onClick={handleDisplayDrawer}>
           Your notifications
         </div>
-
         {displayDrawer && (
-          <div
-            style={{
-              border: "2px dashed red",
-              padding: "10px",
-              width: "400px",
-              backgroundColor: "#fff8f8",
-              position: "absolute",
-              right: 0,
-              top: "2.5rem",
-              zIndex: 1,
-            }}
-            data-testid="notifications-panel"
-          >
-            {notifications.length > 0 ? (
-              <>
-                <p>Here is the list of notifications</p>
-                <button
-                  aria-label="Close"
-                  onClick={() => {
-                    console.log("Close button has been clicked");
-                    handleHideDrawer();
-                  }}
-                  style={{
-                    position: "absolute",
-                    top: "10px",
-                    right: "10px",
-                    border: "none",
-                    background: "transparent",
-                    cursor: "pointer",
-                    zIndex: 1001,
-                  }}
-                >
-                  Close
-                </button>
-                <ul style={{ listStyle: "none", padding: 0 }}>
-                  {notifications.map((notification) => (
-                    <li
-                      key={notification.id}
-                      onClick={() => this.markAsRead(notification.id)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {notification.value ? (
-                        notification.value
-                      ) : (
-                        <span dangerouslySetInnerHTML={notification.html} />
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            ) : (
-              <p>No new notification for now</p>
-            )}
+          <div className={css(styles.notifications)}>
+            <button
+              style={{ float: 'right', background: 'none', border: 'none' }}
+              aria-label="Close"
+              onClick={handleHideDrawer}
+            >
+              ×
+            </button>
+            <p>Here is the list of notifications</p>
+            <ul>
+              {notifications.length === 0 ? (
+                <li>No new notification for now</li>
+              ) : (
+                notifications.map((notif) => (
+                  <NotificationItem
+                    key={notif.id}
+                    id={notif.id}
+                    type={notif.type}
+                    value={notif.value}
+                    html={notif.html}
+                    markAsRead={markNotificationAsRead}
+                  />
+                ))
+              )}
+            </ul>
           </div>
         )}
       </>
@@ -93,20 +51,28 @@ class Notifications extends React.Component {
   }
 }
 
+const styles = StyleSheet.create({
+  menuItem: {
+    textAlign: 'right',
+    cursor: 'pointer',
+  },
+  notifications: {
+    border: '1px dashed red',
+    padding: '10px',
+    width: '300px',
+    position: 'absolute',
+    right: 0,
+    top: '20px',
+    backgroundColor: 'white',
+  },
+});
+
 Notifications.propTypes = {
   displayDrawer: PropTypes.bool,
-  notifications: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      type: PropTypes.string,
-      value: PropTypes.string,
-      html: PropTypes.shape({
-        __html: PropTypes.string,
-      }),
-    })
-  ),
+  notifications: PropTypes.arrayOf(PropTypes.object),
   handleDisplayDrawer: PropTypes.func,
   handleHideDrawer: PropTypes.func,
+  markNotificationAsRead: PropTypes.func,
 };
 
 Notifications.defaultProps = {
@@ -114,6 +80,7 @@ Notifications.defaultProps = {
   notifications: [],
   handleDisplayDrawer: () => {},
   handleHideDrawer: () => {},
+  markNotificationAsRead: () => {},
 };
 
 export default Notifications;
