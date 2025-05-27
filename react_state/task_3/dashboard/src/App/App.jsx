@@ -1,4 +1,3 @@
-// src/App/App.jsx
 import React from "react";
 import { StyleSheet, css } from "aphrodite";
 import Notifications from "../Notifications/Notifications";
@@ -9,7 +8,7 @@ import CourseList from "../CourseList/CourseList";
 import { getLatestNotification } from "../utils/utils";
 import BodySection from "../BodySection/BodySection";
 import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
-import newContext, { user as defaultUser } from "../Context/context";
+import AppContext, { user as defaultUser } from "../Context/context";
 
 class App extends React.Component {
   constructor(props) {
@@ -72,9 +71,7 @@ class App extends React.Component {
     ];
 
     return (
-      <newContext.Provider
-        value={{ user: this.state.user, logOut: this.state.logOut }}
-      >
+      <AppContext.Provider value={{ user: this.state.user, logOut: this.state.logOut }}>
         <div className={css(styles.notifications)}>
           <Notifications
             notifications={notificationsList}
@@ -103,7 +100,7 @@ class App extends React.Component {
         <footer className={css(styles.footer)}>
           <p>Copyright 2025 - Holberton School</p>
         </footer>
-      </newContext.Provider>
+      </AppContext.Provider>
     );
   }
 }

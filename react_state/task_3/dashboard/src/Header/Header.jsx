@@ -1,11 +1,10 @@
-// src/Header/Header.jsx
 import React from "react";
 import logo from "../assets/holberton-logo.jpg";
 import { StyleSheet, css } from "aphrodite";
-import newContext from "../Context/context";
+import AppContext from "../Context/context";
 
 class Header extends React.Component {
-  static contextType = newContext;
+  static contextType = AppContext;
 
   render() {
     const { user, logOut } = this.context;
@@ -17,11 +16,7 @@ class Header extends React.Component {
           <h1 className={css(styles.title)}>School dashboard</h1>
         </div>
         {user.isLoggedIn && (
-          <section
-            id="logoutSection"
-            data-testid="logoutSection"
-            className={css(styles.logoutSection)}
-          >
+          <section id="logoutSection" className={css(styles.logoutSection)}>
             Welcome <strong>{user.email}</strong>{" "}
             <a href="#logout" onClick={logOut}>
               (logout)
