@@ -1,87 +1,80 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React , { useState }from 'react';
 import { StyleSheet, css } from 'aphrodite';
+import PropTypes from 'prop-types';
 
-class Login extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: '',
-      password: '',
-      enableSubmit: false,
-    };
-  }
+function Login({ logIn }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [enableSubmit, setEnableSubmit] = useState(false);
 
-  handleChangeEmail = (e) => {
-    const email = e.target.value;
-    this.setState({ email }, this.validateForm);
+  const handleChangeEmail = (event) => {
+    const updatedEmail = event.target.value;
+    setEmail(updatedEmail);
+    setEnableSubmit(updatedEmail.trim() !== '' && password.trim() !== '');
   };
 
-  handleChangePassword = (e) => {
-    const password = e.target.value;
-    this.setState({ password }, this.validateForm);
+  const handleChangePassword = (event) => {
+    const updatedPassword = event.target.value;
+    setPassword(updatedPassword);
+    setEnableSubmit(email.trim() !== '' && updatedPassword.trim() !== '');
   };
 
-  validateForm = () => {
-    const { email, password } = this.state;
-    const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const validPassword = password.length >= 8;
-    this.setState({ enableSubmit: validEmail && validPassword });
+  const handleLoginSubmit = (event) => {
+    event.preventDefault(); // Empêche le rechargement de la page
+    logIn(email, password);
   };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    const { email, password } = this.state;
-    this.props.logIn(email, password);
-  };
-
-  render() {
-    const { enableSubmit, email, password } = this.state;
-
-    return (
-      <div className={css(styles.login)}>
+  return (
+      <div className={css(styles.body)}>
         <p>Login to access the full dashboard</p>
-        <form onSubmit={this.handleSubmit}>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={this.handleChangeEmail}
-          />
-
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={this.handleChangePassword}
-          />
-
-          <input
-            type="submit"
-            value="OK"
-            disabled={!enableSubmit}
-          />
+        <form className={css(styles.form)} onSubmit={handleLoginSubmit}>
+          <div className={css(styles.block)}>
+            <label htmlFor="email" className={css(styles.label)}>Email:</label>
+            <input className={css(styles.input)} type="email" id="email" name="email" value={email} onChange={handleChangeEmail} />
+          </div>
+          <div className={css(styles.block)}>
+            <label htmlFor="password" className={css(styles.label)}>Password:</label>
+            <input className={css(styles.input)} type="password" id="password" name="password" value={password} onChange={handleChangePassword} />
+          </div>
+          <input className={css(styles.button)} type="submit" value="OK"  disabled={!enableSubmit}></input>
         </form>
       </div>
-    );
-  }
+  );
 }
 
 Login.propTypes = {
-  logIn: PropTypes.func,
-};
-
-Login.defaultProps = {
-  logIn: () => {},
+  logIn: PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({
-  login: {
-    margin: '2rem',
+  body: {
+    fontSize: '20px',
+    fontFamily: 'Arial, sans-serif',
+  },
+  button: {
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    backgroundColor: 'white',
+  },
+  block: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '10px',
+    marginRight: '20px',
+  },
+  form: {
+    display: 'inline-block',
+    '@media (min-width: 900px)': {
+      display: 'flex',
+    },
+  },
+  label: {
+    marginRight: '10px',
+    fontWeight: 'bold',
+  },
+  input: {
+    border: '1px solid #ccc',
+    padding: '5px',
   },
 });
 

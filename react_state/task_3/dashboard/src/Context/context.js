@@ -1,16 +1,21 @@
-import React from "react";
+import React from 'react';
 
-// 1. تعريف المستخدم الافتراضي
-export const user = {
-  email: "",
-  password: "",
+// Define a default user object
+export const defaultUser = {
+  email: '',
+  password: '',
   isLoggedIn: false,
 };
 
-// 2. تعريف دالة تسجيل الخروج الافتراضية
-export const logOut = () => {};
+// Define a default logOut function
+export const defaultLogOut = () => {
+  console.log("Logging out...");
+};
 
-// 3. إنشاء الـ Context وتصديره
-const newContext = React.createContext({ user, logOut });
+// Create a React context with the default user and logOut function
+const AppContext = React.createContext({
+  user: defaultUser,
+  logOut: defaultLogOut,
+});
 
-export default newContext;
+export default AppContext;

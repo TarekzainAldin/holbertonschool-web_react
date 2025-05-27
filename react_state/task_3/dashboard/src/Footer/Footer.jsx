@@ -1,13 +1,20 @@
 import React, { useContext } from 'react';
-import AppContext from '../Context/context';
+import { getFullYear, getFooterCopy } from '../utils/utils';
+import AppContext from '../App/AppContext';
 
-function Footer() {
+function Footer({ isIndex }) {
   const { user } = useContext(AppContext);
 
   return (
     <footer>
-      <p>Copyright 2023</p>
-      {user.isLoggedIn && <p><a href="/contact">Contact us</a></p>}
+      <p>
+        Copyright {getFullYear()} - {getFooterCopy(isIndex)}
+      </p>
+      {user.isLoggedIn && (
+        <p>
+          <a href="/contact">Contact us</a>
+        </p>
+      )}
     </footer>
   );
 }
