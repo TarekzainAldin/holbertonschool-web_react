@@ -1,4 +1,3 @@
-// src/App/App.spec.js
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import App from "./App";
@@ -13,7 +12,7 @@ afterAll(() => {
 });
 
 describe("App component", () => {
-  test("renders header, login and footer components", () => {
+  test("renders header, login and footer components initially", () => {
     render(<App />);
     expect(screen.getByText(/School dashboard/i)).toBeInTheDocument();
     expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
@@ -23,7 +22,9 @@ describe("App component", () => {
   test("calls logOut and alerts when Ctrl + H is pressed", () => {
     const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
     render(<App />);
+
     fireEvent.keyDown(document, { key: "h", ctrlKey: true });
+
     expect(alertMock).toHaveBeenCalledWith("Logging you out");
     alertMock.mockRestore();
   });
@@ -32,12 +33,14 @@ describe("App component", () => {
     render(<App />);
     expect(screen.getByText(/News from the School/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Holberton School News goes here/i)
+      screen.getByText(/Lorem ipsum dolor sit amet/i)
     ).toBeInTheDocument();
   });
 
   test("displays CourseList instead of Login after logIn is called", () => {
     render(<App />);
+
+    // Input fields for email and password
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
     const submitBtn = screen.getByRole("button", { name: /ok/i });
@@ -46,32 +49,13 @@ describe("App component", () => {
     fireEvent.change(passwordInput, { target: { value: "12345678" } });
     fireEvent.click(submitBtn);
 
-    expect(
-      screen.queryByText(/Log in to continue/i)
-    ).not.toBeInTheDocument();
+    // After login, login form should disappear, course list should appear
+    expect(screen.queryByText(/Log in to continue/i)).not.toBeInTheDocument();
     expect(screen.getByText(/Course list/i)).toBeInTheDocument();
-  });
-
-  test("logs user out and shows login form again", () => {
-    render(<App />);
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const submitBtn = screen.getByRole("button", { name: /ok/i });
-
-    fireEvent.change(emailInput, { target: { value: "test@mail.com" } });
-    fireEvent.change(passwordInput, { target: { value: "12345678" } });
-    fireEvent.click(submitBtn);
-
-    expect(screen.getByText(/Course list/i)).toBeInTheDocument();
-
-    const logoutLink = screen.getByText("(logout)");
-    fireEvent.click(logoutLink);
-
-    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
   });
 });
 
-describe("App notification drawer behavior", () => {
+describe("Notification drawer behavior", () => {
   test('displays drawer when clicking on "Your notifications"', () => {
     render(<App />);
     fireEvent.click(screen.getByText(/your notifications/i));

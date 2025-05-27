@@ -1,7 +1,7 @@
-import React from "react";
-import logo from "../assets/holberton-logo.jpg";
-import { StyleSheet, css } from "aphrodite";
-import AppContext from "../Context/context";
+import React from 'react';
+import logo from '../assets/holberton-logo.jpg';
+import { StyleSheet, css } from 'aphrodite';
+import AppContext from '../Context/context';
 
 class Header extends React.Component {
   static contextType = AppContext;
@@ -17,7 +17,7 @@ class Header extends React.Component {
         </div>
         {user.isLoggedIn && (
           <section id="logoutSection" className={css(styles.logoutSection)}>
-            Welcome <strong>{user.email}</strong>{" "}
+            Welcome <strong>{user.email}</strong>{' '}
             <a href="#logout" onClick={logOut}>
               (logout)
             </a>
@@ -30,20 +30,20 @@ class Header extends React.Component {
 
 const styles = StyleSheet.create({
   header: {
-    textAlign: "center",
-    padding: "20px",
+    textAlign: 'center',
+    padding: '20px',
   },
   logo: {
-    width: "150px",
+    width: '150px',
   },
   title: {
-    color: "white",
+    color: 'white',
   },
   logoutSection: {
-    textAlign: "right",
-    paddingRight: "1rem",
-    fontSize: "1rem",
-    color: "#fff",
+    textAlign: 'right',
+    paddingRight: '1rem',
+    fontSize: '1rem',
+    color: '#fff',
   },
 });
 
