@@ -1,3 +1,4 @@
+// src/App/App.jsx
 import React from "react";
 import { StyleSheet, css } from "aphrodite";
 import Notifications from "../Notifications/Notifications";
@@ -8,7 +9,6 @@ import CourseList from "../CourseList/CourseList";
 import { getLatestNotification } from "../utils/utils";
 import BodySection from "../BodySection/BodySection";
 import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
-
 import newContext, { user as defaultUser } from "../Context/context";
 
 class App extends React.Component {

@@ -1,3 +1,4 @@
+// src/App/App.spec.js
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import App from "./App";
@@ -46,9 +47,27 @@ describe("App component", () => {
     fireEvent.click(submitBtn);
 
     expect(
-      screen.queryByText(/Login to access the full dashboard/i)
+      screen.queryByText(/Log in to continue/i)
     ).not.toBeInTheDocument();
     expect(screen.getByText(/Course list/i)).toBeInTheDocument();
+  });
+
+  test("logs user out and shows login form again", () => {
+    render(<App />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitBtn = screen.getByRole("button", { name: /ok/i });
+
+    fireEvent.change(emailInput, { target: { value: "test@mail.com" } });
+    fireEvent.change(passwordInput, { target: { value: "12345678" } });
+    fireEvent.click(submitBtn);
+
+    expect(screen.getByText(/Course list/i)).toBeInTheDocument();
+
+    const logoutLink = screen.getByText("(logout)");
+    fireEvent.click(logoutLink);
+
+    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
   });
 });
 
