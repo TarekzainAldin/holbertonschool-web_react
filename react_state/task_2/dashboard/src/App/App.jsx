@@ -1,5 +1,5 @@
 import React from 'react';
-import newContext, { defaultUser } from '../Context/context';
+import newContext, { defaultUser, defaultLogOut } from '../Context/context';
 import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
@@ -13,6 +13,8 @@ import { StyleSheet, css } from 'aphrodite';
 class App extends React.Component {
   constructor(props) {
     super(props);
+
+    // حفظ كائن المستخدم في الحالة لتجنب تغيير المرجعية
     this.state = {
       displayDrawer: false,
       user: { ...defaultUser },

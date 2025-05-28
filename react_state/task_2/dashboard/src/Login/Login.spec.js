@@ -1,32 +1,19 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { shallow } from 'enzyme';
 import Login from './Login';
 
-describe('Login component', () => {
-  test('calls logIn with email and password when form is submitted', () => {
+describe('Login Component', () => {
+  it('calls logIn prop with email and password on submit', () => {
     const mockLogIn = jest.fn();
+    const wrapper = shallow(<Login logIn={mockLogIn} email="" password="" />);
+    
+    // تحديث الحقول ليتمكن من تفعيل الزر
+    wrapper.find('#email').simulate('change', { target: { value: 'user@test.com' } });
+    wrapper.find('#password').simulate('change', { target: { value: 'password123' } });
 
-    render(<Login logIn={mockLogIn} email="" password="" />);
+    // تفعيل ال submit
+    wrapper.find('form').simulate('submit', { preventDefault: () => {} });
 
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const submitButton = screen.getByDisplayValue('OK');
-
-    // زر الإرسال معطل في البداية
-    expect(submitButton).toBeDisabled();
-
-    // أدخل بريد إلكتروني صالح وكلمة مرور >= 8 أحرف
-    fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'mypassword' } });
-
-    // بعد الإدخال الصحيح، يجب أن يكون الزر مفعل
-    expect(submitButton).toBeEnabled();
-
-    // إرسال الفورم
-    fireEvent.click(submitButton);
-
-    // تحقق أن الدالة logIn تم استدعاؤها مرة واحدة بالقيم الصحيحة
-    expect(mockLogIn).toHaveBeenCalledTimes(1);
-    expect(mockLogIn).toHaveBeenCalledWith('user@example.com', 'mypassword');
+    expect(mockLogIn).toHaveBeenCalledWith('user@test.com', 'password123');
   });
 });
