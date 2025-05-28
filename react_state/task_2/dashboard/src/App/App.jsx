@@ -1,5 +1,6 @@
+// task_2/dashboard/src/App/App.jsx
 import React from 'react';
-import newContext, { defaultUser, defaultLogOut } from '../Context/context';
+import newContext, { defaultUser } from '../Context/context';
 import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
@@ -13,8 +14,6 @@ import { StyleSheet, css } from 'aphrodite';
 class App extends React.Component {
   constructor(props) {
     super(props);
-
-    // حفظ كائن المستخدم في الحالة لتجنب تغيير المرجعية
     this.state = {
       displayDrawer: false,
       user: { ...defaultUser },
@@ -25,6 +24,29 @@ class App extends React.Component {
     this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
     this.handleHideDrawer = this.handleHideDrawer.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+
+    // Initialize context value object
+    this.contextValue = {
+      user: this.state.user,
+      logOut: this.logOut,
+    };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.user !== this.state.user) {
+      this.contextValue = {
+        user: this.state.user,
+        logOut: this.logOut,
+      };
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
   logIn(email, password) {
@@ -41,14 +63,6 @@ class App extends React.Component {
     this.setState({
       user: { ...defaultUser },
     });
-  }
-
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyDown);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
   handleDisplayDrawer() {
@@ -79,9 +93,7 @@ class App extends React.Component {
     ];
 
     return (
-      <newContext.Provider
-        value={{ user: this.state.user, logOut: this.logOut }}
-      >
+      <newContext.Provider value={this.contextValue}>
         <div className={css(styles.app)}>
           <Notifications
             notifications={notificationsList}

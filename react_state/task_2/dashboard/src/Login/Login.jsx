@@ -1,3 +1,4 @@
+// task_2/dashboard/src/Login/Login.jsx
 import React from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
@@ -14,6 +15,11 @@ class Login extends React.Component {
     this.handleChangeEmail = this.handleChangeEmail.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
   }
+
+  static defaultProps = {
+    email: '',
+    password: '',
+  };
 
   validateForm(email, password) {
     const isValidEmail = /\S+@\S+\.\S+/.test(email);

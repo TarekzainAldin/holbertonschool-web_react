@@ -1,19 +1,20 @@
+// task_2/dashboard/src/Login/Login.spec.js
 import React from 'react';
 import { shallow } from 'enzyme';
 import Login from './Login';
 
 describe('Login Component', () => {
-  it('calls logIn prop with email and password on submit', () => {
-    const mockLogIn = jest.fn();
-    const wrapper = shallow(<Login logIn={mockLogIn} email="" password="" />);
-    
-    // تحديث الحقول ليتمكن من تفعيل الزر
-    wrapper.find('#email').simulate('change', { target: { value: 'user@test.com' } });
-    wrapper.find('#password').simulate('change', { target: { value: 'password123' } });
+  it('calls logIn prop function with email and password on form submit', () => {
+    const logInMock = jest.fn();
+    const wrapper = shallow(<Login logIn={logInMock} />);
 
-    // تفعيل ال submit
-    wrapper.find('form').simulate('submit', { preventDefault: () => {} });
+    // Simulate entering valid email and password
+    wrapper.find('input#email').simulate('change', { target: { value: 'test@example.com' } });
+    wrapper.find('input#password').simulate('change', { target: { value: 'password123' } });
 
-    expect(mockLogIn).toHaveBeenCalledWith('user@test.com', 'password123');
+    // Simulate form submit
+    wrapper.find('form').simulate('submit', { preventDefault() {} });
+
+    expect(logInMock).toHaveBeenCalledWith('test@example.com', 'password123');
   });
 });
