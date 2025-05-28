@@ -36,7 +36,9 @@ class App extends React.Component {
   }
 
   logOut() {
-    this.setState({ user: { ...defaultUser } });
+    this.setState({
+      user: { ...defaultUser },
+    });
   }
 
   componentDidMount() {
@@ -68,7 +70,6 @@ class App extends React.Component {
       { id: 2, type: 'urgent', value: 'New resume available' },
       { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
     ];
-
     const coursesList = [
       { id: 1, name: 'ES6', credit: 60 },
       { id: 2, name: 'Webpack', credit: 20 },

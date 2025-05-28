@@ -8,27 +8,25 @@ describe('Login component', () => {
 
     render(<Login logIn={mockLogIn} email="" password="" />);
 
-    // عناصر الإدخال
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
-    const submitButton = screen.getByRole('button', { name: /ok/i });
+    const submitButton = screen.getByDisplayValue('OK');
 
-    // في البداية يجب أن يكون الزر معطل
+    // زر الإرسال معطل في البداية
     expect(submitButton).toBeDisabled();
 
-    // أدخل بريد إلكتروني صالح
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    // أدخل كلمة مرور صالحة (>= 8 أحرف)
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    // أدخل بريد إلكتروني صالح وكلمة مرور >= 8 أحرف
+    fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'mypassword' } });
 
-    // بعد الإدخال الصحيح، يجب أن يكون زر الإرسال مفعل
+    // بعد الإدخال الصحيح، يجب أن يكون الزر مفعل
     expect(submitButton).toBeEnabled();
 
-    // محاكاة إرسال الفورم
+    // إرسال الفورم
     fireEvent.click(submitButton);
 
-    // التحقق من أن logIn تم استدعاؤها مرة واحدة مع القيم الصحيحة
+    // تحقق أن الدالة logIn تم استدعاؤها مرة واحدة بالقيم الصحيحة
     expect(mockLogIn).toHaveBeenCalledTimes(1);
-    expect(mockLogIn).toHaveBeenCalledWith('test@example.com', 'password123');
+    expect(mockLogIn).toHaveBeenCalledWith('user@example.com', 'mypassword');
   });
 });

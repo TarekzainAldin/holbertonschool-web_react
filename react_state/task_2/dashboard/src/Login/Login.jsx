@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { StyleSheet, css } from 'aphrodite';
 
 class Login extends React.Component {
@@ -16,21 +15,18 @@ class Login extends React.Component {
     this.handleChangePassword = this.handleChangePassword.bind(this);
   }
 
-  // Validate email and password
   validateForm(email, password) {
     const isValidEmail = /\S+@\S+\.\S+/.test(email);
     const isValidPassword = password.length >= 8;
     return isValidEmail && isValidPassword;
   }
 
-  // Handle form submission
   handleLoginSubmit(event) {
     event.preventDefault();
     const { email, password } = this.state;
     this.props.logIn(email, password);
   }
 
-  // Handle email change
   handleChangeEmail(event) {
     const email = event.target.value;
     const { password } = this.state;
@@ -40,7 +36,6 @@ class Login extends React.Component {
     });
   }
 
-  // Handle password change
   handleChangePassword(event) {
     const password = event.target.value;
     const { email } = this.state;
@@ -52,7 +47,6 @@ class Login extends React.Component {
 
   render() {
     const { email, password, enableSubmit } = this.state;
-
     return (
       <div className={css(styles.bodystyle)}>
         <p>Login to access the full dashboard</p>
@@ -77,28 +71,12 @@ class Login extends React.Component {
               onChange={this.handleChangePassword}
             />
           </label>
-          <input
-            type="submit"
-            value="OK"
-            disabled={!enableSubmit}
-            className={css(styles.submitButton)}
-          />
+          <input type="submit" value="OK" disabled={!enableSubmit} />
         </form>
       </div>
     );
   }
 }
-
-Login.propTypes = {
-  logIn: PropTypes.func.isRequired,
-  email: PropTypes.string,
-  password: PropTypes.string,
-};
-
-Login.defaultProps = {
-  email: '',
-  password: '',
-};
 
 const styles = StyleSheet.create({
   bodystyle: {
@@ -106,11 +84,7 @@ const styles = StyleSheet.create({
     padding: '0.5rem',
   },
   bodyinput: {
-    margin: '0 0.5rem',
-  },
-  submitButton: {
-    marginTop: '1rem',
-    cursor: 'pointer',
+    margin: '0 0.5rem 0',
   },
 });
 
