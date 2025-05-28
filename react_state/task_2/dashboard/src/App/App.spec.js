@@ -1,54 +1,58 @@
-// task_2/dashboard/src/App/App.spec.js
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { shallow, mount } from 'enzyme';
 import App from './App';
+import newContext from '../Context/context';
+import Login from '../Login/Login';
+import CourseList from '../CourseList/CourseList';
 
 describe('App Component', () => {
-  test('renders Login when not logged in', () => {
-    render(<App />);
-    expect(screen.getByText(/Login to access the full dashboard/i)).toBeInTheDocument();
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallow(<App />);
   });
 
-  test('renders CourseList when logged in', () => {
-    render(<App />);
-    // log in by calling logIn via state update
-    const email = 'test@example.com';
-    const password = 'password123';
-
-    // simulate login by finding Login form elements and triggering submit
-    const emailInput = screen.getByLabelText(/Email:/i);
-    const passwordInput = screen.getByLabelText(/Password:/i);
-    const submitButton = screen.getByRole('button', { name: /OK/i });
-
-    fireEvent.change(emailInput, { target: { value: email } });
-    fireEvent.change(passwordInput, { target: { value: password } });
-    fireEvent.click(submitButton);
-
-    // Now CourseList should be rendered
-    expect(screen.queryByText(/Login to access the full dashboard/i)).not.toBeInTheDocument();
-    expect(screen.getByText(/Course list/i)).toBeInTheDocument();
+  it('renders without crashing', () => {
+    expect(wrapper.exists()).toBe(true);
   });
 
-  test('logOut resets user state', () => {
-    render(<App />);
-    // Login first
-    const emailInput = screen.getByLabelText(/Email:/i);
-    const passwordInput = screen.getByLabelText(/Password:/i);
-    const submitButton = screen.getByRole('button', { name: /OK/i });
+  it('provides user and logOut in context', () => {
+    const mounted = mount(<App />);
+    const provider = mounted.find(newContext.Provider);
+    expect(provider.exists()).toBe(true);
 
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-    fireEvent.click(submitButton);
+    const value = provider.prop('value');
+    expect(value).toHaveProperty('user');
+    expect(value).toHaveProperty('logOut');
+  });
 
-    // User logged in, now log out
-    // Access logOut via context or simulate ctrl+h keypress?
+  it('renders Login component when user is NOT logged in', () => {
+    wrapper.setState({ user: { email: '', password: '', isLoggedIn: false } });
+    expect(wrapper.find(Login).exists()).toBe(true);
+  });
 
-    // Simulate Ctrl+H for logout alert and reset
-    window.alert = jest.fn();
-    fireEvent.keyDown(document, { key: 'h', ctrlKey: true });
+  it('renders CourseList component when user IS logged in', () => {
+    wrapper.setState({ user: { email: 'test@test.com', password: '12345678', isLoggedIn: true } });
+    expect(wrapper.find(CourseList).exists()).toBe(true);
+  });
 
-    expect(window.alert).toHaveBeenCalledWith('Logging you out');
-    // Login form should re-appear after logout
-    expect(screen.getByText(/Login to access the full dashboard/i)).toBeInTheDocument();
+  it('logIn method updates the user state correctly', () => {
+    const instance = wrapper.instance();
+    instance.logIn('user@example.com', 'password123');
+    expect(wrapper.state('user')).toEqual({
+      email: 'user@example.com',
+      password: 'password123',
+      isLoggedIn: true,
+    });
+  });
+
+  it('logOut method resets the user state', () => {
+    const instance = wrapper.instance();
+    instance.logOut();
+    expect(wrapper.state('user')).toEqual({
+      email: '',
+      password: '',
+      isLoggedIn: false,
+    });
   });
 });
