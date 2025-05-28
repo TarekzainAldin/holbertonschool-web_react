@@ -1,58 +1,61 @@
+/**
+ * @jest-environment jsdom
+ */
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
-import newContext from '../Context/context';
-import Login from '../Login/Login';
-import CourseList from '../CourseList/CourseList';
 
 describe('App Component', () => {
-  let wrapper;
-
-  beforeEach(() => {
-    wrapper = shallow(<App />);
+  test('renders login form when not logged in', () => {
+    render(<App />);
+    // Check if login title is rendered
+    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
+    // Check if email input is rendered
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    // Check if password input is rendered
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
   });
 
-  it('renders without crashing', () => {
-    expect(wrapper.exists()).toBe(true);
-  });
+  test('renders course list when logged in', () => {
+    render(<App />);
 
-  it('provides user and logOut in context', () => {
-    const mounted = mount(<App />);
-    const provider = mounted.find(newContext.Provider);
-    expect(provider.exists()).toBe(true);
-
-    const value = provider.prop('value');
-    expect(value).toHaveProperty('user');
-    expect(value).toHaveProperty('logOut');
-  });
-
-  it('renders Login component when user is NOT logged in', () => {
-    wrapper.setState({ user: { email: '', password: '', isLoggedIn: false } });
-    expect(wrapper.find(Login).exists()).toBe(true);
-  });
-
-  it('renders CourseList component when user IS logged in', () => {
-    wrapper.setState({ user: { email: 'test@test.com', password: '12345678', isLoggedIn: true } });
-    expect(wrapper.find(CourseList).exists()).toBe(true);
-  });
-
-  it('logIn method updates the user state correctly', () => {
-    const instance = wrapper.instance();
-    instance.logIn('user@example.com', 'password123');
-    expect(wrapper.state('user')).toEqual({
-      email: 'user@example.com',
-      password: 'password123',
-      isLoggedIn: true,
+    // Log in by filling the form and submitting
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'test@example.com' },
     });
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: '1234' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /ok/i }));
+
+    // Now the course list should be rendered
+    expect(screen.getByText(/Course list/i)).toBeInTheDocument();
+    expect(screen.getByText('ES6')).toBeInTheDocument();
+    expect(screen.getByText('Webpack')).toBeInTheDocument();
+    expect(screen.getByText('React')).toBeInTheDocument();
   });
 
-  it('logOut method resets the user state', () => {
-    const instance = wrapper.instance();
-    instance.logOut();
-    expect(wrapper.state('user')).toEqual({
-      email: '',
-      password: '',
-      isLoggedIn: false,
+  test('logs out when ctrl+h is pressed and alert is shown', () => {
+    jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+    render(<App />);
+
+    // Log in first
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'test@example.com' },
     });
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: '1234' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /ok/i }));
+
+    // Press ctrl+h to trigger logout
+    fireEvent.keyDown(document, { ctrlKey: true, key: 'h' });
+
+    expect(window.alert).toHaveBeenCalledWith('Logging you out');
+    // After logout, login form should appear again
+    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
+
+    window.alert.mockRestore();
   });
 });
