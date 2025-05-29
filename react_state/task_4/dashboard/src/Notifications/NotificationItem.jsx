@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function NotificationItem({ type, value, html, id, markAsRead }) {
+function NotificationItem({ id, type, value, html, markAsRead }) {
   return (
     <li
       data-notification-type={type}
@@ -14,16 +14,19 @@ function NotificationItem({ type, value, html, id, markAsRead }) {
 }
 
 NotificationItem.propTypes = {
+  id: PropTypes.number.isRequired,
   type: PropTypes.string,
   value: PropTypes.string,
-  html: PropTypes.shape({ __html: PropTypes.string }),
-  id: PropTypes.number,
+  html: PropTypes.shape({
+    __html: PropTypes.string,
+  }),
   markAsRead: PropTypes.func,
 };
 
 NotificationItem.defaultProps = {
   type: 'default',
-  id: 0,
+  value: '',
+  html: null,
   markAsRead: () => {},
 };
 
