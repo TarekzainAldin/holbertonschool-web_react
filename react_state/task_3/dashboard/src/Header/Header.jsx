@@ -1,4 +1,3 @@
-// src/Header/Header.jsx
 import React from "react";
 import logo from "../assets/holberton-logo.jpg";
 import { StyleSheet, css } from "aphrodite";
@@ -6,6 +5,10 @@ import newContext from "../Context/context";
 
 class Header extends React.Component {
   static contextType = newContext;
+
+  constructor(props) {
+    super(props);
+  }
 
   render() {
     const { user, logOut } = this.context;
