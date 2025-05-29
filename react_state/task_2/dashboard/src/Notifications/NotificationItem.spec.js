@@ -1,47 +1,54 @@
-import NotificationItem from "./NotificationItem";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { StyleSheetTestUtils } from "aphrodite";
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import NotificationItem from './NotificationItem';
 
-beforeAll(() => {
-  // Désactive l'injection de styles Aphrodite pendant les tests
-  StyleSheetTestUtils.suppressStyleInjection();
-});
+describe('NotificationItem Component', () => {
+  test('renders with value prop and default type', () => {
+    render(
+      <NotificationItem
+        type="default"
+        value="Test notification"
+        id={1}
+        markAsRead={jest.fn()}
+      />
+    );
 
-afterAll(() => {
-  // Réactive les styles après les tests
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-});
+    const li = screen.getByText('Test notification');
+    expect(li).toBeInTheDocument();
+    expect(li).toHaveAttribute('data-notification-type', 'default');
+  });
 
-test('li has attribute data-notification-type="default"', () => {
-  render(<NotificationItem type="default" value="Test notification" />);
-  const li = screen.getByText("Test notification");
+  test('renders with html prop and urgent type', () => {
+    const htmlContent = { __html: '<strong>Urgent Notification</strong>' };
 
-  expect(li).toBeInTheDocument();
-  expect(li).toHaveAttribute("data-notification-type", "default");
-  // Aphrodite supprime les styles, donc on ne teste plus la couleur ici
-});
+    render(
+      <NotificationItem
+        type="urgent"
+        html={htmlContent}
+        id={2}
+        markAsRead={jest.fn()}
+      />
+    );
 
-test('li has attribute data-notification-type="urgent"', () => {
-  render(<NotificationItem type="urgent" value="Test urgent notification" />);
+    const li = screen.getByRole('listitem');
+    expect(li).toHaveAttribute('data-notification-type', 'urgent');
+    expect(li.innerHTML).toBe(htmlContent.__html);
+  });
 
-  //expect(li).toBeInTheDocument();
-  //expect(li).toHaveAttribute('data-notification-type', 'urgent');
-  // Aphrodite supprime les styles, donc on ne teste plus la couleur ici
-});
+  test('calls markAsRead with correct id on click', () => {
+    const markAsReadMock = jest.fn();
+    render(
+      <NotificationItem
+        type="default"
+        value="click me"
+        id={42}
+        markAsRead={markAsReadMock}
+      />
+    );
 
-test("calls markAsRead with correct id on click", () => {
-  const mockMarkAsRead = jest.fn();
-  render(
-    <NotificationItem
-      id={42}
-      type="default"
-      value="Clickable notification"
-      markAsRead={mockMarkAsRead}
-    />
-  );
-
-  const li = screen.getByText("Clickable notification");
-  fireEvent.click(li);
-
-  expect(mockMarkAsRead).toHaveBeenCalledWith(42);
+    const li = screen.getByText('click me');
+    fireEvent.click(li);
+    expect(markAsReadMock).toHaveBeenCalledTimes(1);
+    expect(markAsReadMock).toHaveBeenCalledWith(42);
+  });
 });

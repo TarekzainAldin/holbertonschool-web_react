@@ -1,22 +1,21 @@
-import React from "react";
-import { shallow } from "enzyme";
-import BodySection from "./BodySection";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import BodySection from './BodySection';
 
-describe("<BodySection />", () => {
-  let wrapper;
+describe('BodySection Component', () => {
+  test('renders the title correctly', () => {
+    render(<BodySection title="Test Title" />);
+    const titleElement = screen.getByText('Test Title');
+    expect(titleElement).toBeInTheDocument();
+  });
 
-  beforeEach(() => {
-    wrapper = shallow(
-      <BodySection title="test title">
-        <p>test children node</p>
+  test('renders children correctly', () => {
+    render(
+      <BodySection title="Section Title">
+        <p>Child content</p>
       </BodySection>
     );
-  });
-
-  it("should render one h2 element that includes the text test title", () => {
-    expect(wrapper.contains(<h2>test title</h2>)).toBe(true);
-  });
-  it("should render one p element that includes the text test children node", () => {
-    expect(wrapper.contains(<p>test children node</p>)).toBe(true);
+    const childElement = screen.getByText('Child content');
+    expect(childElement).toBeInTheDocument();
   });
 });

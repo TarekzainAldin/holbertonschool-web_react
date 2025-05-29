@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React from "react";
 import { StyleSheet, css } from "aphrodite";
 
@@ -49,3 +50,6 @@ const styles = StyleSheet.create({
     width: "70%",
   },
 });
+
+// مهم جداً لتتمكن من استخدام هذه الستايلات في الاختبارات
+export { styles };

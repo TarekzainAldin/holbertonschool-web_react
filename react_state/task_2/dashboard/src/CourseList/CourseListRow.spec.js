@@ -1,72 +1,75 @@
+import React from "react";
 import { render, screen } from "@testing-library/react";
-import CourseListRow from "./CourseListRow";
-import { StyleSheetTestUtils } from "aphrodite";
+import CourseListRow, { styles } from "./CourseListRow";
+import { css } from "aphrodite";
 
-beforeAll(() => {
-  StyleSheetTestUtils.suppressStyleInjection();
-});
+describe("CourseListRow Component", () => {
+  test("renders header row with one cell spanning two columns", () => {
+    render(<CourseListRow isHeader={true} textFirstCell="Header One Cell" />);
 
-afterAll(() => {
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-});
+    const headerCell = screen.getByText("Header One Cell");
+    expect(headerCell.tagName).toBe("TH");
+    expect(headerCell).toHaveAttribute("colspan", "2");
 
-describe("When isHeader is true", () => {
-  test("Check whether the component renders one columnheader that has the attribute colspan = 2", () => {
+    // نتأكد ان الكلاس يحتوي على الكلاس الخاص بـ Aphrodite
+    expect(headerCell.className).toContain(css(styles.headerCell));
+  });
+
+  test("renders header row with two header cells", () => {
     render(
+      <CourseListRow
+        isHeader={true}
+        textFirstCell="Header Cell 1"
+        textSecondCell="Header Cell 2"
+      />
+    );
+
+    const firstCell = screen.getByText("Header Cell 1");
+    const secondCell = screen.getByText("Header Cell 2");
+
+    expect(firstCell.tagName).toBe("TH");
+    expect(secondCell.tagName).toBe("TH");
+
+    expect(firstCell.className).toContain(css(styles.headerCell));
+    expect(secondCell.className).toContain(css(styles.headerCell));
+  });
+
+  test("renders regular row with two data cells", () => {
+    render(
+      <CourseListRow
+        isHeader={false}
+        textFirstCell="Data Cell 1"
+        textSecondCell="Data Cell 2"
+      />
+    );
+
+    const firstCell = screen.getByText("Data Cell 1");
+    const secondCell = screen.getByText("Data Cell 2");
+
+    expect(firstCell.tagName).toBe("TD");
+    expect(secondCell.tagName).toBe("TD");
+  });
+
+  test("applies correct class names to row based on isHeader prop", () => {
+    const { container, rerender } = render(
       <table>
         <tbody>
-          <CourseListRow isHeader={true} textFirstCell="Only one header" />
+          <CourseListRow isHeader={true} textFirstCell="Header" />
         </tbody>
       </table>
     );
 
-    const cols = screen.getAllByRole("columnheader");
-    expect(cols).toHaveLength(1);
-    expect(cols[0]).toHaveAttribute("colspan", "2");
-  });
+    const tr = container.querySelector("tr");
+    expect(tr.className).toContain(css(styles.headerRow));
 
-  test("Check whether the component renders 2 <th> cells when 2 headers are passed", () => {
-    render(
+    rerender(
       <table>
         <tbody>
-          <CourseListRow
-            isHeader={true}
-            textFirstCell="Header 1"
-            textSecondCell="Header 2"
-          />
+          <CourseListRow isHeader={false} textFirstCell="Row" />
         </tbody>
       </table>
     );
 
-    const cols = screen.getAllByRole("columnheader");
-    expect(cols).toHaveLength(2);
-  });
-
-  // Test de style à désactiver à cause de Aphrodite
-  /*
-  test('Header row has correct background color', () => {
-    ...
-  });
-  */
-});
-
-describe("When isHeader is false", () => {
-  test("Check if it renders two td elements with correct text content", () => {
-    render(
-      <table>
-        <tbody>
-          <CourseListRow
-            isHeader={false}
-            textFirstCell="Row cell 1"
-            textSecondCell="Row cell 2"
-          />
-        </tbody>
-      </table>
-    );
-
-    const cells = screen.getAllByRole("cell");
-    expect(cells).toHaveLength(2);
-    expect(cells[0]).toHaveTextContent("Row cell 1");
-    expect(cells[1]).toHaveTextContent("Row cell 2");
+    expect(tr.className).toContain(css(styles.row));
   });
 });
