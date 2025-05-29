@@ -1,22 +1,73 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import App from './App';
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import App from "./App";
+import { StyleSheetTestUtils } from "aphrodite";
 
-it('removes a notification and logs it', () => {
-  console.log = jest.fn();
-  const wrapper = shallow(<App />);
-  
-  // تأكد من أن هناك إشعارًا
-  wrapper.setState({
-    notifications: [
-      { id: 1, type: 'default', value: 'Test notification' },
-    ]
+beforeAll(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterAll(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
+
+describe("App component", () => {
+  test("renders header, login and footer components", () => {
+    render(<App />);
+    expect(screen.getByText(/School dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
+    expect(screen.getByText(/Copyright/i)).toBeInTheDocument();
   });
 
-  // استدعاء دالة الحذف
-  wrapper.instance().markNotificationAsRead(1);
+  test("calls logOut and alerts when Ctrl + H is pressed", () => {
+    const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
+    render(<App />);
+    fireEvent.keyDown(document, { key: "h", ctrlKey: true });
+    expect(alertMock).toHaveBeenCalledWith("Logging you out");
+    alertMock.mockRestore();
+  });
 
-  // تحقق من الحذف
-  expect(wrapper.state('notifications')).toEqual([]);
-  expect(console.log).toHaveBeenCalledWith('Notification 1 has been marked as read');
+  test("displays News from the School and its paragraph", () => {
+    render(<App />);
+    expect(screen.getByText(/News from the School/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Holberton School News goes here/i)
+    ).toBeInTheDocument();
+  });
+
+  test("displays CourseList instead of Login after logIn is called", () => {
+    render(<App />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitBtn = screen.getByRole("button", { name: /ok/i });
+
+    fireEvent.change(emailInput, { target: { value: "test@mail.com" } });
+    fireEvent.change(passwordInput, { target: { value: "12345678" } });
+    fireEvent.click(submitBtn);
+
+    expect(
+      screen.queryByText(/Login to access the full dashboard/i)
+    ).not.toBeInTheDocument();
+    expect(screen.getByText(/Course list/i)).toBeInTheDocument();
+  });
+});
+
+describe("App notification drawer behavior", () => {
+  test('displays drawer when clicking on "Your notifications"', () => {
+    render(<App />);
+    fireEvent.click(screen.getByText(/your notifications/i));
+    expect(
+      screen.getByText(/Here is the list of notifications/i)
+    ).toBeInTheDocument();
+  });
+
+  test("hides drawer when clicking on close button", () => {
+    render(<App />);
+    fireEvent.click(screen.getByText(/your notifications/i));
+    const closeBtn = screen.getByRole("button", { name: /close/i });
+    fireEvent.click(closeBtn);
+    expect(
+      screen.queryByText(/Here is the list of notifications/i)
+    ).not.toBeInTheDocument();
+  });
 });
