@@ -6,6 +6,11 @@ import AppContext from '../Context/context';
 class Header extends React.Component {
   static contextType = AppContext;
 
+  constructor(props) {
+    super(props);
+    // No local state, but constructor is now explicitly defined
+  }
+
   render() {
     const { user, logOut } = this.context;
 

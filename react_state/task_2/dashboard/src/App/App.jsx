@@ -1,6 +1,6 @@
 // task_2/dashboard/src/App/App.jsx
 import React from 'react';
-import newContext, { defaultUser } from '../Context/context';
+import newContext { defaultUser } from '../Context/context';
 import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';

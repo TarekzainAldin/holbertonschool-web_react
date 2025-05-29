@@ -1,17 +1,17 @@
-// task_2/dashboard/src/Context/context.js
 import React from 'react';
 
-export const defaultUser = {
+// Define default user object with required properties
+const user = {
   email: '',
   password: '',
-  isLoggedIn: false,
+  isLoggedIn: false
 };
 
-export const defaultLogOut = () => {};
+// Define default logOut function as an empty function
+const logOut = () => {};
 
-const newContext = React.createContext({
-  user: defaultUser,
-  logOut: defaultLogOut,
+// Create and export a new React context with default values
+export const newContext = React.createContext({
+  user,
+  logOut
 });
-
-export default newContext;
