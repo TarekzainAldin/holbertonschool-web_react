@@ -14,7 +14,7 @@ afterAll(() => {
 
 test("h1 element with the text School Dashboard is rendered", () => {
   render(<Header />);
-  const heading = screen.getByRole("heading", { name: /School Dashboard/i });
+  const heading = screen.getByRole("heading", { name: /School dashboard/i });
   expect(heading).toBeInTheDocument();
 });
 
@@ -34,8 +34,10 @@ test("does not render logout section if user is not logged in", () => {
       <Header />
     </AppContext.Provider>
   );
-  const logoutSection = screen.queryByTestId("logoutSection");
-  expect(logoutSection).not.toBeInTheDocument();
+
+  // Check by both test ID and DOM ID
+  expect(screen.queryByTestId("logoutSection")).not.toBeInTheDocument();
+  expect(document.getElementById("logoutSection")).toBeNull();
 });
 
 test("renders logout section if user is logged in", () => {
