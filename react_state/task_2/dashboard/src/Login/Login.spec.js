@@ -1,48 +1,48 @@
-// Login.test.jsx
+// src/Login/Login.spec.js
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Login from './Login';
 
-// 🧪 Mock aphrodite
-jest.mock('aphrodite', () => ({
-  StyleSheet: { create: () => ({}) },
-  css: () => '',
-}));
-
-describe('Login component', () => {
-  test('renders Login form with inputs and submit button', () => {
+describe('Login Component', () => {
+  it('renders login form inputs and submit button', () => {
     render(<Login />);
-
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /ok/i })).toBeDisabled();
   });
 
-  test('enables submit when valid email and password are entered', () => {
+  it('enables submit button when email and password are valid', () => {
     render(<Login />);
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const submitButton = screen.getByRole('button', { name: /ok/i });
-
-    fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-
-    expect(submitButton).toBeEnabled();
-  });
-
-  test('calls logIn with correct data when form is submitted', () => {
-    const mockLogin = jest.fn();
-    render(<Login logIn={mockLogin} />);
-    
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'mypassword' },
+      target: { value: 'validpass' },
     });
+    expect(screen.getByRole('button', { name: /ok/i })).toBeEnabled();
+  });
 
+  it('calls logIn with email and password when submitted', () => {
+    const mockLogIn = jest.fn();
+    render(<Login logIn={mockLogIn} />);
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'user@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: 'strongpass' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /ok/i }));
-    
-    expect(mockLogin).toHaveBeenCalledWith('test@example.com', 'mypassword');
+    expect(mockLogIn).toHaveBeenCalledWith('user@example.com', 'strongpass');
+  });
+
+  it('disables submit button if form is invalid', () => {
+    render(<Login />);
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'invalidemail' },
+    });
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: 'short' },
+    });
+    expect(screen.getByRole('button', { name: /ok/i })).toBeDisabled();
   });
 });

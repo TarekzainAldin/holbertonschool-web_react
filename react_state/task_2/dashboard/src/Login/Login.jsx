@@ -6,9 +6,9 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: props.email || '',
-      password: props.password || '',
-      enableSubmit: false,
+      email: props.email,
+      password: props.password,
+      enableSubmit: this.validateForm(props.email, props.password),
     };
 
     this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
@@ -19,6 +19,7 @@ class Login extends React.Component {
   static defaultProps = {
     email: '',
     password: '',
+    logIn: () => {},
   };
 
   validateForm(email, password) {

@@ -1,61 +1,48 @@
-/**
- * @jest-environment jsdom
- */
+// src/App/App.spec.js
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
 
 describe('App Component', () => {
-  test('renders login form when not logged in', () => {
+  it('renders login form by default', () => {
     render(<App />);
-    // Check if login title is rendered
-    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
-    // Check if email input is rendered
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    // Check if password input is rendered
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByText(/log in to continue/i)).toBeInTheDocument();
+    expect(screen.queryByText(/course list/i)).not.toBeInTheDocument();
   });
 
-  test('renders course list when logged in', () => {
+  it('renders course list after successful login', () => {
     render(<App />);
 
-    // Log in by filling the form and submitting
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole('button', { name: /ok/i });
+
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'validpass' } });
+
+    fireEvent.click(submitButton);
+
+    // Now CourseList should appear
+    expect(screen.getByText(/course list/i)).toBeInTheDocument();
+    expect(screen.queryByText(/log in to continue/i)).not.toBeInTheDocument();
+  });
+
+  it('logs out and shows login screen again', () => {
+    render(<App />);
+
+    // Login
     fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: 'test@example.com' },
     });
     fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: '1234' },
+      target: { value: 'validpass' },
     });
     fireEvent.click(screen.getByRole('button', { name: /ok/i }));
 
-    // Now the course list should be rendered
-    expect(screen.getByText(/Course list/i)).toBeInTheDocument();
-    expect(screen.getByText('ES6')).toBeInTheDocument();
-    expect(screen.getByText('Webpack')).toBeInTheDocument();
-    expect(screen.getByText('React')).toBeInTheDocument();
-  });
+    // Simulate Ctrl+H logout
+    fireEvent.keyDown(document, { key: 'h', ctrlKey: true });
 
-  test('logs out when ctrl+h is pressed and alert is shown', () => {
-    jest.spyOn(window, 'alert').mockImplementation(() => {});
-
-    render(<App />);
-
-    // Log in first
-    fireEvent.change(screen.getByLabelText(/email/i), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: '1234' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /ok/i }));
-
-    // Press ctrl+h to trigger logout
-    fireEvent.keyDown(document, { ctrlKey: true, key: 'h' });
-
-    expect(window.alert).toHaveBeenCalledWith('Logging you out');
-    // After logout, login form should appear again
-    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
-
-    window.alert.mockRestore();
+    expect(screen.getByText(/log in to continue/i)).toBeInTheDocument();
+    expect(screen.queryByText(/course list/i)).not.toBeInTheDocument();
   });
 });

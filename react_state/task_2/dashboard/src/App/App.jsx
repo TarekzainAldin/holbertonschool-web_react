@@ -1,6 +1,6 @@
 // task_2/dashboard/src/App/App.jsx
 import React from 'react';
-import newContext { defaultUser } from '../Context/context';
+import { NewContext , defaultUser } from '../Context/context';
 import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
@@ -24,21 +24,6 @@ class App extends React.Component {
     this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
     this.handleHideDrawer = this.handleHideDrawer.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
-
-    // Initialize context value object
-    this.contextValue = {
-      user: this.state.user,
-      logOut: this.logOut,
-    };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.user !== this.state.user) {
-      this.contextValue = {
-        user: this.state.user,
-        logOut: this.logOut,
-      };
-    }
   }
 
   componentDidMount() {
@@ -47,6 +32,13 @@ class App extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
+  }
+
+  handleKeyDown(event) {
+    if (event.ctrlKey && event.key === 'h') {
+      alert('Logging you out');
+      this.logOut();
+    }
   }
 
   logIn(email, password) {
@@ -73,19 +65,20 @@ class App extends React.Component {
     this.setState({ displayDrawer: false });
   }
 
-  handleKeyDown(event) {
-    if (event.ctrlKey && event.key === 'h') {
-      alert('Logging you out');
-      this.logOut();
-    }
-  }
-
   render() {
+    const { user } = this.state;
+
+    const contextValue = {
+      user: user,
+      logOut: this.logOut,
+    };
+
     const notificationsList = [
       { id: 1, type: 'default', value: 'New course available' },
       { id: 2, type: 'urgent', value: 'New resume available' },
       { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
     ];
+
     const coursesList = [
       { id: 1, name: 'ES6', credit: 60 },
       { id: 2, name: 'Webpack', credit: 20 },
@@ -93,7 +86,7 @@ class App extends React.Component {
     ];
 
     return (
-      <newContext.Provider value={this.contextValue}>
+      <newContext.Provider value={contextValue}>
         <div className={css(styles.app)}>
           <Notifications
             notifications={notificationsList}
@@ -103,7 +96,7 @@ class App extends React.Component {
           />
           <Header />
           <div className={css(styles.body)}>
-            {this.state.user.isLoggedIn ? (
+            {user.isLoggedIn ? (
               <BodySectionWithMarginBottom title="Course list">
                 <CourseList courses={coursesList} />
               </BodySectionWithMarginBottom>
@@ -111,8 +104,8 @@ class App extends React.Component {
               <BodySectionWithMarginBottom title="Log in to continue">
                 <Login
                   logIn={this.logIn}
-                  email={this.state.user.email}
-                  password={this.state.user.password}
+                  email={user.email}
+                  password={user.password}
                 />
               </BodySectionWithMarginBottom>
             )}
