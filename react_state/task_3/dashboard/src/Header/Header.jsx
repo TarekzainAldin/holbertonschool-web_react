@@ -20,7 +20,11 @@ class Header extends React.Component {
           <h1 className={css(styles.title)}>School dashboard</h1>
         </div>
         {user.isLoggedIn && (
-          <section id="logoutSection" className={css(styles.logoutSection)}>
+          <section
+            id="logoutSection"
+            data-testid="logoutSection"
+            className={css(styles.logoutSection)}
+          >
             Welcome <strong>{user.email}</strong>{" "}
             <a href="#logout" onClick={logOut}>
               (logout)
