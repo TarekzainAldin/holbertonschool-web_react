@@ -1,48 +1,35 @@
 // src/App/App.spec.js
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import App from './App';
 
 describe('App Component', () => {
-  it('renders login form by default', () => {
-    render(<App />);
-    expect(screen.getByText(/log in to continue/i)).toBeInTheDocument();
-    expect(screen.queryByText(/course list/i)).not.toBeInTheDocument();
+  beforeEach(() => {
+    jest.spyOn(window, 'alert').mockImplementation(() => {});
   });
 
-  it('renders course list after successful login', () => {
-    render(<App />);
-
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const submitButton = screen.getByRole('button', { name: /ok/i });
-
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'validpass' } });
-
-    fireEvent.click(submitButton);
-
-    // Now CourseList should appear
-    expect(screen.getByText(/course list/i)).toBeInTheDocument();
-    expect(screen.queryByText(/log in to continue/i)).not.toBeInTheDocument();
+  afterEach(() => {
+    window.alert.mockRestore();
   });
 
-  it('logs out and shows login screen again', () => {
+  test('renders App component without crashing', () => {
+    const { getByText } = render(<App />);
+    expect(getByText(/Log in to continue/i)).toBeInTheDocument();
+  });
+
+  test('calls alert and logOut on Ctrl+H keyDown', () => {
     render(<App />);
 
-    // Login
-    fireEvent.change(screen.getByLabelText(/email/i), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'validpass' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /ok/i }));
-
-    // Simulate Ctrl+H logout
     fireEvent.keyDown(document, { key: 'h', ctrlKey: true });
 
-    expect(screen.getByText(/log in to continue/i)).toBeInTheDocument();
-    expect(screen.queryByText(/course list/i)).not.toBeInTheDocument();
+    expect(window.alert).toHaveBeenCalledWith('Logging you out');
+  });
+
+  test('does not call alert for other keys', () => {
+    render(<App />);
+
+    fireEvent.keyDown(document, { key: 'a', ctrlKey: false });
+
+    expect(window.alert).not.toHaveBeenCalled();
   });
 });

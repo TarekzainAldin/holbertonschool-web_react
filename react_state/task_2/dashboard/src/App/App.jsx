@@ -1,6 +1,6 @@
-// task_2/dashboard/src/App/App.jsx
+// src/App/App.jsx
 import React from 'react';
-import { NewContext , defaultUser } from '../Context/context';
+import { NewContext, defaultUser } from '../Context/context';
 import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
@@ -86,7 +86,7 @@ class App extends React.Component {
     ];
 
     return (
-      <newContext.Provider value={contextValue}>
+      <NewContext.Provider value={contextValue}>
         <div className={css(styles.app)}>
           <Notifications
             notifications={notificationsList}
@@ -115,7 +115,7 @@ class App extends React.Component {
           </div>
           <Footer />
         </div>
-      </newContext.Provider>
+      </NewContext.Provider>
     );
   }
 }
