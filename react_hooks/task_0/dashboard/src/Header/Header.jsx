@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import holbertonLogo from '../assets/holberton-logo.jpg';
 import AppContext from '../Context/context';
@@ -58,3 +58,4 @@ const styles = StyleSheet.create({
 });
 
 export default Header;
+
