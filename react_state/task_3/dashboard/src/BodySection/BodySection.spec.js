@@ -1,25 +1,23 @@
-// src/BodySection/BodySection.spec.js
-
-import React from "react";
-import { shallow } from "enzyme";
 import BodySection from "./BodySection";
+import { render, screen } from "@testing-library/react";
+import { StyleSheetTestUtils } from 'aphrodite';
 
-describe("<BodySection />", () => {
-  let wrapper;
-
-  beforeEach(() => {
-    wrapper = shallow(
-      <BodySection title="test title">
-        <p>test children node</p>
-      </BodySection>
-    );
-  });
-
-  it("renders one h2 element that includes the text 'test title'", () => {
-    expect(wrapper.contains(<h2>test title</h2>)).toBe(true);
-  });
-
-  it("renders children properly", () => {
-    expect(wrapper.contains(<p>test children node</p>)).toBe(true);
-  });
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
 });
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
+
+describe('BodySection component', () => {
+  test('Check the rendering component', () => {
+    render(<BodySection title="test"><p>child</p></BodySection>)
+
+    const heading = screen.getByRole('heading', { level: 2, name: /test/i});
+    const children = screen.getAllByText(/child/i);
+
+    expect(heading).toBeInTheDocument();
+    expect(children.length).toBe(1);
+  });
+})

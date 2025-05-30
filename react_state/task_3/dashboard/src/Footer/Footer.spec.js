@@ -1,53 +1,30 @@
+import { render, screen } from "@testing-library/react";
+import { getCurrentYear, getFooterCopy } from "../utils/utils";
+import Footer from "./Footer";
+import { StyleSheetTestUtils } from 'aphrodite';
 
-import { render, screen } from '@testing-library/react';
-import Footer from './Footer';
-import AppContext from '../App/AppContext';
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
-// دالة مزيفة لإعادة إنشاء الـ Context مع القيمة المرغوبة
-const renderWithContext = (ui, { providerProps }) => {
-  return render(
-    <AppContext.Provider value={providerProps}>
-      {ui}
-    </AppContext.Provider>
-  );
-};
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
-describe('Footer component', () => {
-  test('renders without crashing', () => {
-    render(<Footer />);
-    expect(screen.getByText(/Copyright/)).toBeInTheDocument();
-  });
+test('the text content within the 2 p elements in the app-body and app-footer divs matches', () => {
+  render(<Footer />);
+  const divfooter = screen.getByText(/Copyright 2025 - holberton School/i);
 
-  test('does not display "Contact us" when user is logged out', () => {
-    const providerProps = {
-      user: {
-        email: '',
-        password: '',
-        isLoggedIn: false,
-      },
-      logOut: jest.fn(),
-    };
+  expect(divfooter).toBeInTheDocument();
+});
 
-    renderWithContext(<Footer />, { providerProps });
+test('renders correct footer content when isIndex is true', () => {
+  render(<Footer />);
 
-    const contactLink = screen.queryByText(/Contact us/i);
-    expect(contactLink).not.toBeInTheDocument();
-  });
+  const year = getCurrentYear();
+  const copy = getFooterCopy(true);
+  const expectedText = `Copyright ${year} - ${copy}`;
 
-  test('displays "Contact us" when user is logged in', () => {
-    const providerProps = {
-      user: {
-        email: 'user@example.com',
-        password: 'password123',
-        isLoggedIn: true,
-      },
-      logOut: jest.fn(),
-    };
-
-    renderWithContext(<Footer />, { providerProps });
-
-    const contactLink = screen.getByText(/Contact us/i);
-    expect(contactLink).toBeInTheDocument();
-    expect(contactLink.tagName).toBe('A');
-  });
+  const footerText = screen.getByText(expectedText, { exact: false });
+  expect(footerText).toBeInTheDocument();
 });

@@ -1,22 +1,20 @@
-import React, { useContext } from 'react';
-import { getFullYear, getFooterCopy } from '../utils/utils';
-import AppContext from '../App/AppContext';
+import { getCurrentYear, getFooterCopy } from '../utils/utils';
+import { StyleSheet, css } from 'aphrodite';
 
-function Footer({ isIndex }) {
-  const { user } = useContext(AppContext);
-
-  return (
-    <footer className='App-Footer'>
-      <p>
-        Copyright {getFullYear()} - {getFooterCopy(isIndex)}
-      </p>
-      {user.isLoggedIn && (
-        <p>
-          <a href="/contact">Contact us</a>
-        </p>
-      )}
-    </footer>
-  );
+export default function Footer() {
+    return (
+    <div className={css(styles.footer)}>
+        <p>Copyright { getCurrentYear() } - { getFooterCopy(true) }</p>
+    </div>
+    )
 }
 
-export default Footer;
+const styles = StyleSheet.create({
+    footer: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '0.5rem',
+    borderTopStyle: 'solid',
+    borderColor: '#e1003c',
+  },
+})

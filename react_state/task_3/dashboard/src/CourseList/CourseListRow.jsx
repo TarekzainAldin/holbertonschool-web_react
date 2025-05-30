@@ -1,51 +1,44 @@
 import React from "react";
-import { StyleSheet, css } from "aphrodite";
+import { StyleSheet, css } from 'aphrodite';
 
-export default function CourseListRow({
-  isHeader = false,
-  textFirstCell = "",
-  textSecondCell = null,
-}) {
-  const rowClass = isHeader ? css(styles.headerRow) : css(styles.row);
-
-  return (
-    <tr className={rowClass}>
-      {isHeader ? (
-        textSecondCell === null ? (
-          <th colSpan="2" className={css(styles.headerCell)}>
-            {textFirstCell}
-          </th>
-        ) : (
-          <>
-            <th className={css(styles.headerCell, styles.thLeft)}>
-              {textFirstCell}
-            </th>
-            <th className={css(styles.headerCell)}>{textSecondCell}</th>
-          </>
-        )
-      ) : (
-        <>
-          <td>{textFirstCell}</td>
-          <td>{textSecondCell}</td>
-        </>
-      )}
-    </tr>
-  );
+export default function CourseListRow({ isHeader=false, textFirstCell="", textSecondCell=null }) {
+	const rowStyle = css(isHeader ? styles.headerRow : styles.dataRow);
+	const cellStyle = css(styles.cell);
+return (
+	<tr className={rowStyle}>
+		{isHeader ? (
+			textSecondCell === null ? (
+				<th className={cellStyle} colSpan="2">{textFirstCell}</th>
+			) : (
+				<>
+					<th className={cellStyle} style={{ width: '70%'}}>{textFirstCell}</th>
+					<th className={cellStyle}>{textSecondCell}</th>
+				</>
+			)
+		) : (
+			<>
+				<td className={cellStyle}>{textFirstCell}</td>
+				<td className={cellStyle}>{textSecondCell}</td>
+			</>
+		)}
+	</tr>
+	);
 }
 
 const styles = StyleSheet.create({
-  row: {
-    backgroundColor: "rgba(245, 245, 245, 0.67)",
-  },
-  headerRow: {
-    backgroundColor: "rgba(222, 181, 181, 0.27)",
-  },
-  headerCell: {
-    fontWeight: "bold",
-    textAlign: "left",
-    borderBottom: "1px solid #ccc",
-  },
-  thLeft: {
-    width: "70%",
-  },
-});
+	headerRow: {
+		backgroundColor: '#deb5b545',
+	},
+	dataRow: {
+		backgroundColor: '#f5f5f5ab',
+	},
+	headecell: {
+		backgroundColor: '#deb5b545',
+		border: '1px solid black',
+		borderCollapse: 'collapse'
+	},
+	cell: {
+		border: '1px solid black',
+		borderCollapse: 'collapse'
+	},
+})

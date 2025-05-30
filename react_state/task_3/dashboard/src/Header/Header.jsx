@@ -1,58 +1,47 @@
-import React from "react";
-import logo from "../assets/holberton-logo.jpg";
-import { StyleSheet, css } from "aphrodite";
-import newContext from "../Context/context";
+import React from 'react';
+import holbertonLogo from '../assets/holberton-logo.jpg';
+import { StyleSheet, css } from 'aphrodite';
+import newContext from '../Context/context';
 
 class Header extends React.Component {
-  static contextType = newContext;
-
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const { user, logOut } = this.context;
-
-    return (
-      <>
-        <div className={css(styles.header)}>
-          <img src={logo} alt="holberton logo" className={css(styles.logo)} />
-          <h1 className={css(styles.title)}>School dashboard</h1>
+    static contextType = newContext;
+    render() {
+        const { user, logOut } = this.context;
+        return (
+        <>
+        <div className={css(styles.headerstyle)}>
+            <img src={holbertonLogo} className={css(styles.headerimg)} alt="holberton logo" />
+            <h1 className={css(styles.title)}>School dashboard</h1>
         </div>
         {user.isLoggedIn && (
-          <section
-            id="logoutSection"
-            data-testid="logoutSection"
-            className={css(styles.logoutSection)}
-          >
-            Welcome <strong>{user.email}</strong>{" "}
-            <a href="#logout" onClick={logOut}>
-              (logout)
-            </a>
-          </section>
+            <section id='logoutSection'>
+                Welcome {user.email} (
+                    <a href='#' onClick={logOut}><i>logout</i></a>
+                )
+            </section>
         )}
-      </>
-    );
-  }
+        </>
+        )
+    }
 }
 
 const styles = StyleSheet.create({
-  header: {
-    textAlign: "center",
-    padding: "20px",
-  },
-  logo: {
-    width: "150px",
-  },
-  title: {
-    color: "white",
-  },
-  logoutSection: {
-    textAlign: "right",
-    paddingRight: "1rem",
-    fontSize: "1rem",
-    color: "#fff",
-  },
-});
+    headerstyle: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: '1rem',
+        borderBottomStyle: 'solid',
+        borderColor: '#e1003c',
+    },
+    title: {
+        display: 'flex',
+        fontWeight: 'bold',
+        color: '#e1003c',
+    },
+    headerimg: {
+        display: 'flex',
+        width: '150px'
+    },
+})
 
-export default Header;
+export default Header
