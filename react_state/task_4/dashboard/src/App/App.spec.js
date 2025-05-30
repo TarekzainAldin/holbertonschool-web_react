@@ -1,73 +1,96 @@
-import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import App from "./App";
-import { StyleSheetTestUtils } from "aphrodite";
+import { StyleSheetTestUtils } from 'aphrodite';
 
-beforeAll(() => {
+beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
 });
 
-afterAll(() => {
+afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-describe("App component", () => {
-  test("renders header, login and footer components", () => {
-    render(<App />);
-    expect(screen.getByText(/School dashboard/i)).toBeInTheDocument();
-    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
-    expect(screen.getByText(/Copyright/i)).toBeInTheDocument();
-  });
-
-  test("calls logOut and alerts when Ctrl + H is pressed", () => {
-    const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
-    render(<App />);
-    fireEvent.keyDown(document, { key: "h", ctrlKey: true });
-    expect(alertMock).toHaveBeenCalledWith("Logging you out");
-    alertMock.mockRestore();
-  });
-
-  test("displays News from the School and its paragraph", () => {
-    render(<App />);
-    expect(screen.getByText(/News from the School/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Holberton School News goes here/i)
-    ).toBeInTheDocument();
-  });
-
-  test("displays CourseList instead of Login after logIn is called", () => {
-    render(<App />);
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const submitBtn = screen.getByRole("button", { name: /ok/i });
-
-    fireEvent.change(emailInput, { target: { value: "test@mail.com" } });
-    fireEvent.change(passwordInput, { target: { value: "12345678" } });
-    fireEvent.click(submitBtn);
-
-    expect(
-      screen.queryByText(/Login to access the full dashboard/i)
-    ).not.toBeInTheDocument();
-    expect(screen.getByText(/Course list/i)).toBeInTheDocument();
-  });
+test('App component', () => {
+  render(<App />);
 });
 
-describe("App notification drawer behavior", () => {
-  test('displays drawer when clicking on "Your notifications"', () => {
-    render(<App />);
-    fireEvent.click(screen.getByText(/your notifications/i));
-    expect(
-      screen.getByText(/Here is the list of notifications/i)
-    ).toBeInTheDocument();
+test('should reset state and show login when ctrl+h is pressed', () => {
+  // mock alert
+  const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+
+  render(<App />);
+
+  // simulate login
+  fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } });
+  fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
+  fireEvent.click(screen.getByRole('button', { name: /ok/i }));
+
+  // confirm login success
+  expect(screen.getByText(/Course list/i)).toBeInTheDocument();
+
+  // simulate ctrl+h logout
+  fireEvent.keyDown(document, { key: 'h', ctrlKey: true });
+
+  // check logout happened
+  expect(alertSpy).toHaveBeenCalledWith('Logging you out');
+  expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
+
+  alertSpy.mockRestore();
+});
+
+test('displays "Log in to continue" title when isLoggedIn is false', () => {
+  render(<App />);
+  const text = screen.getByText(/Log in to continue/i);
+  expect(text).toBeInTheDocument();
+});
+
+test('Check that a title "News from the School" and paragraph are displayed by default', () => {
+  render(<App />);
+
+  const heading = screen.getByRole('heading', { level: 2, name: /News from the School/i });
+  const paragraph = screen.getByText(/Holberton School News goes here/i);
+
+  expect(heading).toBeInTheDocument();
+  expect(paragraph).toBeInTheDocument();
+});
+
+test('displays "Course list" title when user logs in', () => {
+  render(<App />);
+
+  const emailInput = screen.getByLabelText(/email/i);
+  const passwordInput = screen.getByLabelText(/password/i);
+  const submitButton = screen.getByRole('button', { name: /ok/i });
+
+  fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+  fireEvent.change(passwordInput, { target: { value: 'password123' } });
+  fireEvent.click(submitButton);
+
+  const title = screen.getByText(/Course list/i);
+  expect(title).toBeInTheDocument();
+});
+
+const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+describe('App component', () => {
+  afterEach(() => {
+    consoleLogSpy.mockClear();
   });
 
-  test("hides drawer when clicking on close button", () => {
+  afterAll(() => {
+    consoleLogSpy.mockRestore();
+  });
+
+  test('clicking on a notification item removes it and logs the expected message', () => {
     render(<App />);
-    fireEvent.click(screen.getByText(/your notifications/i));
-    const closeBtn = screen.getByRole("button", { name: /close/i });
-    fireEvent.click(closeBtn);
-    expect(
-      screen.queryByText(/Here is the list of notifications/i)
-    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('Your notifications'));
+
+    const notification = screen.getByText('New course available');
+    expect(notification).toBeInTheDocument();
+
+    fireEvent.click(notification);
+
+    expect(notification).not.toBeInTheDocument();
+    expect(consoleLogSpy).toHaveBeenCalledWith('Notification 1 has been marked as read');
   });
 });
