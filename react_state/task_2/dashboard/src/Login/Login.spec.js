@@ -1,48 +1,88 @@
-// src/Login/Login.spec.js
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import Login from './Login';
+import { render, screen, fireEvent } from "@testing-library/react";
+import Login from "./Login";
+import { StyleSheetTestUtils } from 'aphrodite';
+
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
+
+test('the text content within the 2 p elements in the app-body and app-footer divs matches', () => {
+  render(<Login />);
+  const divbody = screen.getByText(/Login to access the full dashboard/i);
+
+  expect(divbody).toBeInTheDocument();
+});
+
+test('renders 2 input elements', () => {
+  render(<Login />);
+  const labelemail = screen.getByLabelText(/Email/i);
+  const labelpassword = screen.getByLabelText(/Password/i);
+
+  expect(labelemail).toBeInTheDocument();
+  expect(labelpassword).toBeInTheDocument();
+});
+
+test('renders 2 label elements with the text Email and Password', () => {
+  render(<Login />);
+  const labelemail = screen.getByLabelText(/email/i);
+  const labelpassword = screen.getByLabelText(/password/i);
+
+  expect(labelemail).toBeInTheDocument();
+  expect(labelpassword).toBeInTheDocument();
+});
+
+test('renders a button with the text OK', () => {
+  render(<Login />);
+  const button = screen.getByRole('button', { name: /ok/i });
+
+  expect(button).toBeInTheDocument();
+});
 
 describe('Login Component', () => {
-  it('renders login form inputs and submit button', () => {
+  test('Submit button is disabled by default', () => {
     render(<Login />);
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /ok/i })).toBeDisabled();
+    const submitButton = screen.getByRole('button', { name: /ok/i });
+    expect(submitButton).toBeDisabled();
   });
 
-  it('enables submit button when email and password are valid', () => {
+  test('Submit button enables only when email and password are valid', () => {
     render(<Login />);
-    fireEvent.change(screen.getByLabelText(/email/i), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'validpass' },
-    });
-    expect(screen.getByRole('button', { name: /ok/i })).toBeEnabled();
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole('button', { name: /ok/i });
+
+    // Enter invalid email and valid password (8 chars)
+    fireEvent.change(emailInput, { target: { value: 'invalidemail' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    expect(submitButton).toBeDisabled();
+
+    // Enter valid email but short password
+    fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'short' } });
+    expect(submitButton).toBeDisabled();
+
+    // Enter valid email and valid password (>=8 chars)
+    fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    expect(submitButton).toBeEnabled();
   });
 
-  it('calls logIn with email and password when submitted', () => {
-    const mockLogIn = jest.fn();
-    render(<Login logIn={mockLogIn} />);
-    fireEvent.change(screen.getByLabelText(/email/i), {
-      target: { value: 'user@example.com' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'strongpass' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /ok/i }));
-    expect(mockLogIn).toHaveBeenCalledWith('user@example.com', 'strongpass');
-  });
+  test('Submit button enables only when email and password are valid', () => {
+    const mockMogIn = jest.fn();
+    render(<Login logIn={mockMogIn} />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole('button', { name: /ok/i });
 
-  it('disables submit button if form is invalid', () => {
-    render(<Login />);
-    fireEvent.change(screen.getByLabelText(/email/i), {
-      target: { value: 'invalidemail' },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: 'short' },
-    });
-    expect(screen.getByRole('button', { name: /ok/i })).toBeDisabled();
+    fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+
+    fireEvent.click(submitButton);
+
+    expect(mockMogIn).toHaveBeenCalledWith('user@example.com', 'password123');
   });
 });

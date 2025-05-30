@@ -1,35 +1,50 @@
-// src/App/App.spec.js
-import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
-import App from './App';
+import { render, screen, fireEvent } from "@testing-library/react";
+import App from "./App";
+import { StyleSheetTestUtils } from 'aphrodite';
 
-describe('App Component', () => {
-  beforeEach(() => {
-    jest.spyOn(window, 'alert').mockImplementation(() => {});
-  });
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
-  afterEach(() => {
-    window.alert.mockRestore();
-  });
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
-  test('renders App component without crashing', () => {
-    const { getByText } = render(<App />);
-    expect(getByText(/Log in to continue/i)).toBeInTheDocument();
-  });
+test('App component', () => {
+  render(<App />);
+});
 
-  test('calls alert and logOut on Ctrl+H keyDown', () => {
-    render(<App />);
+test('should call logOut function when ctrl+h is pressed', () => {
+  // Create a mock function for logOut prop
+  const logOutMock = jest.fn();
+  // Spy alert and mock alert popup
+  const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
 
-    fireEvent.keyDown(document, { key: 'h', ctrlKey: true });
+  // Render the component with the mock logOut function
+  render(<App logOut={logOutMock} />);
 
-    expect(window.alert).toHaveBeenCalledWith('Logging you out');
-  });
+  // Simulate the keydown event (Ctrl+h)
+  fireEvent.keyDown(document, { key: 'h', ctrlKey: true });
 
-  test('does not call alert for other keys', () => {
-    render(<App />);
+  expect(alertSpy).toHaveBeenCalledWith('Logging you out');
+  expect(logOutMock).toHaveBeenCalledTimes(1);
 
-    fireEvent.keyDown(document, { key: 'a', ctrlKey: false });
+  // Restore alert after test
+  alertSpy.mockRestore();
+});
 
-    expect(window.alert).not.toHaveBeenCalled();
-  });
+test('displays "Log in to continue" title when isLoggedIn is false', () => {
+  render(<App isLoggedIn={false} />);
+  const text = screen.getByText(/Log in to continue/i);
+  expect(text).toBeInTheDocument();
+});
+
+test('Check that a title "News from the School" and paragraph are displayed by default', () => {
+  render(<App />);
+
+  const heading = screen.getByRole('heading', { level: 2, name: /News from the School/i });
+  const paragraph = screen.getByText(/Holberton School News goes here/i);
+
+  expect(heading).toBeInTheDocument();
+  expect(paragraph).toBeInTheDocument();
 });
