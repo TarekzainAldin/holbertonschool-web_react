@@ -1,81 +1,96 @@
-import React , { useState }from 'react';
+import React from 'react'
+import WithLogging from '../HOC/WithLogging'
 import { StyleSheet, css } from 'aphrodite';
-import PropTypes from 'prop-types';
+import App from '../App/App';
 
-function Login({ logIn }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [enableSubmit, setEnableSubmit] = useState(false);
+class Login extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoggedIn: false,
+            email: '',
+            password: '',
+            enableSubmit: false,
+        }
+        this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
+        this.handleChangeEmail = this.handleChangeEmail.bind(this);
+        this.handleChangePassword = this.handleChangePassword.bind(this);
+    }
 
-  const handleChangeEmail = (event) => {
-    const updatedEmail = event.target.value;
-    setEmail(updatedEmail);
-    setEnableSubmit(updatedEmail.trim() !== '' && password.trim() !== '');
+    handleLoginSubmit = (event) => {
+        event.preventDefault();
+        const { email, password } = this.state;
+        this.props.logIn(email, password);
+    }
+
+    handleChangeEmail = (event) => {
+        const email = event.target.value;
+        const { password } = this.state;
+        const enableSubmit = this.validateForm(email, password);
+        this.setState({ email, enableSubmit });
   };
 
-  const handleChangePassword = (event) => {
-    const updatedPassword = event.target.value;
-    setPassword(updatedPassword);
-    setEnableSubmit(email.trim() !== '' && updatedPassword.trim() !== '');
+    handleChangePassword = (event) => {
+        const password = event.target.value;
+        const { email } = this.state;
+        const enableSubmit = this.validateForm(email, password);
+        this.setState({ password, enableSubmit });
   };
 
-  const handleLoginSubmit = (event) => {
-    event.preventDefault(); // Empêche le rechargement de la page
-    logIn(email, password);
-  };
+    validateForm = (email, password) => {
+        const isValidEmail = /\S+@\S+\.\S+/.test(email);
+        const isValidPassword = password.length >= 8;
+        return email !== '' && password !== '' && isValidEmail && isValidPassword;
+    };
 
-  return (
-      <div className={css(styles.body)}>
-        <p>Login to access the full dashboard</p>
-        <form className={css(styles.form)} onSubmit={handleLoginSubmit}>
-          <div className={css(styles.block)}>
-            <label htmlFor="email" className={css(styles.label)}>Email:</label>
-            <input className={css(styles.input)} type="email" id="email" name="email" value={email} onChange={handleChangeEmail} />
-          </div>
-          <div className={css(styles.block)}>
-            <label htmlFor="password" className={css(styles.label)}>Password:</label>
-            <input className={css(styles.input)} type="password" id="password" name="password" value={password} onChange={handleChangePassword} />
-          </div>
-          <input className={css(styles.button)} type="submit" value="OK"  disabled={!enableSubmit}></input>
-        </form>
-      </div>
-  );
+    render() {
+        const { email, password, enableSubmit } = this.state;
+
+        return (
+        <div className={css(styles.bodystyle)}>
+            <p>Login to access the full dashboard</p>
+            <form onSubmit={this.handleLoginSubmit}>
+                <label htmlFor="email">Email:
+                    <input className={css(styles.bodyinput)} id="email" type="email" value={email} onChange={this.handleChangeEmail} />
+                </label>
+                <label htmlFor="password">Password:
+                    <input className={css(styles.bodyinput)} id="password" type="password" value={password} onChange={this.handleChangePassword} />
+                </label>
+                <input className={styles.button} type='submit' value='OK' disabled={!enableSubmit}/>
+            </form>
+        </div>
+        )
+    }
 }
 
-Login.propTypes = {
-  logIn: PropTypes.func.isRequired,
-};
-
 const styles = StyleSheet.create({
-  body: {
-    fontSize: '20px',
-    fontFamily: 'Arial, sans-serif',
-  },
-  button: {
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    backgroundColor: 'white',
-  },
-  block: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '10px',
-    marginRight: '20px',
-  },
-  form: {
-    display: 'inline-block',
-    '@media (min-width: 900px)': {
-      display: 'flex',
+    bodystyle: {
+        display: 'block',
+        justifyContent: 'flex-start',
+        padding: '0.5rem',
+        flex: '1',
+        '@media (max-width: 900px)': {
+            display:' flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+        },
     },
-  },
-  label: {
-    marginRight: '10px',
-    fontWeight: 'bold',
-  },
-  input: {
-    border: '1px solid #ccc',
-    padding: '5px',
-  },
-});
+    bodyinput: {
+        margin: '0 0.5rem 0',
+        '@media (max-width: 900px)': {
+            border: 'none',
+            outline: 'none',
+        }
+    },
+    button: {
+        marginTop: '1rem',
+        display: 'inline-block',
+        width: 'auto',
+        '@media (max-width: 900px)': {
+            width: 'fit-content',
+        },
+    },
+})
 
-export default Login;
+const LoginWithLogging = WithLogging(Login);
+export default LoginWithLogging;
