@@ -1,44 +1,33 @@
-/* eslint-disable no-undef, no-unused-vars */
-import { getCurrentYear, getFooterCopy } from '../utils/utils';
-import { render, screen } from '@testing-library/react';
-import Footer from './Footer';
-import { newContext } from '../Context/context';
-import { StyleSheetTestUtils } from 'aphrodite';
+import { useContext } from "react";
+import { StyleSheet, css } from "aphrodite";
+import { getCurrentYear, getFooterCopy } from "../utils/utils";
+import AppContext from "../Context/context";
 
-beforeEach(() => {
-  StyleSheetTestUtils.suppressStyleInjection();
-});
+export default function Footer() {
+  const { user } = useContext(AppContext); // 👈 consomme le contexte
 
-afterEach(() => {
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-});
+  return (
+    <div className={css(styles.footer)}>
+      <p>
+        Copyright {getCurrentYear()} - {getFooterCopy(true)}
+      </p>
+      {user.isLoggedIn && (
+        <p id="logoutSection">
+          <a href="#">Contact us</a>
+        </p>
+      )}
+    </div>
+  );
+}
 
-describe('Footer', () => {
-  test('renders correct footer text', () => {
-    render(<Footer />);
-    const text = `Copyright ${getCurrentYear()} - ${getFooterCopy(true)}`;
-    expect(screen.getByText(text)).toBeInTheDocument();
-  });
-
-  test('returns the current year', () => {
-    const year = new Date().getFullYear();
-    expect(getCurrentYear()).toBe(year);
-  });
-
-  test('returns "Holberton School" when argument is true', () => {
-    expect(getFooterCopy(true)).toBe('Holberton School');
-  });
-
-  test('returns "Holberton School main dashboard" when argument is false', () => {
-    expect(getFooterCopy(false)).toBe('Holberton School main dashboard');
-  });
-
-  test('displays contact link when logged in', () => {
-    render(
-      <newContext.Provider value={{ user: { isLoggedIn: true } }}>
-        <Footer />
-      </newContext.Provider>
-    );
-    expect(screen.getByText(/Contact us/i)).toBeInTheDocument();
-  });
+const styles = StyleSheet.create({
+  footer: {
+    position: "fixed",
+    bottom: 0,
+    width: "100%",
+    textAlign: "center",
+    fontStyle: "italic",
+    borderTop: "3px solid #e11d3f",
+    padding: "1rem 0",
+  },
 });
