@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Header from "./Header";
-import { newContext } from "../Context/context";
+import newContext from "../Context/context";
 import { StyleSheetTestUtils } from "aphrodite";
 
 beforeEach(() => {
@@ -12,7 +12,7 @@ afterEach(() => {
 });
 
 describe("Header component", () => {
-  test("should not render logoutSection if user is not logged in", () => {
+  test("does NOT render logoutSection if user is NOT logged in", () => {
     render(
       <newContext.Provider
         value={{
@@ -23,18 +23,16 @@ describe("Header component", () => {
         <Header />
       </newContext.Provider>
     );
+
     expect(screen.queryByText(/logout/i)).toBeNull();
+    expect(screen.queryByText(/welcome/i)).toBeNull();
   });
 
-  test("should render logoutSection if user is logged in", () => {
+  test("renders logoutSection with user email when logged in", () => {
     render(
       <newContext.Provider
         value={{
-          user: {
-            isLoggedIn: true,
-            email: "test@email.com",
-            password: "12345678",
-          },
+          user: { isLoggedIn: true, email: "user@example.com", password: "pass" },
           logOut: jest.fn(),
         }}
       >
@@ -42,28 +40,25 @@ describe("Header component", () => {
       </newContext.Provider>
     );
 
-    expect(screen.getByText(/test@email.com/i)).toBeInTheDocument();
-
+    expect(screen.getByText(/welcome user@example.com/i)).toBeInTheDocument();
     expect(screen.getByText(/logout/i)).toBeInTheDocument();
   });
 
-  test("should call logOut when clicking logout link", () => {
+  test("calls logOut function when logout link is clicked", () => {
     const mockLogOut = jest.fn();
+
     render(
       <newContext.Provider
         value={{
-          user: {
-            isLoggedIn: true,
-            email: "test@email.com",
-            password: "12345678",
-          },
+          user: { isLoggedIn: true, email: "user@example.com", password: "pass" },
           logOut: mockLogOut,
         }}
       >
         <Header />
       </newContext.Provider>
     );
+
     fireEvent.click(screen.getByText(/logout/i));
-    expect(mockLogOut).toHaveBeenCalled();
+    expect(mockLogOut).toHaveBeenCalledTimes(1);
   });
 });
