@@ -1,7 +1,7 @@
 import { getCurrentYear, getFooterCopy } from "../utils/utils";
 import { render, screen } from "@testing-library/react";
 import Footer from "./Footer";
-import { newContext } from "../Context/context";
+import { NewContext } from "../Context/context";
 
 describe("Footer", () => {
   test("renders correct footer text", () => {
