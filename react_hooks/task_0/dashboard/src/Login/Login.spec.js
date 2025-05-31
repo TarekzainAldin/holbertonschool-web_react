@@ -1,42 +1,90 @@
-// task_2/dashboard/src/Login/Login.spec.js
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import Login from './Login';
+import { render, screen, fireEvent } from "@testing-library/react";
+import Login from "./Login";
+import { StyleSheetTestUtils } from "aphrodite";
 
-describe('Login Component', () => {
-  test('submit button disabled with invalid email or short password', () => {
-    render(<Login logIn={jest.fn()} email="" password="" />);
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
-    const submitButton = screen.getByRole('button', { name: /OK/i });
-    expect(submitButton).toBeDisabled();
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
-    const emailInput = screen.getByLabelText(/Email:/i);
-    const passwordInput = screen.getByLabelText(/Password:/i);
-
-    fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
-    fireEvent.change(passwordInput, { target: { value: '123' } });
-
-    expect(submitButton).toBeDisabled();
-
-    fireEvent.change(emailInput, { target: { value: 'valid@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-
-    expect(submitButton).toBeEnabled();
+describe("Login component", () => {
+  test("renders 2 input elements", () => {
+    const { container } = render(<Login />);
+    const inputs = container.querySelectorAll(
+      "input[type='email'], input[type='password']"
+    );
+    expect(inputs.length).toBe(2);
   });
 
-  test('calls logIn prop with email and password on submit', () => {
-    const mockLogIn = jest.fn();
-    render(<Login logIn={mockLogIn} email="" password="" />);
+  test("renders labels for email and password", () => {
+    render(<Login />);
+    const labels = screen.getAllByText(/email|password/i);
+    expect(labels.length).toBe(2);
+  });
 
-    const emailInput = screen.getByLabelText(/Email:/i);
-    const passwordInput = screen.getByLabelText(/Password:/i);
-    const submitButton = screen.getByRole('button', { name: /OK/i });
+  test("renders a submit button with the text OK", () => {
+    render(<Login />);
+    const submitBtn = screen.getByRole("button", { name: /^OK$/i });
+    expect(submitBtn).toBeInTheDocument();
+  });
 
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+  test("submit button is disabled by default", () => {
+    render(<Login />);
+    const submitBtn = screen.getByRole("button", { name: /^OK$/i });
+    expect(submitBtn).toBeDisabled();
+  });
+
+  test("submit button becomes enabled with valid email and strong password", () => {
+    render(<Login />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitBtn = screen.getByRole("button", { name: /^OK$/i });
+
+    fireEvent.change(emailInput, { target: { value: "user@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "password123" } });
+
+    expect(submitBtn).toBeEnabled();
+  });
+
+  test("submit button remains disabled with invalid email", () => {
+    render(<Login />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitBtn = screen.getByRole("button", { name: /^OK$/i });
+
+    fireEvent.change(emailInput, { target: { value: "invalid-email" } });
+    fireEvent.change(passwordInput, { target: { value: "password123" } });
+
+    expect(submitBtn).toBeDisabled();
+  });
+
+  test("submit button remains disabled with short password", () => {
+    render(<Login />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitBtn = screen.getByRole("button", { name: /^OK$/i });
+
+    fireEvent.change(emailInput, { target: { value: "user@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "123" } });
+
+    expect(submitBtn).toBeDisabled();
+  });
+
+  test("calls logIn with email and password on form submit", () => {
+    const logInMock = jest.fn();
+    const { getByLabelText, getByText } = render(<Login logIn={logInMock} />);
+
+    const emailInput = getByLabelText(/email/i);
+    const passwordInput = getByLabelText(/password/i);
+    const submitButton = getByText(/ok/i);
+
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.change(passwordInput, { target: { value: "password123" } });
     fireEvent.click(submitButton);
 
-    expect(mockLogIn).toHaveBeenCalledTimes(1);
-    expect(mockLogIn).toHaveBeenCalledWith('test@example.com', 'password123');
+    expect(logInMock).toHaveBeenCalledWith("test@example.com", "password123");
   });
 });

@@ -1,72 +1,65 @@
+import React from "react";
 import { render, screen } from "@testing-library/react";
 import CourseListRow from "./CourseListRow";
+
 import { StyleSheetTestUtils } from "aphrodite";
 
-beforeAll(() => {
+beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
 });
 
-afterAll(() => {
+afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-describe("When isHeader is true", () => {
-  test("Check whether the component renders one columnheader that has the attribute colspan = 2", () => {
+describe("CourseListRow", () => {
+  test("renders one th with colSpan=2 when isHeader is true and textSecondCell is null", () => {
     render(
       <table>
-        <tbody>
-          <CourseListRow isHeader={true} textFirstCell="Only one header" />
-        </tbody>
+        <thead>
+          <CourseListRow isHeader={true} textFirstCell="Header Only" />
+        </thead>
       </table>
     );
-
-    const cols = screen.getAllByRole("columnheader");
-    expect(cols).toHaveLength(1);
-    expect(cols[0]).toHaveAttribute("colspan", "2");
+    const th = screen.getByRole("columnheader");
+    expect(th).toBeInTheDocument();
+    expect(th).toHaveAttribute("colspan", "2");
+    expect(th).toHaveTextContent("Header Only");
   });
 
-  test("Check whether the component renders 2 <th> cells when 2 headers are passed", () => {
+  test("renders two th when isHeader is true and textSecondCell is provided", () => {
     render(
       <table>
-        <tbody>
+        <thead>
           <CourseListRow
             isHeader={true}
-            textFirstCell="Header 1"
-            textSecondCell="Header 2"
+            textFirstCell="Course name"
+            textSecondCell="Credit"
           />
-        </tbody>
+        </thead>
       </table>
     );
-
-    const cols = screen.getAllByRole("columnheader");
-    expect(cols).toHaveLength(2);
+    const ths = screen.getAllByRole("columnheader");
+    expect(ths.length).toBe(2);
+    expect(ths[0]).toHaveTextContent("Course name");
+    expect(ths[1]).toHaveTextContent("Credit");
   });
 
-  // Test de style à désactiver à cause de Aphrodite
-  /*
-  test('Header row has correct background color', () => {
-    ...
-  });
-  */
-});
-
-describe("When isHeader is false", () => {
-  test("Check if it renders two td elements with correct text content", () => {
+  test("renders two td when isHeader is false", () => {
     render(
       <table>
         <tbody>
           <CourseListRow
             isHeader={false}
-            textFirstCell="Row cell 1"
-            textSecondCell="Row cell 2"
+            textFirstCell="ES6"
+            textSecondCell="60"
           />
         </tbody>
       </table>
     );
-
-    const cells = screen.getAllByRole("cell");
-    expect(cells).toHaveLength(2);
-    expect(cells[0]).toHaveTextContent("Row cell 1");
-    expect(cells[1]).toHaveTextContent("Row cell 2");
+    const tds = screen.getAllByRole("cell");
+    expect(tds.length).toBe(2);
+    expect(tds[0]).toHaveTextContent("ES6");
+    expect(tds[1]).toHaveTextContent("60");
   });
 });

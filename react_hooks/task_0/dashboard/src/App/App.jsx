@@ -1,79 +1,80 @@
-import React from 'react'
-import Notifications from '../Notifications/Notifications'
-import Header from '../Header/Header'
-import Footer from '../Footer/Footer'
-import Login from '../Login/Login'
-import BodySection from '../BodySection/BodySection'
-import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom'
-import CourseList from '../CourseList/CourseList'
-import PropTypes from 'prop-types'
-import { getLatestNotification } from '../utils/utils'
-import { StyleSheet, css } from 'aphrodite';
-import newContext from '../Context/context'
+import React, { Component } from "react";
+import Notifications from "../Notifications/Notifications";
+import Header from "../Header/Header";
+import Login from "../Login/Login";
+import Footer from "../Footer/Footer";
+import { getLatestNotification } from "../utils/utils";
+import CourseList from "../CourseList/CourseList";
+import BodySection from "../BodySection/BodySection";
+import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
+import WithLogging from "../HOC/WithLogging";
+//import { StyleSheet, css } from "aphrodite";
+import { newContext as NewContext } from "../Context/context";
 
-const notificationsList = [
-  { id: 1, type: 'default', value: 'New course available' },
-    { id: 2, type: 'urgent', value: 'New resume available' },
-    { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
-  ];
-const coursesList = [
-  { id: 1, name: 'ES6', credit: '60' },
-  { id: 2, name: 'Webpack', credit: '20' },
-  { id: 3, name: 'React', credit: '40' },
-];
+const LoginWithLogging = WithLogging(Login);
+const CourseListWithLogging = WithLogging(CourseList);
 
-class App extends React.Component {
+class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       displayDrawer: false,
       user: {
-        email: '',
-        password: '',
+        email: "",
+        password: "",
         isLoggedIn: false,
       },
-      logOut: newContext.logOut,
-      notifications: notificationsList,
-      courses: coursesList,
+      notifications: [
+        { id: 1, type: "default", value: "New course available" },
+        { id: 2, type: "urgent", value: "New resume available" },
+        { id: 3, type: "urgent", html: { __html: getLatestNotification() } },
+      ],
+      courses: [
+        { id: 1, name: "ES6", credit: 60 },
+        { id: 2, name: "Webpack", credit: 20 },
+        { id: 3, name: "React", credit: 40 },
+      ],
+    };
+  }
+
+  handleDisplayDrawer = () => this.setState({ displayDrawer: true });
+  handleHideDrawer = () => this.setState({ displayDrawer: false });
+
+  handleKeyDown = (e) => {
+    if (e.ctrlKey && e.key === "h") {
+      alert("Logging you out");
+      this.logOut();
     }
-    // This binding is necessary to make `this` work in the callback
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
-    this.handleHideDrawer = this.handleHideDrawer.bind(this);
-    this.logIn = this.logIn.bind(this);
-    this.logOut = this.logOut.bind(this);
-    this.markNotificationAsRead = this.markNotificationAsRead.bind(this);
+  };
 
-  }
-
-  logOut() {
+  logIn = (email, password) => {
     this.setState({
       user: {
-        email: '',
-        password: '',
-        isLoggedIn: false,
-      }
-    })
-  }
-
-  markNotificationAsRead(id) {
-    console.log(`Notification ${id} has been marked as read`);
-    this.setState((prevState) => ({
-      notifications: prevState.notifications.filter(
-        (notification) => notification.id !== id
-      ),
-    }));
-  }
-
-  logIn(email, password) {
-    this.setState({
-      user: {
-        email: email,
-        password: password,
+        email,
+        password,
         isLoggedIn: true,
-      }
-    })
-  }
+      },
+    });
+  };
+
+  logOut = () => {
+    this.setState({
+      user: {
+        email: "",
+        password: "",
+        isLoggedIn: false,
+      },
+    });
+  };
+
+  markNotificationAsRead = (id) => {
+    console.log(`Notification ${id} has been marked as read`);
+    this.setState({
+      notifications: this.state.notifications.filter(
+        (notif) => notif.id !== id
+      ),
+    });
+  };
 
   componentDidMount() {
     document.addEventListener("keydown", this.handleKeyDown);
@@ -83,83 +84,74 @@ class App extends React.Component {
     document.removeEventListener("keydown", this.handleKeyDown);
   }
 
-  handleDisplayDrawer = () => {
-    this.setState({ displayDrawer: true });
-  }
-
-  handleHideDrawer = () => {
-    this.setState({ displayDrawer: false });
-  }
-
-  handleKeyDown = (event) => {
-    if (event.ctrlKey && event.key === 'h') {
-      alert('Logging you out');
-      this.logOut();
-    }
-  }
-
   render() {
+    const { displayDrawer, user } = this.state;
 
-      return (
-        <newContext.Provider value={{ user: this.state.user, logOut: this.logOut }}>
-          <React.Fragment>
-            <div className={css(styles.app)}>
-              <div className={css(styles.notifications)}>
-                <Notifications markNotificationAsRead={this.markNotificationAsRead}
-                notifications={this.state.notifications}
-                displayDrawer={this.state.displayDrawer}
-                handleDisplayDrawer={this.handleDisplayDrawer}
-                handleHideDrawer={this.handleHideDrawer} />
-              </div>
-              <Header />
-              <div className={css(styles.body)}>
-                {this.state.user.isLoggedIn ? (
-                  <BodySectionWithMarginBottom title='Course list'>
-                    <CourseList courses={coursesList} />
-                  </BodySectionWithMarginBottom>
-                  ) : (
-                  <BodySectionWithMarginBottom title='Log in to continue'>
-                    <Login
-                    logIn={this.logIn}
-                    email={this.state.user.email}
-                    password={this.state.user.password} />
-                  </BodySectionWithMarginBottom>
-                )}
-                <BodySection title='News from the School'>
-                  <p>Holberton School News goes here</p>
-                </BodySection>
-              </div>
-              <Footer />
-            </div>
-          </React.Fragment>
-        </newContext.Provider>
-      )
+    const contextValue = {
+      user: this.state.user,
+      logOut: this.logOut,
+    };
+
+    return (
+      <NewContext.Provider value={contextValue}>
+        <>
+          <div className="root-notifications">
+            <Notifications
+              notifications={this.state.notifications}
+              displayDrawer={displayDrawer}
+              handleDisplayDrawer={this.handleDisplayDrawer}
+              handleHideDrawer={this.handleHideDrawer}
+              markNotificationAsRead={this.markNotificationAsRead}
+            />
+          </div>
+          <Header />
+          <div
+          //className={css(styles.body)}
+          >
+            {user.isLoggedIn ? (
+              <BodySectionWithMarginBottom>
+                <CourseListWithLogging
+                  title="Course List"
+                  courses={this.state.courses}
+                />
+              </BodySectionWithMarginBottom>
+            ) : (
+              <BodySectionWithMarginBottom title="Log in to continue">
+                <LoginWithLogging
+                  logIn={this.logIn}
+                  email={user.email}
+                  password={user.password}
+                />
+              </BodySectionWithMarginBottom>
+            )}
+            <BodySection title="News from the School">
+              <p>Holberton School News goes here</p>
+            </BodySection>
+          </div>
+          <Footer
+          //className={css(styles.footer)}
+          >
+            <p>Copyright 2025 - Holberton School</p>
+          </Footer>
+        </>
+      </NewContext.Provider>
+    );
   }
 }
 
-const styles = StyleSheet.create({
-  app: {
-    margin: '0',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column'
-  },
+/*const styles = StyleSheet.create({
   body: {
-    flex: '1',
+    padding: "40px",
+    minHeight: "300px",
   },
-  notifications: {
-    display: 'flex',
-    position: 'absolute',
-    flexDirection: 'column',
-    right: '0',
-    paddingRight: '1rem',
-    minWidth: '30rem',
-  }
-})
+  footer: {
+    position: "fixed",
+    bottom: 0,
+    width: "100%",
+    borderTop: "3px solid #e1003c",
+    textAlign: "center",
+    padding: "1rem 0",
+  },
+});*/
 
-App.PropTypes = {
-  handleDisplayDrawer: PropTypes.func,
-  handleHideDrawer: PropTypes.func,
-};
-
-export default App
+export default App;

@@ -1,27 +1,38 @@
 import React from "react";
-import { shallow } from "enzyme";
+import { render, screen } from "@testing-library/react";
 import BodySectionWithMarginBottom from "./BodySectionWithMarginBottom";
-import BodySection from "./BodySection";
 
-describe("<BodySectionWithMarginBottom />", () => {
-  let wrapper;
+import { StyleSheetTestUtils } from "aphrodite";
 
-  beforeEach(() => {
-    wrapper = shallow(
-      <BodySectionWithMarginBottom title="test title">
-        <p>test children node</p>
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
+
+describe("BodySectionWithMarginBottom", () => {
+  test("renders a div with class bodySectionWithMargin", () => {
+    const { container } = render(
+      <BodySectionWithMarginBottom title="Section Title">
+        <p>Test content</p>
       </BodySectionWithMarginBottom>
     );
+
+    expect(screen.getByText("Section Title")).toBeInTheDocument();
+    expect(screen.getByText("Test content")).toBeInTheDocument();
   });
 
-  it("should render a BodySection component", () => {
-    expect(wrapper.find(BodySection).length).toBe(1);
-  });
-
-  it("should pass the correct props to BodySection", () => {
-    expect(wrapper.find(BodySection).prop("title")).toEqual("test title");
-    expect(wrapper.find(BodySection).prop("children")).toEqual(
-      <p>test children node</p>
+  test("renders the BodySection component with the correct title", () => {
+    render(
+      <BodySectionWithMarginBottom title="Test title">
+        <p>Some content</p>
+      </BodySectionWithMarginBottom>
     );
+
+    // Check that the h2 from BodySection is present
+    const heading = screen.getByRole("heading", { level: 2 });
+    expect(heading).toHaveTextContent("Test title");
   });
 });

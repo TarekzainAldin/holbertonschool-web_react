@@ -1,51 +1,75 @@
 import React from "react";
-import { StyleSheet, css } from "aphrodite";
+import PropTypes from "prop-types";
+//import { StyleSheet, css } from "aphrodite";
 
-export default function CourseListRow({
+function CourseListRow({
   isHeader = false,
   textFirstCell = "",
   textSecondCell = null,
 }) {
-  const rowClass = isHeader ? css(styles.headerRow) : css(styles.row);
-
-  return (
-    <tr className={rowClass}>
-      {isHeader ? (
-        textSecondCell === null ? (
-          <th colSpan="2" className={css(styles.headerCell)}>
+  if (isHeader) {
+    if (textSecondCell === null) {
+      return (
+        <tr>
+          <th
+            colSpan="2"
+            //className={css(styles.th)}
+          >
             {textFirstCell}
           </th>
-        ) : (
-          <>
-            <th className={css(styles.headerCell, styles.thLeft)}>
-              {textFirstCell}
-            </th>
-            <th className={css(styles.headerCell)}>{textSecondCell}</th>
-          </>
-        )
-      ) : (
-        <>
-          <td>{textFirstCell}</td>
-          <td>{textSecondCell}</td>
-        </>
-      )}
+        </tr>
+      );
+    } else {
+      return (
+        <tr>
+          <th
+          //className={css(styles.th)}
+          >
+            {textFirstCell}
+          </th>
+          <th
+          //className={css(styles.th)}
+          >
+            {textSecondCell}
+          </th>
+        </tr>
+      );
+    }
+  }
+
+  return (
+    <tr>
+      <td
+      //className={css(styles.td)}
+      >
+        {textFirstCell}
+      </td>
+      <td
+      //className={css(styles.td)}
+      >
+        {textSecondCell}
+      </td>
     </tr>
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    backgroundColor: "rgba(245, 245, 245, 0.67)",
-  },
-  headerRow: {
-    backgroundColor: "rgba(222, 181, 181, 0.27)",
-  },
-  headerCell: {
+CourseListRow.propTypes = {
+  isHeader: PropTypes.bool,
+  textFirstCell: PropTypes.string,
+  textSecondCell: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
+
+/*const styles = StyleSheet.create({
+  th: {
+    border: "1px solid #ddd",
+    padding: "10px",
     fontWeight: "bold",
-    textAlign: "left",
-    borderBottom: "1px solid #ccc",
+    textAlign: "center",
   },
-  thLeft: {
-    width: "70%",
+  td: {
+    border: "1px solid #ddd",
+    padding: "10px",
   },
-});
+});*/
+
+export default CourseListRow;

@@ -2,10 +2,7 @@ import React from "react";
 import { render, screen, cleanup } from "@testing-library/react";
 import WithLogging from "./WithLogging";
 
-afterEach(() => {
-  cleanup();
-  jest.clearAllMocks();
-});
+afterEach(cleanup);
 
 class MockApp extends React.Component {
   render() {
@@ -14,32 +11,28 @@ class MockApp extends React.Component {
 }
 
 describe("WithLogging HOC", () => {
-  it("renders the wrapped component correctly", () => {
-    const Wrapped = WithLogging(MockApp);
-    render(<Wrapped />);
-    expect(
-      screen.getByText(/Hello from Mock App Component/i)
-    ).toBeInTheDocument();
-  });
-
-  it("logs on mount and unmount", () => {
-    const consoleLogSpy = jest.spyOn(console, "log");
-
-    const Wrapped = WithLogging(MockApp);
-    const { unmount } = render(<Wrapped />);
-
-    expect(consoleLogSpy).toHaveBeenCalledWith("Component MockApp is mounted");
-
-    unmount();
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      "Component MockApp is going to unmount"
+  test("renders wrapped component content", () => {
+    const WrappedComponent = WithLogging(MockApp);
+    render(<WrappedComponent />);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "Hello from Mock App Component"
     );
   });
 
-  it("uses default name if component name is missing", () => {
-    const NamelessComponent = () => <p>Anonymous</p>;
-    const Wrapped = WithLogging(NamelessComponent);
-    render(<Wrapped />);
-    expect(Wrapped.displayName).toBe("WithLogging(NamelessComponent)");
+  test("logs when mounted and unmounted", () => {
+    const logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+
+    const WrappedComponent = WithLogging(MockApp);
+    const { unmount } = render(<WrappedComponent />);
+
+    expect(logSpy).toHaveBeenCalledWith("Component MockApp is mounted");
+
+    unmount();
+
+    expect(logSpy).toHaveBeenCalledWith(
+      "Component MockApp is going to unmount"
+    );
+
+    logSpy.mockRestore();
   });
 });

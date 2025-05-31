@@ -1,25 +1,23 @@
-// src/BodySection/BodySection.spec.js
-
 import React from "react";
-import { shallow } from "enzyme";
+import { render, screen } from "@testing-library/react";
 import BodySection from "./BodySection";
 
-describe("<BodySection />", () => {
-  let wrapper;
-
-  beforeEach(() => {
-    wrapper = shallow(
-      <BodySection title="test title">
-        <p>test children node</p>
-      </BodySection>
+describe("BodySection", () => {
+  test("renders a heading with the title prop", () => {
+    render(<BodySection title="Test Title" />);
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
+      "Test Title"
     );
   });
 
-  it("renders one h2 element that includes the text 'test title'", () => {
-    expect(wrapper.contains(<h2>test title</h2>)).toBe(true);
-  });
-
-  it("renders children properly", () => {
-    expect(wrapper.contains(<p>test children node</p>)).toBe(true);
+  test("renders children passed to it", () => {
+    render(
+      <BodySection title="With children">
+        <p>Child 1</p>
+        <p>Child 2</p>
+      </BodySection>
+    );
+    expect(screen.getByText("Child 1")).toBeInTheDocument();
+    expect(screen.getByText("Child 2")).toBeInTheDocument();
   });
 });
