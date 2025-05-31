@@ -1,21 +1,28 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import logo from '../assets/holberton-logo.jpg';
 import { StyleSheet, css } from 'aphrodite';
-import { newContext } from '../Context/context';
+import { AppContext } from '../App/AppContext';
 
 function Header() {
-  const { user, logOut } = useContext(newContext);
+  const { user, logOut } = useContext(AppContext);
 
   return (
     <div className={css(styles.header)}>
       <img src={logo} alt="holberton logo" className={css(styles.logo)} />
       <h1 className={css(styles.title)}>School dashboard</h1>
-      {user?.isLoggedIn && (
+      {user.isLoggedIn && (
         <section id="logoutSection" className={css(styles.logout)}>
-          Welcome {user.email}{' '}
-          <a href="#" onClick={logOut}>
+          Welcome <strong>{user.email}</strong> (
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              logOut();
+            }}
+          >
             logout
           </a>
+          )
         </section>
       )}
     </div>

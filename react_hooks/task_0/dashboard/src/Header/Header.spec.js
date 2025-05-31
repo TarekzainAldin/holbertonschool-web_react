@@ -1,7 +1,8 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import Header from "./Header";
-import { newContext } from "../Context/context";
-import { StyleSheetTestUtils } from "aphrodite";
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import Header from './Header';
+import { AppContext } from '../App/AppContext';
+import { StyleSheetTestUtils } from 'aphrodite';
 
 beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
@@ -11,58 +12,52 @@ afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-describe("Header component", () => {
-  test("should not render logoutSection if user is not logged in", () => {
+describe('Header component', () => {
+  test('does not render logoutSection when user is not logged in', () => {
     render(
-      <newContext.Provider
+      <AppContext.Provider
         value={{
-          user: { isLoggedIn: false, email: "", password: "" },
+          user: { isLoggedIn: false, email: '', password: '' },
           logOut: jest.fn(),
         }}
       >
         <Header />
-      </newContext.Provider>
+      </AppContext.Provider>
     );
+
     expect(screen.queryByText(/logout/i)).toBeNull();
   });
 
-  test("should render logoutSection if user is logged in", () => {
+  test('renders logoutSection when user is logged in', () => {
     render(
-      <newContext.Provider
+      <AppContext.Provider
         value={{
-          user: {
-            isLoggedIn: true,
-            email: "test@email.com",
-            password: "12345678",
-          },
+          user: { isLoggedIn: true, email: 'test@email.com' },
           logOut: jest.fn(),
         }}
       >
         <Header />
-      </newContext.Provider>
+      </AppContext.Provider>
     );
 
-    expect(screen.getByText(/test@email.com/i)).toBeInTheDocument();
-
+    expect(screen.getByText(/Welcome/i)).toBeInTheDocument();
     expect(screen.getByText(/logout/i)).toBeInTheDocument();
+    expect(screen.getByText(/test@email.com/i)).toBeInTheDocument();
   });
 
-  test("should call logOut when clicking logout link", () => {
+  test('calls logOut when clicking logout link', () => {
     const mockLogOut = jest.fn();
     render(
-      <newContext.Provider
+      <AppContext.Provider
         value={{
-          user: {
-            isLoggedIn: true,
-            email: "test@email.com",
-            password: "12345678",
-          },
+          user: { isLoggedIn: true, email: 'test@email.com' },
           logOut: mockLogOut,
         }}
       >
         <Header />
-      </newContext.Provider>
+      </AppContext.Provider>
     );
+
     fireEvent.click(screen.getByText(/logout/i));
     expect(mockLogOut).toHaveBeenCalled();
   });
