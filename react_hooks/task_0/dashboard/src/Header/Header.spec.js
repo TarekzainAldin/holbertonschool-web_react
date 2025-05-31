@@ -1,53 +1,69 @@
-// src/Header/Header.spec.js
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import Header from './Header';
-import newContext from '../Context/context';
+import { render, screen, fireEvent } from "@testing-library/react";
+import Header from "./Header";
+import { newContext } from "../Context/context";
+import { StyleSheetTestUtils } from "aphrodite";
 
-// Utility to render with custom context
-const renderWithContext = (ui, { providerProps }) => {
-  return render(
-    <newContext.Provider value={providerProps}>
-      {ui}
-    </newContext.Provider>
-  );
-};
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
-describe('Header Component', () => {
-  it('renders without crashing', () => {
-    renderWithContext(<Header />, { providerProps: { user: { isLoggedIn: false }, logOut: jest.fn() } });
-    expect(screen.getByText('School dashboard')).toBeInTheDocument();
-    expect(screen.queryByText(/Welcome/)).toBeNull();
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
+
+describe("Header component", () => {
+  test("should not render logoutSection if user is not logged in", () => {
+    render(
+      <newContext.Provider
+        value={{
+          user: { isLoggedIn: false, email: "", password: "" },
+          logOut: jest.fn(),
+        }}
+      >
+        <Header />
+      </newContext.Provider>
+    );
+    expect(screen.queryByText(/logout/i)).toBeNull();
   });
 
-  it('displays welcome message when user is logged in', () => {
-    const providerProps = {
-      user: {
-        isLoggedIn: true,
-        email: 'test@example.com'
-      },
-      logOut: jest.fn(),
-    };
+  test("should render logoutSection if user is logged in", () => {
+    render(
+      <newContext.Provider
+        value={{
+          user: {
+            isLoggedIn: true,
+            email: "test@email.com",
+            password: "12345678",
+          },
+          logOut: jest.fn(),
+        }}
+      >
+        <Header />
+      </newContext.Provider>
+    );
 
-    renderWithContext(<Header />, { providerProps });
+    expect(screen.getByText(/test@email.com/i)).toBeInTheDocument();
 
-    expect(screen.getByText(/Welcome/)).toBeInTheDocument();
-    expect(screen.getByText('(logout)')).toBeInTheDocument();
+    expect(screen.getByText(/logout/i)).toBeInTheDocument();
   });
 
-  it('calls logOut function when logout link is clicked', () => {
+  test("should call logOut when clicking logout link", () => {
     const mockLogOut = jest.fn();
-    const providerProps = {
-      user: {
-        isLoggedIn: true,
-        email: 'test@example.com'
-      },
-      logOut: mockLogOut,
-    };
-
-    renderWithContext(<Header />, { providerProps });
-
-    fireEvent.click(screen.getByText('(logout)'));
+    render(
+      <newContext.Provider
+        value={{
+          user: {
+            isLoggedIn: true,
+            email: "test@email.com",
+            password: "12345678",
+          },
+          logOut: mockLogOut,
+        }}
+      >
+        <Header />
+      </newContext.Provider>
+    );
+    fireEvent.click(screen.getByText(/logout/i));
     expect(mockLogOut).toHaveBeenCalled();
   });
 });
