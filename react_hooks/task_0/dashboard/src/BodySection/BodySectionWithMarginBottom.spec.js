@@ -14,7 +14,7 @@ afterEach(() => {
 
 describe("BodySectionWithMarginBottom", () => {
   test("renders a div with class bodySectionWithMargin", () => {
-    render(
+    const { container } = render(
       <BodySectionWithMarginBottom title="Section Title">
         <p>Test content</p>
       </BodySectionWithMarginBottom>

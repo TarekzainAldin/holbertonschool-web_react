@@ -1,24 +1,22 @@
-import { getCurrentYear, getFooterCopy, getLatestNotification } from './utils';
+/* eslint-env jest */
+import { getCurrentYear, getFooterCopy, getLatestNotification } from "./utils";
 
-describe('Utils functions', () => {
-  test('getCurrentYear returns the current year', () => {
-    const year = getCurrentYear();
-    expect(year).toBe(new Date().getFullYear());
+describe("utils.js functions", () => {
+  test("getCurrentYear returns the current year", () => {
+    const year = new Date().getFullYear();
+    expect(getCurrentYear()).toBe(year);
   });
 
-  test('getFooterCopy returns correct string when true', () => {
-    expect(getFooterCopy(true)).toBe('Holberton School'); // Correct casing
-  });
-  
-  test('getFooterCopy returns correct string when false', () => {
-    expect(getFooterCopy(false)).toBe('Holberton School main dashboard'); // Correct casing
+  test('getFooterCopy returns "Holberton School" when argument is true', () => {
+    expect(getFooterCopy(true)).toBe("Holberton School");
   });
 
-  test('getLatestNotification returns expected HTML string', () => {
-    const notification = getLatestNotification();
-    expect(notification).toContain('<strong>Urgent requirement</strong>');
-    expect(notification).toMatch(/complete by EOD/i);
+  test('getFooterCopy returns "Holberton School main dashboard" when argument is false', () => {
+    expect(getFooterCopy(false)).toBe("Holberton School main dashboard");
+  });
+
+  test("getLatestNotification returns correct HTML string", () => {
+    const expected = "<strong>Urgent requirement</strong> - complete by EOD";
+    expect(getLatestNotification()).toBe(expected);
   });
 });
-
-

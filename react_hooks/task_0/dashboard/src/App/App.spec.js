@@ -3,7 +3,7 @@ import App from "./App";
 import Notifications from "../Notifications/Notifications";
 import { getLatestNotification } from "../utils/utils";
 import { StyleSheetTestUtils } from "aphrodite";
-import {  NewContext } from "../Context/context";  // <-- keep it here, used later
+import { newContext } from "../Context/context";
 
 beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
@@ -125,7 +125,7 @@ describe("App component", () => {
   });
 
   test("markNotificationAsRead removes notification and logs correctly", () => {
-    const logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+    const logSpy = jest.spyOn(console, "log");
 
     render(
       <newContext.Provider
@@ -135,14 +135,14 @@ describe("App component", () => {
             email: "test@example.com",
             password: "12345678",
           },
-          logOut: jest.fn(),
+          logOut: () => {},
         }}
       >
         <App />
       </newContext.Provider>
     );
+    fireEvent.click(screen.getByText(/Your notifications/i));
 
-    // Assuming your notifications list is rendered with clickable texts
     const notifText = screen.getByText(/New course available/i);
     fireEvent.click(notifText);
 

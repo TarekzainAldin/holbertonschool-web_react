@@ -1,91 +1,111 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, css } from 'aphrodite';
+import React from "react";
+//import { StyleSheet, css } from "aphrodite";
 
-function Login({ logIn }) {
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [enableSubmit, setEnableSubmit] = useState(false);
+class Login extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: "",
+      password: "",
+      enableSubmit: false,
+    };
+  }
 
-  const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
-  const isValidPassword = (password) => password.length >= 8;
+  componentDidMount() {
+    this.updateSubmitState();
+  }
 
-  useEffect(() => {
-    const { email, password } = formData;
-    const canSubmit =
-      email !== '' &&
-      password !== '' &&
-      isValidEmail(email) &&
-      isValidPassword(password);
-    setEnableSubmit(canSubmit);
-  }, [formData]);
-
-  const handleChangeEmail = (e) => {
-    setFormData((prev) => ({ ...prev, email: e.target.value }));
+  handleChangeEmail = (e) => {
+    const email = e.target.value;
+    this.setState({ email }, this.updateSubmitState);
   };
 
-  const handleChangePassword = (e) => {
-    setFormData((prev) => ({ ...prev, password: e.target.value }));
+  handleChangePassword = (e) => {
+    const password = e.target.value;
+    this.setState({ password }, this.updateSubmitState);
   };
 
-  const handleLoginSubmit = (e) => {
+  handleLoginSubmit = (e) => {
     e.preventDefault();
-    logIn(formData.email, formData.password);
+    const { logIn } = this.props;
+    const { email, password } = this.state;
+    logIn(email, password);
   };
 
-  return (
-    <div className={css(styles.login)}>
-      <p>Login to access the full dashboard</p>
-      <form onSubmit={handleLoginSubmit}>
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          className={css(styles.input)}
-          onChange={handleChangeEmail}
-        />
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          className={css(styles.input)}
-          onChange={handleChangePassword}
-        />
-        <input
-          type="submit"
-          value="OK"
-          className={css(styles.button)}
-          disabled={!enableSubmit}
-        />
-      </form>
-    </div>
-  );
+  isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+  isValidPassword = (password) => password.length >= 8;
+
+  updateSubmitState = () => {
+    const { email, password } = this.state;
+    const enableSubmit =
+      email !== "" &&
+      password !== "" &&
+      this.isValidEmail(email) &&
+      this.isValidPassword(password);
+    this.setState({ enableSubmit });
+  };
+
+  render() {
+    const { email, password, enableSubmit } = this.state;
+
+    return (
+      <div
+      //className={css(styles.login)}
+      >
+        <p>Login to access the full dashboard</p>
+        <form onSubmit={this.handleLoginSubmit}>
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={email}
+            //className={css(styles.input)}
+            onChange={this.handleChangeEmail}
+          />
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={password}
+            //className={css(styles.input)}
+            onChange={this.handleChangePassword}
+          />
+          <input
+            type="submit"
+            //className={css(styles.button)}
+            disabled={!enableSubmit}
+            value="OK"
+          />
+        </form>
+      </div>
+    );
+  }
 }
 
 Login.defaultProps = {
   logIn: () => {},
 };
 
-const styles = StyleSheet.create({
+/*const styles = StyleSheet.create({
   login: {
-    padding: '40px',
-    minHeight: '300px',
-    '@media (max-width: 900px)': {
-      display: 'block',
-      padding: '10px',
+    padding: "40px",
+    minHeight: "300px",
+    "@media (max-width: 900px)": {
+      display: "block",
+      padding: "10px",
     },
   },
   input: {
-    display: 'block',
-    marginBottom: '10px',
-    marginTop: '5px',
+    display: "block",
+    marginBottom: "10px",
+    marginTop: "5px",
   },
   button: {
-    display: 'block',
-    marginTop: '10px',
+    display: "block",
+    marginTop: "10px",
   },
-});
+});*/
 
 export default Login;
