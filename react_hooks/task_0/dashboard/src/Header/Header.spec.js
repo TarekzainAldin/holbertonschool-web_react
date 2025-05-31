@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Header from "./Header";
-import { newContext } from "../Context/context";
+import { NewContext } from "../Context/context";
 import { StyleSheetTestUtils } from "aphrodite";
 
 beforeEach(() => {
