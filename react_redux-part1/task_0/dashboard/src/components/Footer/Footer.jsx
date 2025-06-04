@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { StyleSheet, css } from "aphrodite";
-import { getCurrentYear, getFooterCopy } from "../utils/utils";
-import AppContext from "../Context/context";
+import { getCurrentYear, getFooterCopy } from "../../utils/utils";
+import AppContext from "../../Context/context";
 
 export default function Footer() {
   const { user } = useContext(AppContext); // 👈 consomme le contexte

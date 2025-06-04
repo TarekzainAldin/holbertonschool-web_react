@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import App from "./App";
+import App from "../App";
 import { StyleSheetTestUtils } from "aphrodite";
 
 // Supprime l'injection de styles Aphrodite pendant les tests

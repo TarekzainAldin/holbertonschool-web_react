@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Header from "./Header";
-import AppContext from "../Context/context";
+import AppContext from "../../Context/context";
 import { StyleSheetTestUtils } from "aphrodite";
 
 beforeAll(() => {

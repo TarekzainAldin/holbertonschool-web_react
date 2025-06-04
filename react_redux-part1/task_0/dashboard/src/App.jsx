@@ -4,7 +4,7 @@ import Footer from "./Footer";
 import Notifications from "./Notifications";
 import Login from "./Login";
 import CourseList from "./CourseList";
-import { appReducer, initialState, APP_ACTIONS } from "./App/appReducer";
+import { appReducer, initialState, APP_ACTIONS } from "./appReducer";
 import axios from "axios";
 
 function App() {

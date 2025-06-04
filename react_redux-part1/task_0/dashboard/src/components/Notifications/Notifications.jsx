@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import PropTypes from 'prop-types';
 import closeIcon from '../assets/close-icon.png';
-import NotificationItem from './NotificationItem';
+import NotificationItem from '../NotificationItem/NotificationItem';
 import { StyleSheet, css } from 'aphrodite';
 
 function Notifications({

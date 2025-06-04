@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import BodySection from './BodySection';
+import BodySection from '../BodySection/BodySection';
 import { StyleSheet, css } from 'aphrodite';
 
 class BodySectionWithMarginBottom extends React.Component {
