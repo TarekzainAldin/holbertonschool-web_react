@@ -1,7 +1,6 @@
-/* eslint-disable no-undef, no-unused-vars */
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import BodySectionWithMarginBottom from './BodySectionWithMarginBottom';
-
 import { StyleSheetTestUtils } from 'aphrodite';
 
 beforeEach(() => {
@@ -12,27 +11,60 @@ afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
+const mockBodySection = jest.fn();
+jest.mock('../BodySection/BodySection', () => {
+  const MockBodySection = (props) => {
+    mockBodySection(props);
+    return (
+      <div>
+        <h2>{props.title}</h2>
+        {props.children}
+      </div>
+    );
+  };
+  MockBodySection.displayName = 'MockBodySection';
+  return MockBodySection;
+});
+
 describe('BodySectionWithMarginBottom', () => {
-  test('renders a div with class bodySectionWithMargin', () => {
-    const { container } = render(
-      <BodySectionWithMarginBottom title="Section Title">
-        <p>Test content</p>
+  test('Should render BodySection inside a wrapper div with expected content', () => {
+    render(
+      <BodySectionWithMarginBottom title="Hello!">
+        <p>This is child content</p>
+        <span>Hey there!</span>
       </BodySectionWithMarginBottom>
     );
 
-    expect(screen.getByText('Section Title')).toBeInTheDocument();
-    expect(screen.getByText('Test content')).toBeInTheDocument();
+    const wrapper = screen.getByTestId('body-section-with-margin');
+    expect(wrapper).toBeInTheDocument();
+
+    expect(mockBodySection).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Hello!',
+        children: expect.anything(),
+      })
+    );
+
+    expect(wrapper).toHaveTextContent('Hello!');
+    expect(wrapper).toHaveTextContent('This is child content');
+    expect(wrapper).toHaveTextContent('Hey there!');
+
+    const pElement = screen.getByText('This is child content');
+    const spanElement = screen.getByText('Hey there!');
+    expect(pElement).toBeInTheDocument();
+    expect(spanElement).toBeInTheDocument();
   });
 
-  test('renders the BodySection component with the correct title', () => {
+  test('Should apply a class name that includes "bodySectionWithMargin"', () => {
     render(
-      <BodySectionWithMarginBottom title="Test title">
-        <p>Some content</p>
+      <BodySectionWithMarginBottom title="Test Title">
+        <p>Child Content</p>
       </BodySectionWithMarginBottom>
     );
 
-    // Check that the h2 from BodySection is present
-    const heading = screen.getByRole('heading', { level: 2 });
-    expect(heading).toHaveTextContent('Test title');
+    const wrapper = screen.getByTestId('body-section-with-margin');
+    expect(wrapper).toBeInTheDocument();
+
+    expect(wrapper.className).toMatch(/bodySectionWithMargin/);
   });
 });

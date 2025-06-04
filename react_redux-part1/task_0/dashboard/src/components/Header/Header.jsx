@@ -1,58 +1,43 @@
-import { useContext } from "react";
-import { StyleSheet, css } from "aphrodite";
-import holbertonLogo from "../assets/holberton-logo.jpg";
-import AppContext from "../../Context/context";
-
-const Header = () => {
-  const { user, logOut } = useContext(AppContext);
-
-  return (
-    <div className={css(styles.header)}>
-      <img
-        src={holbertonLogo}
-        className={css(styles.logo)}
-        alt="holberton logo"
-      />
-      <h1 className={css(styles.title)}>School dashboard</h1>
-
-      {user.isLoggedIn && (
-        <section
-          id="logoutSection"
-          className={css(styles.logoutSection)}
-          data-testid="logoutSection"
-        >
-          <p>
-            Welcome <strong>{user.email}</strong>{" "}
-            <a href="#" onClick={logOut}>
-              (logout)
-            </a>
-          </p>
-        </section>
-      )}
-    </div>
-  );
-};
+import { StyleSheet, css } from 'aphrodite';
+import logo from '../../assets/holberton-logo.jpg';
 
 const styles = StyleSheet.create({
   header: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottom: "3px solid #e1003c",
-    padding: "20px",
-  },
-  logo: {
-    height: "150px",
-    marginRight: "20px",
+    display: 'inline-flex',
+    alignItems: 'center',
+    fontSize: '20px',
+    fontFamily: 'sans-serif',
   },
   title: {
-    color: "#e1003c",
-    fontSize: "2rem",
+    color: '#e1003c',
+    fontFamily: "'Roboto', sans-serif",
+    fontWeight: 'bold',
+    fontSize: '2.5rem',
+    margin: 0,
+  },
+  logo: {
+    height: '30vmin',
+    pointerEvents: 'none',
   },
   logoutSection: {
-    fontStyle: "italic",
-    fontSize: "1rem",
+    marginLeft: 'auto',
+    fontSize: '1rem',
   },
 });
 
-export default Header;
+export default function Header({ user, logOut }) {
+  return (
+    <div className={css(styles.header)}>
+      <img src={logo} className={css(styles.logo)} alt="holberton logo" />
+      <h1 className={css(styles.title)}>School Dashboard</h1>
+      {user.isLoggedIn && (
+        <div className={css(styles.logoutSection)} id="logoutSection">
+          Welcome <b>{user.email}</b>{' '}
+          <a href="#" onClick={logOut}>
+            (logout)
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}
