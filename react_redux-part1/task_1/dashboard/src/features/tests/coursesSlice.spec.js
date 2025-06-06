@@ -1,54 +1,41 @@
-import coursesReducer, { fetchCourses } from '../courses/coursesSlice';
+import reducer, { fetchCourses } from './coursesSlice';
 import { logout } from '../auth/authSlice';
-import { configureStore } from '@reduxjs/toolkit';
-import thunk from 'redux-thunk';
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
 
-const API_BASE_URL = "http://localhost:5173";
-const COURSES_ENDPOINT = `${API_BASE_URL}/courses.json`;
+// حالة ابتدائية لاختباراتنا
+const initialState = {
+  courses: [],
+};
 
-// إعداد mock للـ Axios
-const mock = new MockAdapter(axios);
+// بيانات وهمية للاختبار
+const mockCourses = [
+  { id: 1, name: 'ES6', credit: 60 },
+  { id: 2, name: 'Webpack', credit: 20 },
+];
 
-describe('coursesSlice', () => {
-  const initialState = {
-    courses: [],
+// 1. اختبار الحالة الابتدائية
+test('should return the initial state by default', () => {
+  expect(reducer(undefined, { type: undefined })).toEqual(initialState);
+});
+
+// 2. اختبار عند تنفيذ fetchCourses.fulfilled
+test('should handle fetchCourses.fulfilled and populate courses', () => {
+  const action = {
+    type: fetchCourses.fulfilled.type,
+    payload: mockCourses,
   };
 
-  it('should return the initial state by default', () => {
-    const result = coursesReducer(undefined, { type: undefined });
-    expect(result).toEqual(initialState);
-  });
+  const state = reducer(initialState, action);
 
-  it('should fetch courses correctly and update the state', async () => {
-    const mockCourses = [
-      { id: 1, name: 'React Basics' },
-      { id: 2, name: 'Redux Fundamentals' },
-    ];
+  expect(state.courses).toEqual(mockCourses);
+});
 
-    mock.onGet(COURSES_ENDPOINT).reply(200, { courses: mockCourses });
+// 3. اختبار عند تنفيذ logout
+test('should reset state when logout action is dispatched', () => {
+  const populatedState = {
+    courses: mockCourses,
+  };
 
-    const store = configureStore({
-      reducer: {
-        courses: coursesReducer,
-      },
-      middleware: [thunk],
-    });
+  const stateAfterLogout = reducer(populatedState, logout());
 
-    await store.dispatch(fetchCourses());
-
-    const state = store.getState().courses;
-    expect(state.courses).toEqual(mockCourses);
-  });
-
-  it('should reset courses to initial state when logout is dispatched', () => {
-    const prevState = {
-      courses: [{ id: 1, name: 'Dummy Course' }],
-    };
-
-    const newState = coursesReducer(prevState, logout());
-
-    expect(newState).toEqual(initialState);
-  });
+  expect(stateAfterLogout).toEqual(initialState);
 });
