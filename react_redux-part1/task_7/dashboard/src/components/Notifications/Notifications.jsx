@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 import closeIcon from '../../assets/close-icon.png';
@@ -45,14 +45,26 @@ const styles = StyleSheet.create({
   },
 });
 
-const Notifications = memo(function Notifications(props) {
+const Notifications = memo(function Notifications() {
   const dispatch = useDispatch();
   const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
   const notifications = useSelector((state) => state.notifications.notifications);
 
-  const handleDisplayDrawer = () => dispatch(showDrawer());
-  const handleHideDrawer = () => dispatch(hideDrawer());
-  const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
+  // Memoize callbacks for performance (efficiency)
+  const handleDisplayDrawer = useCallback(() => {
+    dispatch(showDrawer());
+  }, [dispatch]);
+
+  const handleHideDrawer = useCallback(() => {
+    dispatch(hideDrawer());
+  }, [dispatch]);
+
+  const handleMarkAsRead = useCallback(
+    (id) => {
+      dispatch(markNotificationAsRead(id));
+    },
+    [dispatch]
+  );
 
   return (
     <>
