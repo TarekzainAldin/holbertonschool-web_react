@@ -110,4 +110,4 @@ export default function App() {
             <Footer user={state.user} />
         </>
     );
-}
+};

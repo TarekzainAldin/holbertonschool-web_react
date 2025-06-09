@@ -1,41 +1,40 @@
-import { StyleSheet, css } from 'aphrodite';
-import WithLogging from '../../components/HOC/WithLogging';
-import useLogin from '../../hooks/useLogin';
-import { useDispatch } from 'react-redux';
-import { login } from '../../features/auth/authSlice'; // استيراد الأكشن
+import { StyleSheet, css } from "aphrodite";
+import WithLogging from "../../components/HOC/WithLogging";
+import useLogin from "../../hooks/useLogin";
+import { useDispatch } from "react-redux";
+import { login } from "../../features/auth/authSlice";
 
 const styles = StyleSheet.create({
   body: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '60vh',
-    padding: '20px 20px 20px 40px',
-    borderTop: '5px solid red',
-    fontFamily: 'Roboto, sans-serif',
+    display: "flex",
+    flexDirection: "column",
+    height: "60vh",
+    padding: "20px 20px 20px 40px",
+    borderTop: "5px solid red",
+    fontFamily: "Roboto, sans-serif",
   },
   paragraph: {
-    fontSize: '1.3rem',
+    fontSize: "1.3rem",
     margin: 0,
   },
   form: {
-    margin: '20px 0',
-    fontSize: '1.2rem',
+    margin: "20px 0",
+    fontSize: "1.2rem",
   },
   label: {
-    paddingRight: '10px',
+    paddingRight: "10px",
   },
   input: {
-    marginRight: '10px',
+    marginRight: "10px",
   },
   button: {
-    cursor: 'pointer',
+    cursor: "pointer",
   },
 });
 
 function Login() {
   const dispatch = useDispatch();
 
-  // استخدام الدالة login من Redux بدلاً من prop
   const {
     email,
     password,
@@ -44,15 +43,19 @@ function Login() {
     handleChangePassword,
     handleLoginSubmit,
   } = useLogin({
-    onLogin: ({ email, password }) => dispatch(login({ email, password })),
+    onLogin: (email, password) => dispatch(login({ email, password })),
   });
 
   return (
     <form aria-label="form" onSubmit={handleLoginSubmit}>
       <div className={css(styles.body)}>
-        <p className={css(styles.paragraph)}>Login to access the full dashboard</p>
+        <p className={css(styles.paragraph)}>
+          Login to access the full dashboard
+        </p>
         <div className={css(styles.form)}>
-          <label htmlFor="email" className={css(styles.label)}>Email</label>
+          <label htmlFor="email" className={css(styles.label)}>
+            Email
+          </label>
           <input
             type="email"
             name="email"
@@ -61,7 +64,9 @@ function Login() {
             onChange={handleChangeEmail}
             className={css(styles.input)}
           />
-          <label htmlFor="password" className={css(styles.label)}>Password</label>
+          <label htmlFor="password" className={css(styles.label)}>
+            Password
+          </label>
           <input
             type="password"
             name="password"

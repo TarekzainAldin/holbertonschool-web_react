@@ -1,25 +1,27 @@
-import React from 'react';
-import { StyleSheet, css } from 'aphrodite';
-import CourseListRow from './CourseListRow/CourseListRow';
-import WithLogging from '../../components/HOC/WithLogging';
+import { StyleSheet, css } from "aphrodite";
+import { useSelector } from "react-redux";
+import CourseListRow from "./CourseListRow/CourseListRow";
+import WithLogging from "../../components/HOC/WithLogging";
 
 const styles = StyleSheet.create({
   courses: {
-    margin: '130px auto',
-    width: '90%',
-    height: '33vh',
+    margin: "130px auto",
+    width: "90%",
+    height: "33vh",
   },
   table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    border: '2px solid rgb(161, 161, 161)',
+    width: "100%",
+    borderCollapse: "collapse",
+    border: "2px solid rgb(161, 161, 161)",
   },
   thtd: {
-    border: '2px solid rgb(161, 161, 161)',
+    border: "2px solid rgb(161, 161, 161)",
   },
 });
 
-function CourseList({ courses = [] }) {
+function CourseList() {
+  const courses = useSelector((state) => state.courses);
+
   return (
     <div className={css(styles.courses)}>
       <table id="CourseList" className={css(styles.table)}>
