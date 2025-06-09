@@ -29,14 +29,11 @@ const styles = StyleSheet.create({
 
 export default function Header() {
   const dispatch = useDispatch();
-
-  // 🧠 جلب المستخدم وحالة تسجيل الدخول من Redux
   const user = useSelector((state) => state.auth.user);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  // 🚪 دالة لتسجيل الخروج
   const handleLogout = (e) => {
-    e.preventDefault(); // منع الانتقال من الرابط
+    e.preventDefault();
     dispatch(logout());
   };
 
