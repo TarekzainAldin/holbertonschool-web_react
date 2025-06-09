@@ -1,5 +1,7 @@
 import { StyleSheet, css } from 'aphrodite';
 import logo from '../../assets/holberton-logo.jpg';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../../features/auth/authSlice';
 
 const styles = StyleSheet.create({
   header: {
@@ -25,15 +27,27 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Header({ user, logOut }) {
+export default function Header() {
+  const dispatch = useDispatch();
+
+  // 🧠 جلب المستخدم وحالة تسجيل الدخول من Redux
+  const user = useSelector((state) => state.auth.user);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  // 🚪 دالة لتسجيل الخروج
+  const handleLogout = (e) => {
+    e.preventDefault(); // منع الانتقال من الرابط
+    dispatch(logout());
+  };
+
   return (
     <div className={css(styles.header)}>
       <img src={logo} className={css(styles.logo)} alt="holberton logo" />
       <h1 className={css(styles.title)}>School Dashboard</h1>
-      {user.isLoggedIn && (
+      {isLoggedIn && user && (
         <div className={css(styles.logoutSection)} id="logoutSection">
           Welcome <b>{user.email}</b>{' '}
-          <a href="#" onClick={logOut}>
+          <a href="#" onClick={handleLogout}>
             (logout)
           </a>
         </div>
