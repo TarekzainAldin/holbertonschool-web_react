@@ -1,7 +1,13 @@
 import { memo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 import closeIcon from '../../assets/close-icon.png';
 import NotificationItem from '../NotificationItem/NotificationItem';
+import {
+  markNotificationAsRead,
+  showDrawer,
+  hideDrawer,
+} from '../../actions/notificationActions';
 
 const styles = StyleSheet.create({
   notificationTitle: {
@@ -39,13 +45,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const Notifications = memo(function Notifications({
-  displayDrawer,
-  handleDisplayDrawer,
-  handleHideDrawer,
-  notifications = [],
-  markNotificationAsRead,
-}) {
+const Notifications = memo(function Notifications() {
+  const dispatch = useDispatch();
+  const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
+  const notifications = useSelector((state) => state.notifications.notifications);
+
+  const handleDisplayDrawer = () => dispatch(showDrawer());
+  const handleHideDrawer = () => dispatch(hideDrawer());
+  const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
+
   return (
     <>
       <div className={css(styles.notificationTitle)} onClick={handleDisplayDrawer}>
@@ -71,7 +79,7 @@ const Notifications = memo(function Notifications({
                     type={notification.type}
                     value={notification.value}
                     html={notification.html}
-                    markAsRead={() => markNotificationAsRead(notification.id)}
+                    markAsRead={() => handleMarkAsRead(notification.id)}
                     className={
                       notification.type === 'urgent'
                         ? css(styles.notificationTypeUrgent)
