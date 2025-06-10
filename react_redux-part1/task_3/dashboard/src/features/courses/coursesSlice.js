@@ -1,5 +1,4 @@
 // coursesSlice.js
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { logout } from '../auth/authSlice';
 
