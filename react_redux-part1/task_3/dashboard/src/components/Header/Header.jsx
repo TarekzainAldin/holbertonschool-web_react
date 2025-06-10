@@ -1,36 +1,36 @@
-import { StyleSheet, css } from 'aphrodite';
-import logo from '../../assets/holberton-logo.jpg';
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../../features/auth/authSlice';
+import { StyleSheet, css } from "aphrodite";
+import logo from "../../assets/holberton-logo.jpg";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../features/auth/authSlice";
 
 const styles = StyleSheet.create({
   header: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    fontSize: '20px',
-    fontFamily: 'sans-serif',
+    display: "inline-flex",
+    alignItems: "center",
+    fontSize: "20px",
+    fontFamily: "sans-serif",
   },
   title: {
-    color: '#e1003c',
+    color: "#e1003c",
     fontFamily: "'Roboto', sans-serif",
-    fontWeight: 'bold',
-    fontSize: '2.5rem',
+    fontWeight: "bold",
+    fontSize: "2.5rem",
     margin: 0,
   },
   logo: {
-    height: '30vmin',
-    pointerEvents: 'none',
+    height: "30vmin",
+    pointerEvents: "none",
   },
   logoutSection: {
-    marginLeft: 'auto',
-    fontSize: '1rem',
+    marginLeft: "auto",
+    fontSize: "1rem",
   },
 });
 
 export default function Header() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const user = useSelector((state) => state.auth.user);
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -41,14 +41,18 @@ export default function Header() {
     <div className={css(styles.header)}>
       <img src={logo} className={css(styles.logo)} alt="holberton logo" />
       <h1 className={css(styles.title)}>School Dashboard</h1>
-      {isLoggedIn && user && (
-        <div className={css(styles.logoutSection)} id="logoutSection">
-          Welcome <b>{user.email}</b>{' '}
-          <a href="#" onClick={handleLogout}>
-            (logout)
-          </a>
-        </div>
-      )}
+      <div className={css(styles.logoutSection)} id="logoutSection">
+        {isLoggedIn ? (
+          <>
+            Welcome <b>{user?.email}</b>{" "}
+            <a href="#" onClick={handleLogout}>
+              (logout)
+            </a>
+          </>
+        ) : (
+          <p>Not logged in</p>
+        )}
+      </div>
     </div>
   );
 }
