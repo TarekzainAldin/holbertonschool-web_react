@@ -1,49 +1,55 @@
-// coursesSlice.js
+import reducer, { fetchCourses } from "../courses/coursesSlice";
+import { logout } from "../auth/authSlice";
+import axios from "axios";
+import MockAdapter from "axios-mock-adapter";
 
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { logout } from '../auth/authSlice';
+const mock = new MockAdapter(axios);
 
-// 1. الحالة الابتدائية
 const initialState = {
   courses: [],
 };
 
-// 2. رابط الـ API
-const API_BASE_URL = "http://localhost:5173";
-const ENDPOINTS = {
-  courses: `${API_BASE_URL}/courses.json`
-};
+describe("coursesSlice", () => {
+  afterEach(() => {
+    mock.reset();
+  });
 
-// 3. Thunk غير متزامن لجلب الكورسات
-export const fetchCourses = createAsyncThunk(
-  'courses/fetchCourses',
-  async (_, thunkAPI) => {
-    try {
-      const response = await fetch(ENDPOINTS.courses);
-      const data = await response.json();
-      return data.courses;
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
+  it("should return the initial state by default", () => {
+    const nextState = reducer(undefined, { type: undefined });
+    expect(nextState).toEqual(initialState);
+  });
 
-// 4. إنشاء slice
-const coursesSlice = createSlice({
-  name: 'courses',
-  initialState,
-  reducers: {}, // لا نحتاج لمخفضات محلية
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchCourses.fulfilled, (state, action) => {
-        state.courses = action.payload;
-      })
-      .addCase(logout, () => {
-        return initialState;
-      });
-  }
+  it("should fetch courses data successfully", async () => {
+    const mockCourses = [
+      { id: 1, name: "Math" },
+      { id: 2, name: "Science" },
+    ];
+
+    mock.onGet("http://localhost:5173/courses.json").reply(200, mockCourses);
+
+    const dispatch = jest.fn();
+    const getState = () => ({});
+    const thunkAction = fetchCourses();
+
+    const result = await thunkAction(dispatch, getState, undefined);
+    const fulfilledAction = {
+      type: fetchCourses.fulfilled.type,
+      payload: mockCourses,
+    };
+
+    const nextState = reducer(initialState, fulfilledAction);
+    expect(nextState.courses).toEqual(mockCourses);
+  });
+
+  it("should reset the courses state to empty on logout", () => {
+    const currentState = {
+      courses: [
+        { id: 1, name: "Math" },
+        { id: 2, name: "Science" },
+      ],
+    };
+
+    const nextState = reducer(currentState, logout());
+    expect(nextState).toEqual(initialState);
+  });
 });
-
-// 5. التصدير
-export default coursesSlice.reducer;
