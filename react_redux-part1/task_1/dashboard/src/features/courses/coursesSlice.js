@@ -1,55 +1,40 @@
-import reducer, { fetchCourses } from "../courses/coursesSlice";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { logout } from "../auth/authSlice";
 import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
 
-const mock = new MockAdapter(axios);
+const API_BASE_URL = "http://localhost:5173";
+const ENDPOINTS = {
+  courses: `${API_BASE_URL}/courses.json`,
+};
 
 const initialState = {
   courses: [],
 };
 
-describe("coursesSlice", () => {
-  afterEach(() => {
-    mock.reset();
-  });
+const fetchCourses = createAsyncThunk(
+  "courses/fetchCourses",
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get(ENDPOINTS.courses);
+      return response.data.courses;
+    } catch (error) {
+      return thunkAPI.rejectWithValue("Error fetching courses");
+    }
+  }
+);
 
-  it("should return the initial state by default", () => {
-    const nextState = reducer(undefined, { type: undefined });
-    expect(nextState).toEqual(initialState);
-  });
-
-  it("should fetch courses data successfully", async () => {
-    const mockCourses = [
-      { id: 1, name: "Math" },
-      { id: 2, name: "Science" },
-    ];
-
-    mock.onGet("http://localhost:5173/courses.json").reply(200, mockCourses);
-
-    const dispatch = jest.fn();
-    const getState = () => ({});
-    const thunkAction = fetchCourses();
-
-    const result = await thunkAction(dispatch, getState, undefined);
-    const fulfilledAction = {
-      type: fetchCourses.fulfilled.type,
-      payload: mockCourses,
-    };
-
-    const nextState = reducer(initialState, fulfilledAction);
-    expect(nextState.courses).toEqual(mockCourses);
-  });
-
-  it("should reset the courses state to empty on logout", () => {
-    const currentState = {
-      courses: [
-        { id: 1, name: "Math" },
-        { id: 2, name: "Science" },
-      ],
-    };
-
-    const nextState = reducer(currentState, logout());
-    expect(nextState).toEqual(initialState);
-  });
+const coursesSlice = createSlice({
+  name: "courses",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCourses.fulfilled, (state, action) => {
+        state.courses = action.payload;
+      })
+      .addCase(logout, () => initialState);
+  },
 });
+
+export { fetchCourses };
+export default coursesSlice.reducer;
