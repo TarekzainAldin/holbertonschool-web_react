@@ -1,5 +1,4 @@
-import  { useEffect, useCallback, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Notifications from './components/Notifications/Notifications';
@@ -11,10 +10,12 @@ import BodySectionWithMarginBottom from './components/BodySectionWithMarginBotto
 import BodySection from './components/BodySection/BodySection';
 
 import { login, logout } from './features/auth/authSlice';
+import { fetchCourses } from './features/courses/coursesSlice'; // <-- import courses thunk
+
+import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5173';
 const ENDPOINTS = {
-  courses: `${API_BASE_URL}/courses.json`,
   notifications: `${API_BASE_URL}/notifications.json`,
 };
 
@@ -25,7 +26,6 @@ export default function App() {
   const user = useSelector((state) => state.auth.user);
 
   const [notifications, setNotifications] = useState([]);
-  const [courses, setCourses] = useState([]);
   const [displayDrawer, setDisplayDrawer] = useState(false);
 
   useEffect(() => {
@@ -40,21 +40,12 @@ export default function App() {
     fetchNotifications();
   }, []);
 
+  // Fetch courses from Redux when logged in
   useEffect(() => {
     if (isLoggedIn) {
-      const fetchCourses = async () => {
-        try {
-          const response = await axios.get(ENDPOINTS.courses);
-          setCourses(response.data.courses || []);
-        } catch (error) {
-          console.error('Error fetching courses:', error);
-        }
-      };
-      fetchCourses();
-    } else {
-      setCourses([]);
+      dispatch(fetchCourses());
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, dispatch]);
 
   const handleDisplayDrawer = useCallback(() => setDisplayDrawer(true), []);
   const handleHideDrawer = useCallback(() => setDisplayDrawer(false), []);
@@ -88,7 +79,7 @@ export default function App() {
           </BodySectionWithMarginBottom>
         ) : (
           <BodySectionWithMarginBottom title="Course list">
-            <CourseList courses={courses} />
+            <CourseList />  {/* no props */}
           </BodySectionWithMarginBottom>
         )}
         <BodySection title="News from the School">

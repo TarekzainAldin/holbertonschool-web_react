@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import { useSelector } from 'react-redux';
 import CourseListRow from './CourseListRow/CourseListRow';
@@ -21,43 +20,46 @@ const styles = StyleSheet.create({
 });
 
 function CourseList() {
-  const courses = useSelector(state => state.courses.list || []);
+  const courses = useSelector((state) => state.courses.list);
 
   return (
     <div className={css(styles.courses)}>
       <table id="CourseList" className={css(styles.table)}>
         <thead>
-          <CourseListRow
-            textFirstCell="Available courses"
-            isHeader={true}
-            style={styles.thtd}
-          />
-          <CourseListRow
-            textFirstCell="Course name"
-            textSecondCell="Credit"
-            isHeader={true}
-            style={styles.thtd}
-          />
-        </thead>
-        <tbody>
           {courses.length > 0 ? (
-            courses.map(course => (
+            <>
+              <CourseListRow
+                textFirstCell="Available courses"
+                isHeader={true}
+                style={styles.thtd}
+              />
+              <CourseListRow
+                textFirstCell="Course name"
+                textSecondCell="Credit"
+                isHeader={true}
+                style={styles.thtd}
+              />
+            </>
+          ) : (
+            <CourseListRow
+              isHeader={true}
+              textFirstCell="No course available yet"
+              style={styles.thtd}
+            />
+          )}
+        </thead>
+        {courses.length > 0 && (
+          <tbody>
+            {courses.map((course) => (
               <CourseListRow
                 key={course.id}
                 textFirstCell={course.name}
                 textSecondCell={course.credit}
-                isHeader={false}
                 style={styles.thtd}
               />
-            ))
-          ) : (
-            <CourseListRow
-              textFirstCell="No course available yet"
-              isHeader={false}
-              style={styles.thtd}
-            />
-          )}
-        </tbody>
+            ))}
+          </tbody>
+        )}
       </table>
     </div>
   );
