@@ -41,14 +41,12 @@ export default function Header() {
     <div className={css(styles.header)}>
       <img src={logo} className={css(styles.logo)} alt="holberton logo" />
       <h1 className={css(styles.title)}>School Dashboard</h1>
-      <div className={css(styles.logoutSection)} id="logoutSection">
-        {isLoggedIn && (
-          <>
-            Welcome <b>{user?.email}</b>{" "}
-            <a href="#" onClick={handleLogout}>(logout)</a>
-          </>
-        )}
-      </div>
+      {isLoggedIn && (
+        <div className={css(styles.logoutSection)} id="logoutSection">
+          Welcome <b>{user?.email}</b>{" "}
+          <a href="#" onClick={handleLogout}>(logout)</a>
+        </div>
+      )}
     </div>
   );
 }
