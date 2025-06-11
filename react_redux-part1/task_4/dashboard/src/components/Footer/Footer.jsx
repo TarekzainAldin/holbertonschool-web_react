@@ -8,11 +8,7 @@ export default function Footer() {
   return (
     <div className={css(styles.footer)}>
       <p>Copyright {getCurrentYear()} - {getFooterCopy(true)}</p>
-      {isLoggedIn ? (
-        <p>
-          <a href="#">Contact us</a>
-        </p>
-      ) : null}
+      {isLoggedIn && <a href="#">Contact us</a>}
     </div>
   );
 }
