@@ -1,3 +1,4 @@
+import React from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import { useSelector } from 'react-redux';
 import CourseListRow from './CourseListRow/CourseListRow';
@@ -5,19 +6,22 @@ import WithLogging from '../../components/HOC/WithLogging';
 
 const styles = StyleSheet.create({
   courses: {
-     // style//}
+    margin: '130px auto',
+    width: '90%',
+    height: '33vh',
   },
   table: {
-   // style//}
+    width: '100%',
+    borderCollapse: 'collapse',
+    border: '2px solid rgb(161, 161, 161)',
   },
   thtd: {
-    // style//}
+    border: '2px solid rgb(161, 161, 161)',
   },
 });
 
 function CourseList() {
-  // Adjust this selector if your courses are stored elsewhere in the Redux store.
-  const courses = useSelector((state) => state.courses.list || []);
+  const courses = useSelector(state => state.courses.list || []);
 
   return (
     <div className={css(styles.courses)}>
@@ -37,7 +41,7 @@ function CourseList() {
         </thead>
         <tbody>
           {courses.length > 0 ? (
-            courses.map((course) => (
+            courses.map(course => (
               <CourseListRow
                 key={course.id}
                 textFirstCell={course.name}
