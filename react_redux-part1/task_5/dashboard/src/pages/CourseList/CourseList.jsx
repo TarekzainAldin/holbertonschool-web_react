@@ -7,43 +7,61 @@ import WithLogging from '../../components/HOC/WithLogging';
 const styles = StyleSheet.create({
   courses: {
     margin: '130px auto',
-    width: '80%',
+    width: '90%',
+    height: '33vh',
+  },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    border: '2px solid rgb(161, 161, 161)',
+  },
+  thtd: {
+    border: '2px solid rgb(161, 161, 161)',
   },
 });
 
 function CourseList() {
-  // Select courses array from Redux store (adjust the path if needed)
-  const courses = useSelector((state) => state.courses.list);
+  // Assuming your Redux slice has courses under state.courses.list
+  const courses = useSelector((state) => state.courses.list || []);
 
   return (
     <div className={css(styles.courses)}>
-      {/* Render table headers */}
-      <table>
+      <table id="CourseList" className={css(styles.table)}>
         <thead>
-          <CourseListRow textFirstCell="Available courses" isHeader={true} />
-          <CourseListRow
-            textFirstCell="Course name"
-            textSecondCell="Credit"
-            isHeader={true}
-          />
+          {courses.length > 0 ? (
+            <>
+              <CourseListRow
+                textFirstCell="Available courses"
+                isHeader={true}
+                style={styles.thtd}
+              />
+              <CourseListRow
+                textFirstCell="Course name"
+                textSecondCell="Credit"
+                isHeader={true}
+                style={styles.thtd}
+              />
+            </>
+          ) : (
+            <CourseListRow
+              isHeader={true}
+              textFirstCell="No course available yet"
+              style={styles.thtd}
+            />
+          )}
         </thead>
-        <tbody>
-          {courses && courses.length > 0 ? (
-            courses.map((course) => (
+        {courses.length > 0 && (
+          <tbody>
+            {courses.map((course) => (
               <CourseListRow
                 key={course.id}
                 textFirstCell={course.name}
                 textSecondCell={course.credit}
-                isHeader={false}
+                style={styles.thtd}
               />
-            ))
-          ) : (
-            <CourseListRow
-              textFirstCell="No course available yet"
-              isHeader={false}
-            />
-          )}
-        </tbody>
+            ))}
+          </tbody>
+        )}
       </table>
     </div>
   );
