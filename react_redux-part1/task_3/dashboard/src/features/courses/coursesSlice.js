@@ -1,49 +1,52 @@
-// coursesSlice.js
+// notificationsSlice.js
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { logout } from '../auth/authSlice';
 
-// 1. الحالة الابتدائية
+// initial state
 const initialState = {
-  courses: [],
+  notifications: [],
 };
 
-// 2. رابط الـ API
+// API endpoints
 const API_BASE_URL = "http://localhost:5173";
 const ENDPOINTS = {
-  courses: `${API_BASE_URL}/courses.json`
+  notifications: `${API_BASE_URL}/notifications.json`,
 };
 
-// 3. Thunk غير متزامن لجلب الكورسات
-export const fetchCourses = createAsyncThunk(
-  'courses/fetchCourses',
+// Async thunk for notifications
+export const fetchNotifications = createAsyncThunk(
+  'notifications/fetchNotifications',
   async (_, thunkAPI) => {
     try {
-      const response = await fetch(ENDPOINTS.courses);
+      const response = await fetch(ENDPOINTS.notifications);
       const data = await response.json();
-      return data.courses;
+      return data.notifications;
     } catch (error) {
-      console.error("Error fetching courses:", error);
+      console.error("Error fetching notifications:", error);
       return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
-// 4. إنشاء slice
-const coursesSlice = createSlice({
-  name: 'courses',
+const notificationsSlice = createSlice({
+  name: 'notifications',
   initialState,
-  reducers: {}, // لا نحتاج لمخفضات محلية
+  reducers: {
+    markNotificationAsRead: (state, action) => {
+      state.notifications = state.notifications.filter(n => n.id !== action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCourses.fulfilled, (state, action) => {
-        state.courses = action.payload;
+      .addCase(fetchNotifications.fulfilled, (state, action) => {
+        state.notifications = action.payload;
       })
       .addCase(logout, () => {
         return initialState;
       });
-  }
+  },
 });
 
-// 5. التصدير
-export default coursesSlice.reducer;
+export const { markNotificationAsRead } = notificationsSlice.actions;
+export default notificationsSlice.reducer;
