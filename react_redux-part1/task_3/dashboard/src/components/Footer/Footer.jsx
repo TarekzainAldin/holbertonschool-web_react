@@ -1,15 +1,25 @@
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 import { getCurrentYear, getFooterCopy } from '../../utils/utils';
 
-export default function Footer({ user }) {
+export default function Footer() {
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+
   return (
     <div className={css(styles.footer)}>
       <p>Copyright {getCurrentYear()} - {getFooterCopy(true)}</p>
-      {user.isLoggedIn && <a href="#">Contact us</a>}
+      {isLoggedIn && <a href="#">Contact us</a>}
     </div>
   );
 }
 
 const styles = StyleSheet.create({
-  footer:{ /* styles */ },
+  footer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontStyle: 'italic',
+    fontFamily: 'sans-serif',
+  },
 });
