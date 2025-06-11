@@ -1,9 +1,9 @@
-import { memo } from 'react';
+import { useEffect, memo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 import closeIcon from '../../assets/close-icon.png';
 import NotificationItem from '../NotificationItem/NotificationItem';
-import { markNotificationAsRead, showDrawer, hideDrawer } from '../../redux/notificationsSlice';
+import { markNotificationAsRead, showDrawer, hideDrawer, fetchNotifications } from '../../redux/notificationsSlice';
 
 const styles = StyleSheet.create({
   notificationTitle: {
@@ -45,6 +45,10 @@ const Notifications = memo(function Notifications() {
   const dispatch = useDispatch();
   const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
   const notifications = useSelector((state) => state.notifications.notifications);
+
+  useEffect(() => {
+    dispatch(fetchNotifications());
+  }, [dispatch]);
 
   const handleDisplayDrawer = () => dispatch(showDrawer());
   const handleHideDrawer = () => dispatch(hideDrawer());
