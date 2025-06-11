@@ -1,52 +1,40 @@
-// notificationsSlice.js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { logout } from "../auth/authSlice";
+import axios from "axios";
 
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { logout } from '../auth/authSlice';
-
-// initial state
-const initialState = {
-  notifications: [],
-};
-
-// API endpoints
 const API_BASE_URL = "http://localhost:5173";
 const ENDPOINTS = {
-  notifications: `${API_BASE_URL}/notifications.json`,
+  courses: `${API_BASE_URL}/courses.json`,
 };
 
-// Async thunk for notifications
-export const fetchNotifications = createAsyncThunk(
-  'notifications/fetchNotifications',
+const initialState = {
+  courses: [],
+};
+
+const fetchCourses = createAsyncThunk(
+  "courses/fetchCourses",
   async (_, thunkAPI) => {
     try {
-      const response = await fetch(ENDPOINTS.notifications);
-      const data = await response.json();
-      return data.notifications;
+      const response = await axios.get(ENDPOINTS.courses);
+      return response.data.courses;
     } catch (error) {
-      console.error("Error fetching notifications:", error);
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue("Error fetching courses");
     }
   }
 );
 
-const notificationsSlice = createSlice({
-  name: 'notifications',
+const coursesSlice = createSlice({
+  name: "courses",
   initialState,
-  reducers: {
-    markNotificationAsRead: (state, action) => {
-      state.notifications = state.notifications.filter(n => n.id !== action.payload);
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchNotifications.fulfilled, (state, action) => {
-        state.notifications = action.payload;
+      .addCase(fetchCourses.fulfilled, (state, action) => {
+        state.courses = action.payload;
       })
-      .addCase(logout, () => {
-        return initialState;
-      });
+      .addCase(logout, () => initialState);
   },
 });
 
-export const { markNotificationAsRead } = notificationsSlice.actions;
-export default notificationsSlice.reducer;
+export { fetchCourses };
+export default coursesSlice.reducer;
