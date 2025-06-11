@@ -1,8 +1,7 @@
 import { StyleSheet, css } from "aphrodite";
 import logo from "../../assets/holberton-logo.jpg";
 import { useSelector, useDispatch } from "react-redux";
-import {  logout } from "../../features/auth/authSlice";
-
+import { logout } from "../../features/auth/authSlice";
 
 const styles = StyleSheet.create({
   header: {
@@ -36,11 +35,9 @@ export default function Header() {
   const handleLogout = (e) => {
     e.preventDefault();
     dispatch(logout());
-  
   };
-console.log("isLoggedIn:", isLoggedIn);
+
   return (
-  
     <div className={css(styles.header)}>
       <img src={logo} className={css(styles.logo)} alt="holberton logo" />
       <h1 className={css(styles.title)}>School Dashboard</h1>
@@ -52,10 +49,7 @@ console.log("isLoggedIn:", isLoggedIn);
               (logout)
             </a>
           </>
-          
-        ) : (
-          <p>Not logged in</p>
-        )}
+        ) : null}
       </div>
     </div>
   );
