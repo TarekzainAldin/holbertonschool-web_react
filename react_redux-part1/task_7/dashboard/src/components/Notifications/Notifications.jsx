@@ -3,7 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 import closeIcon from '../../assets/close-icon.png';
 import NotificationItem from '../NotificationItem/NotificationItem';
-import { markNotificationAsRead, showDrawer, hideDrawer, fetchNotifications } from '../../redux/notificationsSlice';
+import {
+  markNotificationAsRead,
+  showDrawer,
+  hideDrawer,
+  fetchNotifications,
+} from '../../redux/notificationsSlice';
 
 const styles = StyleSheet.create({
   notificationTitle: {
@@ -36,9 +41,6 @@ const styles = StyleSheet.create({
   notificationTypeUrgent: {
     color: 'red',
   },
-  menuItem: {
-    textAlign: 'right',
-  },
 });
 
 const Notifications = memo(function Notifications() {
@@ -52,7 +54,10 @@ const Notifications = memo(function Notifications() {
 
   const handleDisplayDrawer = useCallback(() => dispatch(showDrawer()), [dispatch]);
   const handleHideDrawer = useCallback(() => dispatch(hideDrawer()), [dispatch]);
-  const handleMarkAsRead = useCallback((id) => dispatch(markNotificationAsRead(id)), [dispatch]);
+  const handleMarkAsRead = useCallback(
+    (id) => dispatch(markNotificationAsRead(id)),
+    [dispatch]
+  );
 
   return (
     <>
@@ -72,14 +77,14 @@ const Notifications = memo(function Notifications() {
                 <img src={closeIcon} alt="close icon" />
               </button>
               <ul>
-                {notifications.map(notification => (
+                {notifications.map((notification) => (
                   <NotificationItem
                     key={notification.id}
                     id={notification.id}
                     type={notification.type}
                     value={notification.value}
                     html={notification.html}
-                    markAsRead={handleMarkAsRead}  // pass stable function reference
+                    markAsRead={() => handleMarkAsRead(notification.id)}
                     className={
                       notification.type === 'urgent'
                         ? css(styles.notificationTypeUrgent)
