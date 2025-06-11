@@ -1,8 +1,6 @@
 import { StyleSheet, css } from 'aphrodite';
 import WithLogging from '../../components/HOC/WithLogging';
 import useLogin from '../../hooks/useLogin';
-import { useDispatch } from 'react-redux';
-import { login } from '../../features/auth/authSlice'; // استيراد الأكشن
 
 const styles = StyleSheet.create({
   body: {
@@ -32,10 +30,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function Login() {
-  const dispatch = useDispatch();
-
-  // استخدام الدالة login من Redux بدلاً من prop
+function Login({ login }) {
   const {
     email,
     password,
@@ -43,9 +38,7 @@ function Login() {
     handleChangeEmail,
     handleChangePassword,
     handleLoginSubmit,
-  } = useLogin({
-    onLogin: ({ email, password }) => dispatch(login({ email, password })),
-  });
+  } = useLogin({ onLogin: login });
 
   return (
     <form aria-label="form" onSubmit={handleLoginSubmit}>
