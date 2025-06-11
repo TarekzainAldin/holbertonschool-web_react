@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
 });
 
 function CourseList() {
+  // Adjust this selector if your courses are stored elsewhere in the Redux store.
   const courses = useSelector((state) => state.courses.list || []);
 
   return (
@@ -46,6 +47,7 @@ function CourseList() {
                 key={course.id}
                 textFirstCell={course.name}
                 textSecondCell={course.credit}
+                isHeader={false}
                 style={styles.thtd}
               />
             ))
