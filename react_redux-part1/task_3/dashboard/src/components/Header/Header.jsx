@@ -14,7 +14,7 @@ export default function Header() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const user = useSelector((state) => state.auth.user);
-
+  console.log('Header render, isLoggedIn:', isLoggedIn);
   const handleLogout = (e) => {
     e.preventDefault();
     console.log("Logout clicked"); // debug
