@@ -50,7 +50,6 @@ const Notifications = memo(function Notifications() {
     dispatch(fetchNotifications());
   }, [dispatch]);
 
-  // Use stable callbacks
   const handleDisplayDrawer = useCallback(() => dispatch(showDrawer()), [dispatch]);
   const handleHideDrawer = useCallback(() => dispatch(hideDrawer()), [dispatch]);
   const handleMarkAsRead = useCallback((id) => dispatch(markNotificationAsRead(id)), [dispatch]);
@@ -65,7 +64,11 @@ const Notifications = memo(function Notifications() {
           {notifications.length > 0 ? (
             <>
               <p>Here is the list of notifications</p>
-              <button onClick={handleHideDrawer} aria-label="Close" className={css(styles.notificationsButton)}>
+              <button
+                onClick={handleHideDrawer}
+                aria-label="Close"
+                className={css(styles.notificationsButton)}
+              >
                 <img src={closeIcon} alt="close icon" />
               </button>
               <ul>
@@ -76,8 +79,12 @@ const Notifications = memo(function Notifications() {
                     type={notification.type}
                     value={notification.value}
                     html={notification.html}
-                    markAsRead={handleMarkAsRead}  {/* <-- stable function passed */}
-                    className={notification.type === 'urgent' ? css(styles.notificationTypeUrgent) : css(styles.notificationTypeDefault)}
+                    markAsRead={handleMarkAsRead}  // pass stable function reference
+                    className={
+                      notification.type === 'urgent'
+                        ? css(styles.notificationTypeUrgent)
+                        : css(styles.notificationTypeDefault)
+                    }
                   />
                 ))}
               </ul>

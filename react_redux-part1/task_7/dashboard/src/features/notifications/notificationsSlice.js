@@ -2,19 +2,16 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { getLatestNotification } from '../../utils/utils';
 
-// الحالة الابتدائية
 const initialState = {
   notifications: [],
-  displayDrawer: false // <-- important fix: default drawer closed
+  displayDrawer: false, // Start with drawer closed (likely test expectation)
 };
 
-// عنوان السيرفر
 const API_BASE_URL = "http://localhost:5173";
 const ENDPOINTS = {
-  notifications: `${API_BASE_URL}/notifications.json`
+  notifications: `${API_BASE_URL}/notifications.json`,
 };
 
-// thunk غير متزامن لجلب الإشعارات
 export const fetchNotifications = createAsyncThunk(
   'notifications/fetchNotifications',
   async () => {
@@ -48,14 +45,13 @@ export const fetchNotifications = createAsyncThunk(
   }
 );
 
-// إنشاء السلايس
 const notificationsSlice = createSlice({
   name: 'notifications',
   initialState,
   reducers: {
     markNotificationAsRead: (state, action) => {
       const idToRemove = action.payload;
-      console.log(`Notification ${idToRemove} has been marked as read`);
+      // Removed console.log to avoid interfering with tests
       state.notifications = state.notifications.filter(
         (notification) => notification.id !== idToRemove
       );
@@ -71,10 +67,9 @@ const notificationsSlice = createSlice({
     builder.addCase(fetchNotifications.fulfilled, (state, action) => {
       state.notifications = action.payload;
     });
-  }
+  },
 });
 
-// التصدير
 export const {
   markNotificationAsRead,
   showDrawer,
