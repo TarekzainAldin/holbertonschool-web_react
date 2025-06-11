@@ -1,6 +1,5 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
 import Notifications from './components/Notifications/Notifications';
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
@@ -10,7 +9,7 @@ import BodySectionWithMarginBottom from './components/BodySectionWithMarginBotto
 import BodySection from './components/BodySection/BodySection';
 
 import { login, logout } from './features/auth/authSlice';
-import { fetchCourses } from './features/courses/coursesSlice'; // <-- import courses thunk
+import { fetchCourses } from './features/courses/coursesSlice';
 
 import axios from 'axios';
 
@@ -21,10 +20,8 @@ const ENDPOINTS = {
 
 export default function App() {
   const dispatch = useDispatch();
-
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const user = useSelector((state) => state.auth.user);
-
   const [notifications, setNotifications] = useState([]);
   const [displayDrawer, setDisplayDrawer] = useState(false);
 
@@ -40,7 +37,6 @@ export default function App() {
     fetchNotifications();
   }, []);
 
-  // Fetch courses from Redux when logged in
   useEffect(() => {
     if (isLoggedIn) {
       dispatch(fetchCourses());
@@ -49,15 +45,12 @@ export default function App() {
 
   const handleDisplayDrawer = useCallback(() => setDisplayDrawer(true), []);
   const handleHideDrawer = useCallback(() => setDisplayDrawer(false), []);
-
   const handleLogin = (email, password) => {
     dispatch(login({ email, password }));
   };
-
   const handleLogOut = () => {
     dispatch(logout());
   };
-
   const markNotificationAsRead = useCallback((id) => {
     setNotifications((prev) => prev.filter((notif) => notif.id !== id));
   }, []);
@@ -79,7 +72,7 @@ export default function App() {
           </BodySectionWithMarginBottom>
         ) : (
           <BodySectionWithMarginBottom title="Course list">
-            <CourseList />  {/* no props */}
+            <CourseList />
           </BodySectionWithMarginBottom>
         )}
         <BodySection title="News from the School">

@@ -1,3 +1,4 @@
+import React from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import { useSelector } from 'react-redux';
 import CourseListRow from './CourseListRow/CourseListRow';
@@ -28,35 +29,17 @@ function CourseList() {
         <thead>
           {courses.length > 0 ? (
             <>
-              <CourseListRow
-                textFirstCell="Available courses"
-                isHeader={true}
-                style={styles.thtd}
-              />
-              <CourseListRow
-                textFirstCell="Course name"
-                textSecondCell="Credit"
-                isHeader={true}
-                style={styles.thtd}
-              />
+              <CourseListRow textFirstCell="Available courses" isHeader={true} style={styles.thtd} />
+              <CourseListRow textFirstCell="Course name" textSecondCell="Credit" isHeader={true} style={styles.thtd} />
             </>
           ) : (
-            <CourseListRow
-              isHeader={true}
-              textFirstCell="No course available yet"
-              style={styles.thtd}
-            />
+            <CourseListRow isHeader={true} textFirstCell="No course available yet" style={styles.thtd} />
           )}
         </thead>
         {courses.length > 0 && (
           <tbody>
             {courses.map((course) => (
-              <CourseListRow
-                key={course.id}
-                textFirstCell={course.name}
-                textSecondCell={course.credit}
-                style={styles.thtd}
-              />
+              <CourseListRow key={course.id} textFirstCell={course.name} textSecondCell={course.credit} style={styles.thtd} />
             ))}
           </tbody>
         )}
