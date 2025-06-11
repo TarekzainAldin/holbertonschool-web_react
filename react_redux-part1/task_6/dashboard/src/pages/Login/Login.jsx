@@ -50,21 +50,12 @@ function Login() {
 
   return (
     <form aria-label="form" onSubmit={handleLoginSubmit}>
-      <div
-      //className={css(styles.body)}
-      >
-        <p
-        //className={css(styles.paragraph)}
-        >
+      <div className={css(styles.body)}>
+        <p className={css(styles.paragraph)}>
           Login to access the full dashboard
         </p>
-        <div
-        //className={css(styles.form)}
-        >
-          <label
-            htmlFor="email"
-            //className={css(styles.label)}
-          >
+        <div className={css(styles.form)}>
+          <label htmlFor="email" className={css(styles.label)}>
             Email
           </label>
           <input
@@ -73,12 +64,9 @@ function Login() {
             id="email"
             value={email}
             onChange={handleChangeEmail}
-            //className={css(styles.input)}
+            className={css(styles.input)}
           />
-          <label
-            htmlFor="password"
-            //className={css(styles.label)}
-          >
+          <label htmlFor="password" className={css(styles.label)}>
             Password
           </label>
           <input
@@ -87,13 +75,13 @@ function Login() {
             id="password"
             value={password}
             onChange={handleChangePassword}
-            //className={css(styles.input)}
+            className={css(styles.input)}
           />
           <input
             type="submit"
             value="OK"
             disabled={!enableSubmit}
-            //className={css(styles.button)}
+            className={css(styles.button)}
           />
         </div>
       </div>
