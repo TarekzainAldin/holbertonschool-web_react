@@ -8,12 +8,15 @@ const NotificationItem = memo(function NotificationItem({
     id
 }) {
     console.log(`Rendering NotificationItem with id: ${id}, type: ${type}, value: ${value}`);
+
+    const handleClick = () => markAsRead(id);
+
     if (type === 'default') {
         return (
             <li
                 style={{ color: "blue" }}
                 data-notification-type={type}
-                onClick={() => markAsRead(id)}
+                onClick={handleClick}
             >
                 {value}
             </li>
@@ -26,7 +29,7 @@ const NotificationItem = memo(function NotificationItem({
                 style={{ color: "red" }}
                 data-notification-type={type}
                 dangerouslySetInnerHTML={html}
-                onClick={() => markAsRead(id)}
+                onClick={handleClick}
             />
         );
     }
@@ -35,7 +38,7 @@ const NotificationItem = memo(function NotificationItem({
         <li
             style={{ color: "red" }}
             data-notification-type={type}
-            onClick={() => markAsRead(id)}
+            onClick={handleClick}
         >
             {value}
         </li>

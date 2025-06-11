@@ -5,7 +5,7 @@ import { getLatestNotification } from '../../utils/utils';
 // الحالة الابتدائية
 const initialState = {
   notifications: [],
-  displayDrawer: true
+  displayDrawer: false // <-- important fix: default drawer closed
 };
 
 // عنوان السيرفر

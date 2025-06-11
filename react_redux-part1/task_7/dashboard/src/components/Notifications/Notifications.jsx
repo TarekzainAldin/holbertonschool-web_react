@@ -1,4 +1,4 @@
-import { useEffect, memo } from 'react';
+import { useEffect, memo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 import closeIcon from '../../assets/close-icon.png';
@@ -50,9 +50,10 @@ const Notifications = memo(function Notifications() {
     dispatch(fetchNotifications());
   }, [dispatch]);
 
-  const handleDisplayDrawer = () => dispatch(showDrawer());
-  const handleHideDrawer = () => dispatch(hideDrawer());
-  const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
+  // Memoize handlers to avoid unnecessary re-renders
+  const handleDisplayDrawer = useCallback(() => dispatch(showDrawer()), [dispatch]);
+  const handleHideDrawer = useCallback(() => dispatch(hideDrawer()), [dispatch]);
+  const handleMarkAsRead = useCallback((id) => dispatch(markNotificationAsRead(id)), [dispatch]);
 
   return (
     <>
