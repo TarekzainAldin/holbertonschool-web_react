@@ -50,7 +50,7 @@ const Notifications = memo(function Notifications() {
     dispatch(fetchNotifications());
   }, [dispatch]);
 
-  // Memoize handlers to avoid unnecessary re-renders
+  // Use stable callbacks
   const handleDisplayDrawer = useCallback(() => dispatch(showDrawer()), [dispatch]);
   const handleHideDrawer = useCallback(() => dispatch(hideDrawer()), [dispatch]);
   const handleMarkAsRead = useCallback((id) => dispatch(markNotificationAsRead(id)), [dispatch]);
@@ -76,7 +76,7 @@ const Notifications = memo(function Notifications() {
                     type={notification.type}
                     value={notification.value}
                     html={notification.html}
-                    markAsRead={() => handleMarkAsRead(notification.id)}
+                    markAsRead={handleMarkAsRead}  {/* <-- stable function passed */}
                     className={notification.type === 'urgent' ? css(styles.notificationTypeUrgent) : css(styles.notificationTypeDefault)}
                   />
                 ))}
