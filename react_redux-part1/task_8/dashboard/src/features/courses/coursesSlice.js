@@ -1,49 +1,40 @@
-// coursesSlice.js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { logout } from "../auth/authSlice";
+import axios from "axios";
 
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { logout } from '../auth/authSlice';
+const API_BASE_URL = "http://localhost:5173";
+const ENDPOINTS = {
+  courses: `${API_BASE_URL}/courses.json`,
+};
 
-// 1. الحالة الابتدائية
 const initialState = {
   courses: [],
 };
 
-// 2. رابط الـ API
-const API_BASE_URL = "http://localhost:5173";
-const ENDPOINTS = {
-  courses: `${API_BASE_URL}/courses.json`
-};
-
-// 3. Thunk غير متزامن لجلب الكورسات
-export const fetchCourses = createAsyncThunk(
-  'courses/fetchCourses',
+const fetchCourses = createAsyncThunk(
+  "courses/fetchCourses",
   async (_, thunkAPI) => {
     try {
-      const response = await fetch(ENDPOINTS.courses);
-      const data = await response.json();
-      return data.courses;
+      const response = await axios.get(ENDPOINTS.courses);
+      return response.data.courses;
     } catch (error) {
-      console.error("Error fetching courses:", error);
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue("Error fetching courses");
     }
   }
 );
 
-// 4. إنشاء slice
 const coursesSlice = createSlice({
-  name: 'courses',
+  name: "courses",
   initialState,
-  reducers: {}, // لا نحتاج لمخفضات محلية
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchCourses.fulfilled, (state, action) => {
         state.courses = action.payload;
       })
-      .addCase(logout, () => {
-        return initialState;
-      });
-  }
+      .addCase(logout, () => initialState);
+  },
 });
 
-// 5. التصدير
+export { fetchCourses };
 export default coursesSlice.reducer;

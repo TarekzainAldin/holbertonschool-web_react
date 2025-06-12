@@ -43,7 +43,9 @@ function Login() {
     handleChangePassword,
     handleLoginSubmit,
   } = useLogin({
-    onLogin: (email, password) => dispatch(login({ email, password })),
+    onLogin: (email, password) => {
+      dispatch(login({ email, password }));
+    },
   });
 
   return (
