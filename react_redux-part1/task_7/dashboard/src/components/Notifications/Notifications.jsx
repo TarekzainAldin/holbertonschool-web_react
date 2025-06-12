@@ -1,75 +1,42 @@
-import { useEffect, memo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { memo } from 'react';
 import { StyleSheet, css } from 'aphrodite';
-import closeIcon from '../../assets/close-icon.png';
+import { useDispatch, useSelector } from 'react-redux';
+import { hideDrawer, showDrawer, markNotificationAsRead } from '../../features/notifications/notificationsSlice';
 import NotificationItem from '../NotificationItem/NotificationItem';
-import {
-  markNotificationAsRead,
-  showDrawer,
-  hideDrawer,
-  fetchNotifications
-} from '../../redux/notificationsSlice';
+import closeIcon from '../../assets/close-icon.png';
 
 const styles = StyleSheet.create({
-  notificationTitle: {
-    float: 'right',
-    position: 'absolute',
-    right: '10px',
-    top: '2px',
-    cursor: 'pointer',
-  },
-  notifications: {
-    border: 'dotted',
-    borderColor: 'crimson',
-    marginTop: '1%',
-    paddingLeft: '1rem',
-    marginBottom: '1rem',
-    width: '40%',
-    marginLeft: '59%',
-    position: 'relative',
-  },
-  notificationsButton: {
-    position: 'absolute',
-    cursor: 'pointer',
-    right: '5px',
-    top: '20px',
-    background: 'transparent',
-    border: 'none',
-  },
+  notificationTitle: {},
+  notifications: {},
+  notificationsButton: {},
   notificationTypeDefault: {
     color: 'blue',
   },
   notificationTypeUrgent: {
     color: 'red',
   },
+  menuItem: {
+    textAlign: 'right',
+    cursor: 'pointer',
+  },
 });
 
-const NotificationsComponent = () => {
+const Notifications = memo(function Notifications() {
   const dispatch = useDispatch();
-  const displayDrawer = useSelector(state => state.notifications.displayDrawer);
-  const notifications = useSelector(state => state.notifications.notifications);
-
-  useEffect(() => {
-    dispatch(fetchNotifications());
-  }, [dispatch]);
+  const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
+  const notifications = useSelector((state) => state.notifications.notifications);
 
   const handleDisplayDrawer = () => dispatch(showDrawer());
   const handleHideDrawer = () => dispatch(hideDrawer());
-  const handleMarkAsRead = id => dispatch(markNotificationAsRead(id));
+  const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
 
   return (
     <>
-      <div
-        className={css(styles.notificationTitle)}
-        onClick={handleDisplayDrawer}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => { if (e.key === 'Enter') handleDisplayDrawer(); }}
-      >
+      <div className={css(styles.menuItem)} onClick={handleDisplayDrawer}>
         Your notifications
       </div>
       {displayDrawer && (
-        <div className={css(styles.notifications)} data-testid="notifications-drawer">
+        <div className={css(styles.notifications)}>
           {notifications.length > 0 ? (
             <>
               <p>Here is the list of notifications</p>
@@ -81,7 +48,7 @@ const NotificationsComponent = () => {
                 <img src={closeIcon} alt="close icon" />
               </button>
               <ul>
-                {notifications.map(notification => (
+                {notifications.map((notification) => (
                   <NotificationItem
                     key={notification.id}
                     id={notification.id}
@@ -105,9 +72,6 @@ const NotificationsComponent = () => {
       )}
     </>
   );
-};
-
-const Notifications = memo(NotificationsComponent);
-Notifications.displayName = 'Notifications';
+});
 
 export default Notifications;
