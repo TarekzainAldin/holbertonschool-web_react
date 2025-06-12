@@ -23,12 +23,12 @@ const styles = StyleSheet.create({
 
 const Notifications = memo(function Notifications() {
   const dispatch = useDispatch();
-  const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
-  const notifications = useSelector((state) => state.notifications.notifications);
+  const displayDrawer = useSelector(state => state.notifications.displayDrawer);
+  const notifications = useSelector(state => state.notifications.notifications);
 
   const handleDisplayDrawer = () => dispatch(showDrawer());
   const handleHideDrawer = () => dispatch(hideDrawer());
-  const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
+  const handleMarkAsRead = id => dispatch(markNotificationAsRead(id));
 
   return (
     <>
@@ -48,7 +48,7 @@ const Notifications = memo(function Notifications() {
                 <img src={closeIcon} alt="close icon" />
               </button>
               <ul>
-                {notifications.map((notification) => (
+                {notifications.map(notification => (
                   <NotificationItem
                     key={notification.id}
                     id={notification.id}
