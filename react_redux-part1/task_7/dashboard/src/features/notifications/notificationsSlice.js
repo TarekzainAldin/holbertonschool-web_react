@@ -1,19 +1,19 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { getLatestNotification } from '../../utils/utils';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { getLatestNotification } from "../../utils/utils";
 
 const initialState = {
   notifications: [],
-  displayDrawer: false,  // Start closed as tests expect
+  displayDrawer: true,
 };
 
 const API_BASE_URL = "http://localhost:5173";
 const ENDPOINTS = {
-  notifications: `${API_BASE_URL}/notifications.json`
+  notifications: `${API_BASE_URL}/notifications.json`,
 };
 
 export const fetchNotifications = createAsyncThunk(
-  'notifications/fetchNotifications',
+  "notifications/fetchNotifications",
   async () => {
     try {
       const response = await axios.get(ENDPOINTS.notifications);
@@ -21,7 +21,7 @@ export const fetchNotifications = createAsyncThunk(
 
       const latestNotif = {
         id: 3,
-        type: 'urgent',
+        type: "urgent",
         html: { __html: getLatestNotification() },
       };
 
@@ -39,18 +39,19 @@ export const fetchNotifications = createAsyncThunk(
 
       return updatedNotifications;
     } catch (error) {
-      // Just silently handle error (no console.log)
-      return [];
+      console.error("Error fetching notifications:", error);
+      throw error;
     }
   }
 );
 
 const notificationsSlice = createSlice({
-  name: 'notifications',
+  name: "notifications",
   initialState,
   reducers: {
     markNotificationAsRead: (state, action) => {
       const idToRemove = action.payload;
+      console.log(`Notification ${idToRemove} has been marked as read`);
       state.notifications = state.notifications.filter(
         (notification) => notification.id !== idToRemove
       );
@@ -69,10 +70,7 @@ const notificationsSlice = createSlice({
   },
 });
 
-export const {
-  markNotificationAsRead,
-  showDrawer,
-  hideDrawer,
-} = notificationsSlice.actions;
+export const { markNotificationAsRead, showDrawer, hideDrawer } =
+  notificationsSlice.actions;
 
 export default notificationsSlice.reducer;
