@@ -1,30 +1,64 @@
-import { memo } from 'react';
-import { StyleSheet, css } from 'aphrodite';
-import { useDispatch, useSelector } from 'react-redux';
-import { hideDrawer, showDrawer, markNotificationAsRead } from '../../features/notifications/notificationsSlice';
-import NotificationItem from '../NotificationItem/NotificationItem';
-import closeIcon from '../../assets/close-icon.png';
+import { memo, useEffect } from "react";
+// import { StyleSheet, css } from 'aphrodite';
+import { useSelector, useDispatch } from "react-redux";
+import closeIcon from "../../assets/close-icon.png";
+import NotificationItem from "../NotificationItem/NotificationItem";
+import {
+  fetchNotifications,
+  markNotificationAsRead,
+  hideDrawer,
+  showDrawer,
+} from "../../features/notifications/notificationsSlice";
 
-const styles = StyleSheet.create({
-  notificationTitle: {},
-  notifications: {},
-  notificationsButton: {},
-  notificationTypeDefault: {
-    color: 'blue',
-  },
-  notificationTypeUrgent: {
-    color: 'red',
-  },
-  menuItem: {
-    textAlign: 'right',
-    cursor: 'pointer',
-  },
-});
+// const styles = StyleSheet.create({
+//   notificationTitle: {
+//     float: 'right',
+//     position: 'absolute',
+//     right: '10px',
+//     top: '2px',
+//     cursor: 'pointer',
+//   },
+//   notifications: {
+//     border: 'dotted',
+//     borderColor: 'crimson',
+//     marginTop: '1%',
+//     paddingLeft: '1rem',
+//     marginBottom: '1rem',
+//     width: '40%',
+//     marginLeft: '59%',
+//   },
+//   notificationsButton: {
+//     position: 'absolute',
+//     cursor: 'pointer',
+//     right: '5px',
+//     top: '20px',
+//     background: 'transparent',
+//     border: 'none',
+//   },
+//   notificationTypeDefault: {
+//     color: 'blue',
+//   },
+//   notificationTypeUrgent: {
+//     color: 'red',
+//   },
+//   menuItem: {
+//     textAlign: 'right',
+//   },
+// });
 
 const Notifications = memo(function Notifications() {
   const dispatch = useDispatch();
-  const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
-  const notifications = useSelector((state) => state.notifications.notifications);
+
+  const notifications = useSelector(
+    (state) => state.notifications.notifications
+  );
+  const displayDrawer = useSelector(
+    (state) => state.notifications.displayDrawer
+  );
+
+  useEffect(() => {
+    dispatch(fetchNotifications());
+  }, [dispatch]);
 
   const handleDisplayDrawer = () => dispatch(showDrawer());
   const handleHideDrawer = () => dispatch(hideDrawer());
@@ -32,19 +66,15 @@ const Notifications = memo(function Notifications() {
 
   return (
     <>
-      <div className={css(styles.menuItem)} onClick={handleDisplayDrawer}>
+      <div onClick={handleDisplayDrawer} style={{ cursor: "pointer" }}>
         Your notifications
       </div>
       {displayDrawer && (
-        <div className={css(styles.notifications)}>
+        <div>
           {notifications.length > 0 ? (
             <>
               <p>Here is the list of notifications</p>
-              <button
-                onClick={handleHideDrawer}
-                aria-label="Close"
-                className={css(styles.notificationsButton)}
-              >
+              <button onClick={handleHideDrawer} aria-label="Close">
                 <img src={closeIcon} alt="close icon" />
               </button>
               <ul>
@@ -56,11 +86,6 @@ const Notifications = memo(function Notifications() {
                     value={notification.value}
                     html={notification.html}
                     markAsRead={() => handleMarkAsRead(notification.id)}
-                    className={
-                      notification.type === 'urgent'
-                        ? css(styles.notificationTypeUrgent)
-                        : css(styles.notificationTypeDefault)
-                    }
                   />
                 ))}
               </ul>
