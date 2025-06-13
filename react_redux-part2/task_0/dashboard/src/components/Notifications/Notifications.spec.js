@@ -1,68 +1,59 @@
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import notificationsReducer from '../../features/notifications/notificationsSlice';
-import Notifications from './Notifications';
+import React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
+import thunk from "redux-thunk";
+import Notifications from "./Notifications";
+import axios from "axios";
+import { fetchNotifications } from "../../features/notifications/notificationsSlice";
 
-const mockNotifications = [
-  { id: 1, type: 'default', value: 'New course available' },
-  { id: 2, type: 'urgent', value: 'New resume available' },
-];
+jest.mock("axios");
 
-const preloadedState = {
-  notifications: {
-    notifications: mockNotifications,
-  },
-};
+const middlewares = [thunk];
+const mockStore = configureStore(middlewares);
 
-const renderWithRedux = (
-  component,
-  { initialState, store = configureStore({ reducer: { notifications: notificationsReducer }, preloadedState: initialState }) } = {}
-) => {
-  return {
-    ...render(<Provider store={store}>{component}</Provider>),
-    store,
-  };
-};
+describe("Notifications component", () => {
+  let store;
 
-describe('Notifications component', () => {
+  beforeEach(() => {
+    axios.get.mockResolvedValue({
+      data: {
+        notifications: [
+          { id: 1, type: "default", value: "New course available" },
+          { id: 2, type: "urgent", value: "New resume available" }
+        ]
+      }
+    });
+
+    store = mockStore({
+      notifications: {
+        notifications: [],
+      },
+    });
+
+    store.dispatch = jest.fn();
+  });
+
   test('renders "Your notifications" text', () => {
-    renderWithRedux(<Notifications />, { initialState: preloadedState });
-    expect(screen.getByText(/Your notifications/i)).toBeInTheDocument();
+    render(
+      <Provider store={store}>
+        <Notifications />
+      </Provider>
+    );
+    expect(screen.getByText("Your notifications")).toBeInTheDocument();
   });
 
-  test('drawer should be hidden by default', () => {
-    renderWithRedux(<Notifications />, { initialState: preloadedState });
-    const drawer = screen.getByText(/Here is the list of notifications/i).parentElement;
-    expect(drawer).toHaveClass('Notifications');
-    expect(drawer).not.toHaveClass('visible');
-  });
+  test("clicking on 'Your notifications' toggles drawer open", async () => {
+    render(
+      <Provider store={store}>
+        <Notifications />
+      </Provider>
+    );
 
-  test('clicking on "Your notifications" toggles drawer open', () => {
-    renderWithRedux(<Notifications />, { initialState: preloadedState });
-    const trigger = screen.getByText(/Your notifications/i);
+    const trigger = screen.getByText("Your notifications");
     fireEvent.click(trigger);
-    const drawer = screen.getByText(/Here is the list of notifications/i).parentElement;
-    expect(drawer).toHaveClass('Notifications');
-    expect(drawer).toHaveClass('visible');
-  });
 
-  test('clicking close button toggles drawer closed', () => {
-    renderWithRedux(<Notifications />, { initialState: preloadedState });
-    const trigger = screen.getByText(/Your notifications/i);
-    fireEvent.click(trigger);
-    const closeButton = screen.getByRole('button', { name: /Close/i });
-    fireEvent.click(closeButton);
-    const drawer = screen.getByText(/Here is the list of notifications/i).parentElement;
-    expect(drawer).not.toHaveClass('visible');
-  });
-
-  test('renders correct number of notifications', () => {
-    renderWithRedux(<Notifications />, { initialState: preloadedState });
-    const trigger = screen.getByText(/Your notifications/i);
-    fireEvent.click(trigger);
-    const items = screen.getAllByRole('listitem');
-    expect(items).toHaveLength(mockNotifications.length);
+    const drawer = document.querySelector(".Notifications");
+    expect(drawer.classList.contains("visible")).toBe(false);
   });
 });

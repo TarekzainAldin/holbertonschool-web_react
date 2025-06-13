@@ -5,9 +5,9 @@
   margin-bottom: 1rem;
   width: 40%;
   margin-left: 59%;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
   opacity: 0;
   visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .Notifications.visible {

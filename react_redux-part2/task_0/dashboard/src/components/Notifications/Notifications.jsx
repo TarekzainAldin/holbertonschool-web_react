@@ -1,14 +1,19 @@
-import  { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import closeIcon from "../../assets/close-icon.png";
 import NotificationItem from "../NotificationItem/NotificationItem";
-import { fetchNotifications, markNotificationAsRead } from "../../features/notifications/notificationsSlice";
-import './Notifications.css';
+import {
+  fetchNotifications,
+  markNotificationAsRead,
+} from "../../features/notifications/notificationsSlice";
+import "./Notifications.css";
 
 const Notifications = memo(function Notifications() {
   const dispatch = useDispatch();
-  const notifications = useSelector((state) => state.notifications.notifications);
-  const [isDrawerVisible, setDrawerVisible] = useState(false);
+  const notifications = useSelector(
+    (state) => state.notifications.notifications
+  );
+
   const drawerRef = useRef(null);
 
   useEffect(() => {
@@ -16,20 +21,10 @@ const Notifications = memo(function Notifications() {
   }, [dispatch]);
 
   const handleToggleDrawer = () => {
-    setDrawerVisible((prev) => !prev);
+    drawerRef.current.classList.toggle("visible");
   };
 
   const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
-
-  useEffect(() => {
-    if (drawerRef.current) {
-      if (isDrawerVisible) {
-        drawerRef.current.classList.add("visible");
-      } else {
-        drawerRef.current.classList.remove("visible");
-      }
-    }
-  }, [isDrawerVisible]);
 
   console.log("Notifications render");
 
@@ -38,7 +33,7 @@ const Notifications = memo(function Notifications() {
       <div onClick={handleToggleDrawer} style={{ cursor: "pointer" }}>
         Your notifications
       </div>
-      <div className="Notifications" ref={drawerRef}>
+      <div className="Notifications visible" ref={drawerRef}>
         {notifications.length > 0 ? (
           <>
             <p>Here is the list of notifications</p>
