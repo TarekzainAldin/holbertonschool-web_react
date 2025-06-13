@@ -1,25 +1,21 @@
-import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import notificationsReducer from './src/features/notifications/notificationsSlice';
-import Notifications from './src/components/Notifications/Notifications';
+import notificationsReducer from '../../features/notifications/notificationsSlice';
+import Notifications from './Notifications';
 
-// Mock notifications data
 const mockNotifications = [
   { id: 1, type: 'default', value: 'New course available' },
   { id: 2, type: 'urgent', value: 'New resume available' },
 ];
 
-// Mock initial state
 const preloadedState = {
   notifications: {
     notifications: mockNotifications,
   },
 };
 
-// Helper render function with Redux store
 const renderWithRedux = (
   component,
   { initialState, store = configureStore({ reducer: { notifications: notificationsReducer }, preloadedState: initialState }) } = {}
@@ -38,7 +34,6 @@ describe('Notifications component', () => {
 
   test('drawer should be hidden by default', () => {
     renderWithRedux(<Notifications />, { initialState: preloadedState });
-    const trigger = screen.getByText(/Your notifications/i);
     const drawer = screen.getByText(/Here is the list of notifications/i).parentElement;
     expect(drawer).toHaveClass('Notifications');
     expect(drawer).not.toHaveClass('visible');
@@ -48,7 +43,6 @@ describe('Notifications component', () => {
     renderWithRedux(<Notifications />, { initialState: preloadedState });
     const trigger = screen.getByText(/Your notifications/i);
     fireEvent.click(trigger);
-
     const drawer = screen.getByText(/Here is the list of notifications/i).parentElement;
     expect(drawer).toHaveClass('Notifications');
     expect(drawer).toHaveClass('visible');
@@ -57,10 +51,9 @@ describe('Notifications component', () => {
   test('clicking close button toggles drawer closed', () => {
     renderWithRedux(<Notifications />, { initialState: preloadedState });
     const trigger = screen.getByText(/Your notifications/i);
-    fireEvent.click(trigger); // open
+    fireEvent.click(trigger);
     const closeButton = screen.getByRole('button', { name: /Close/i });
-    fireEvent.click(closeButton); // close
-
+    fireEvent.click(closeButton);
     const drawer = screen.getByText(/Here is the list of notifications/i).parentElement;
     expect(drawer).not.toHaveClass('visible');
   });

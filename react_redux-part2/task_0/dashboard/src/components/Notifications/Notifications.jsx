@@ -1,42 +1,44 @@
-import { memo, useEffect, useRef } from "react";
+import  { memo, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import closeIcon from "../../assets/close-icon.png";
 import NotificationItem from "../NotificationItem/NotificationItem";
-import {
-  fetchNotifications,
-  markNotificationAsRead,
-} from "../../features/notifications/notificationsSlice";
+import { fetchNotifications, markNotificationAsRead } from "../../features/notifications/notificationsSlice";
+import './Notifications.css';
 
 const Notifications = memo(function Notifications() {
   const dispatch = useDispatch();
-  const drawerRef = useRef();
-
-  const notifications = useSelector(
-    (state) => state.notifications.notifications
-  );
+  const notifications = useSelector((state) => state.notifications.notifications);
+  const [isDrawerVisible, setDrawerVisible] = useState(false);
+  const drawerRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchNotifications());
   }, [dispatch]);
 
   const handleToggleDrawer = () => {
-    if (drawerRef.current.classList.contains("visible")) {
-      drawerRef.current.classList.remove("visible");
-    } else {
-      drawerRef.current.classList.add("visible");
-    }
+    setDrawerVisible((prev) => !prev);
   };
 
   const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
 
-  console.log(notifications, "this is the notifications log from my choosing");
+  useEffect(() => {
+    if (drawerRef.current) {
+      if (isDrawerVisible) {
+        drawerRef.current.classList.add("visible");
+      } else {
+        drawerRef.current.classList.remove("visible");
+      }
+    }
+  }, [isDrawerVisible]);
+
+  console.log("Notifications render");
 
   return (
     <>
       <div onClick={handleToggleDrawer} style={{ cursor: "pointer" }}>
         Your notifications
       </div>
-      <div ref={drawerRef} className="Notifications">
+      <div className="Notifications" ref={drawerRef}>
         {notifications.length > 0 ? (
           <>
             <p>Here is the list of notifications</p>

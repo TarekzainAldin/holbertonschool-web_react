@@ -64,5 +64,4 @@ const notificationsSlice = createSlice({
 });
 
 export const { markNotificationAsRead } = notificationsSlice.actions;
-
 export default notificationsSlice.reducer;
