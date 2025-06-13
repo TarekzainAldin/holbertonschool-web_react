@@ -3,8 +3,8 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import notificationsReducer from '../../features/notifications/notificationsSlice';
-import Notifications from './Notifications';
+import notificationsReducer from './src/features/notifications/notificationsSlice';
+import Notifications from './src/components/Notifications/Notifications';
 
 // Mock notifications data
 const mockNotifications = [
@@ -38,6 +38,7 @@ describe('Notifications component', () => {
 
   test('drawer should be hidden by default', () => {
     renderWithRedux(<Notifications />, { initialState: preloadedState });
+    const trigger = screen.getByText(/Your notifications/i);
     const drawer = screen.getByText(/Here is the list of notifications/i).parentElement;
     expect(drawer).toHaveClass('Notifications');
     expect(drawer).not.toHaveClass('visible');
@@ -57,7 +58,8 @@ describe('Notifications component', () => {
     renderWithRedux(<Notifications />, { initialState: preloadedState });
     const trigger = screen.getByText(/Your notifications/i);
     fireEvent.click(trigger); // open
-    fireEvent.click(screen.getByRole('button', { name: /Close/i })); // close
+    const closeButton = screen.getByRole('button', { name: /Close/i });
+    fireEvent.click(closeButton); // close
 
     const drawer = screen.getByText(/Here is the list of notifications/i).parentElement;
     expect(drawer).not.toHaveClass('visible');
