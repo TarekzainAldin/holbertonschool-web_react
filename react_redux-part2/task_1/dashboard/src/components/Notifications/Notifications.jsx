@@ -1,64 +1,35 @@
-import { memo, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import closeIcon from "../../assets/close-icon.png";
-import NotificationItem from "../NotificationItem/NotificationItem";
-import {
-  fetchNotifications,
-  markNotificationAsRead,
-} from "../../features/notifications/notificationsSlice";
-import "./Notifications.css";
+import  { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchNotifications } from '../../redux/notificationsSlice';
 
-const Notifications = memo(function Notifications() {
+export default function Notifications() {
   const dispatch = useDispatch();
-  const notifications = useSelector(
-    (state) => state.notifications.notifications
-  );
-
-  const drawerRef = useRef(null);
+  const { notifications, loading, error } = useSelector((state) => state.notifications);
 
   useEffect(() => {
     dispatch(fetchNotifications());
   }, [dispatch]);
 
-  const handleToggleDrawer = () => {
-    drawerRef.current.classList.toggle("visible");
-  };
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
-  const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
-
-  console.log("Notifications render");
+  if (error) {
+    return <p>Error fetching notifications: {error}</p>;
+  }
 
   return (
-    <>
-      <div onClick={handleToggleDrawer} style={{ cursor: "pointer" }}>
-        Your notifications
-      </div>
-      <div className="Notifications visible" ref={drawerRef}>
-        {notifications.length > 0 ? (
-          <>
-            <p>Here is the list of notifications</p>
-            <button onClick={handleToggleDrawer} aria-label="Close">
-              <img src={closeIcon} alt="close icon" />
-            </button>
-            <ul>
-              {notifications.map((notification) => (
-                <NotificationItem
-                  key={notification.id}
-                  id={notification.id}
-                  type={notification.type}
-                  value={notification.value}
-                  html={notification.html}
-                  markAsRead={() => handleMarkAsRead(notification.id)}
-                />
-              ))}
-            </ul>
-          </>
-        ) : (
-          <p>No new notifications for now</p>
-        )}
-      </div>
-    </>
+    <div>
+      <h2>Notifications</h2>
+      {notifications.length === 0 ? (
+        <p>No notifications</p>
+      ) : (
+        <ul>
+          {notifications.map((notif) => (
+            <li key={notif.id}>{notif.value || notif.html?.__html}</li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
-});
-
-export default Notifications;
+}

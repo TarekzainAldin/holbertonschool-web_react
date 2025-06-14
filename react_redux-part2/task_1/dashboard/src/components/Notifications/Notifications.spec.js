@@ -1,59 +1,57 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { Provider } from "react-redux";
-import configureStore from "redux-mock-store";
-import thunk from "redux-thunk";
-import Notifications from "./Notifications";
-import axios from "axios";
-import { fetchNotifications } from "../../features/notifications/notificationsSlice";
+import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import Notifications from './Notifications';
 
-jest.mock("axios");
 
-const middlewares = [thunk];
-const mockStore = configureStore(middlewares);
+jest.mock('../../redux/notificationsSlice', () => ({
+  fetchNotifications: jest.fn(() => ({ type: 'notifications/fetchNotifications' })),
+}));
 
-describe("Notifications component", () => {
-  let store;
+const mockStore = configureStore([thunk]);
 
-  beforeEach(() => {
-    axios.get.mockResolvedValue({
-      data: {
-        notifications: [
-          { id: 1, type: "default", value: "New course available" },
-          { id: 2, type: "urgent", value: "New resume available" }
-        ]
-      }
+describe('Notifications component', () => {
+  it('renders loading state', () => {
+    const store = mockStore({
+      notifications: { notifications: [], loading: true, error: null },
     });
 
-    store = mockStore({
-      notifications: {
-        notifications: [],
-      },
-    });
-
-    store.dispatch = jest.fn();
-  });
-
-  test('renders "Your notifications" text', () => {
-    render(
-      <Provider store={store}>
-        <Notifications />
-      </Provider>
-    );
-    expect(screen.getByText("Your notifications")).toBeInTheDocument();
-  });
-
-  test("clicking on 'Your notifications' toggles drawer open", async () => {
     render(
       <Provider store={store}>
         <Notifications />
       </Provider>
     );
 
-    const trigger = screen.getByText("Your notifications");
-    fireEvent.click(trigger);
+    expect(screen.getByText(/Loading/i)).toBeInTheDocument();
+  });
 
-    const drawer = document.querySelector(".Notifications");
-    expect(drawer.classList.contains("visible")).toBe(false);
+  it('renders notifications list', () => {
+    const notificationsData = [{ id: 1, value: 'Test notification' }];
+    const store = mockStore({
+      notifications: { notifications: notificationsData, loading: false, error: null },
+    });
+
+    render(
+      <Provider store={store}>
+        <Notifications />
+      </Provider>
+    );
+
+    expect(screen.getByText(/Test notification/i)).toBeInTheDocument();
+  });
+
+  it('renders error state', () => {
+    const store = mockStore({
+      notifications: { notifications: [], loading: false, error: 'Failed to fetch' },
+    });
+
+    render(
+      <Provider store={store}>
+        <Notifications />
+      </Provider>
+    );
+
+    expect(screen.getByText(/Error fetching notifications/i)).toBeInTheDocument();
   });
 });
