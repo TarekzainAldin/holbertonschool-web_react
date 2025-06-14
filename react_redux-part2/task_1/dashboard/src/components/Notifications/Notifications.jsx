@@ -15,7 +15,7 @@ export default function Notifications() {
   }
 
   if (error) {
-    return <div>Error fetching notifications: {error}</div>;
+    return <div>Error: {error}</div>;
   }
 
   return (
