@@ -16,7 +16,7 @@ export const fetchNotifications = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(ENDPOINTS.notifications);
-      // Filter unread notifications only, map to required fields
+      // نأخذ فقط الإشعارات التي isRead === false، مع الحقول المطلوبة فقط
       const unreadNotifications = response.data.notifications
         .filter((notif) => notif.isRead === false)
         .map(({ id, type, isRead, value }) => ({ id, type, isRead, value }));
@@ -32,9 +32,9 @@ const notificationsSlice = createSlice({
   initialState,
   reducers: {
     markNotificationAsRead: (state, action) => {
-      const idToMark = action.payload;
+      const idToRemove = action.payload;
       state.notifications = state.notifications.filter(
-        (notif) => notif.id !== idToMark
+        (notif) => notif.id !== idToRemove
       );
     },
   },
@@ -44,6 +44,7 @@ const notificationsSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
+        // تحديث الإشعارات فقط بالإشعارات التي جلبناها من الـ thunk
         state.notifications = action.payload;
         state.loading = false;
       })
