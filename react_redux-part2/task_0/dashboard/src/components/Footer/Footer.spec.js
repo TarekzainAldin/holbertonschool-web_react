@@ -1,61 +1,44 @@
-import { render, screen } from '@testing-library/react';
-import Footer from './Footer';
-import { getCurrentYear, getFooterCopy } from '../../utils/utils';
-import { StyleSheetTestUtils } from "aphrodite";
 
-beforeEach(() => {
-  StyleSheetTestUtils.suppressStyleInjection();
-});
+import { render, screen } from "@testing-library/react";
+import Footer from "./Footer";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import * as utils from "../../utils/utils";
 
-afterEach(() => {
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-});
+// Mock utils functions
+jest.mock("../../utils/utils");
 
+describe("Footer component", () => {
+  beforeEach(() => {
+    utils.getCurrentYear.mockReturnValue(2025);
+    utils.getFooterCopy.mockReturnValue("Holberton School");
+  });
 
-describe('Footer Component', () => {
-    const defaultUser = { isLoggedIn: false, email: '', password: '' };
-    const loggedInUser = { isLoggedIn: true, email: 'test@example.com', password: 'password123' };
-    describe('Basic Rendering', () => {
-        test('Renders without crashing', () => {
-            render(<Footer user={defaultUser} />);
-            const footerParagraph = screen.getByText(`Copyright ${getCurrentYear()} - ${getFooterCopy(true)}`);
-            expect(footerParagraph).toHaveTextContent(/copyright \d{4} - holberton school/i);
-        });
-
-        test('Does not render contact link when user is not logged in', () => {
-            render(<Footer user={defaultUser} />);
-            const link = screen.queryByRole('link', { name: /contact us/i });
-            expect(link).not.toBeInTheDocument();
-        });
-
-        test('Renders contact link when user is logged in', () => {
-            render(<Footer user={loggedInUser} />);
-            const link = screen.getByRole('link', { name: /contact us/i });
-            expect(link).toBeInTheDocument();
-        });
+  const renderWithStore = (isLoggedIn) => {
+    const store = configureStore({
+      reducer: () => ({
+        auth: { isLoggedIn }
+      })
     });
 
-    describe('Edge Scenarios', () => {
-        test('does not render contact link when user email is null', () => {
-            const withTruthyIsLoggedIn = { isLoggedIn: true };
-            render(<Footer user={withTruthyIsLoggedIn} />);
-            const link = screen.queryByRole('link', { name: /contact us/i });
-            expect(link).toBeInTheDocument();
-        });
+    render(
+      <Provider store={store}>
+        <Footer />
+      </Provider>
+    );
+  };
 
-        test('Does not render contact link when user email is invalid', () => {
-            const withFalsyIsLoggedIn = { isLoggedIn: false };
-            render(<Footer user={withFalsyIsLoggedIn} />);
+  test("renders Footer when user is not logged in", () => {
+    renderWithStore(false);
 
-            const link = screen.queryByRole('link', { name: /contact us/i });
-            expect(link).not.toBeInTheDocument();
-        });
-    });
+    expect(screen.getByText("Copyright 2025 - Holberton School")).toBeInTheDocument();
+    expect(screen.queryByText("Contact us")).not.toBeInTheDocument();
+  });
 
-    test('Should confirm Footer is a functional component', () => {
-        const FooterPrototype = Object.getOwnPropertyNames(Footer.prototype);
-        expect(FooterPrototype).toEqual(expect.arrayContaining(['constructor']));
-        expect(FooterPrototype).toHaveLength(1);
-        expect(Footer.prototype.__proto__).toEqual({});
-    });
+  test("renders Footer when user is logged in", () => {
+    renderWithStore(true);
+
+    expect(screen.getByText("Copyright 2025 - Holberton School")).toBeInTheDocument();
+    expect(screen.getByText("Contact us")).toBeInTheDocument();
+  });
 });
