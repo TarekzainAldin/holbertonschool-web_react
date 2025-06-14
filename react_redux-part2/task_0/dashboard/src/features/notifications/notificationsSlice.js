@@ -4,6 +4,8 @@ import { getLatestNotification } from "../../utils/utils";
 
 const initialState = {
   notifications: [],
+  loading: false,        // <-- Add loading state here
+  error: null,           // Optional: track error for better UX/debug
 };
 
 const API_BASE_URL = "http://localhost:5173";
@@ -57,9 +59,19 @@ const notificationsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchNotifications.fulfilled, (state, action) => {
-      state.notifications = action.payload;
-    });
+    builder
+      .addCase(fetchNotifications.pending, (state) => {
+        state.loading = true;    // Set loading true when request starts
+        state.error = null;
+      })
+      .addCase(fetchNotifications.fulfilled, (state, action) => {
+        state.notifications = action.payload;
+        state.loading = false;   // Loading false on success
+      })
+      .addCase(fetchNotifications.rejected, (state, action) => {
+        state.loading = false;   // Loading false on error too
+        state.error = action.error.message;
+      });
   },
 });
 
