@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import CourseList from './CourseList';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -55,8 +55,8 @@ describe('CourseList', () => {
     const { store } = renderWithRedux(<CourseList />);
     await store.dispatch(fetchCourses());
 
-    const checkbox = await screen.findAllByRole('checkbox');
-    fireEvent.click(checkbox[0]);
+    const checkboxes = await screen.findAllByRole('checkbox');
+    fireEvent.click(checkboxes[0]);
 
     const state = store.getState().courses.courses;
     expect(state[0].isSelected).toBe(true);

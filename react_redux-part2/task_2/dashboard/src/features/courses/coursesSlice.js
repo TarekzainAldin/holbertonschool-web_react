@@ -16,7 +16,7 @@ export const fetchCourses = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(ENDPOINTS.courses);
-      // نضيف isSelected=false لكل كورس
+      // أضف isSelected = false لكل كورس
       return response.data.courses.map(course => ({
         ...course,
         isSelected: false,
@@ -33,20 +33,16 @@ const coursesSlice = createSlice({
   reducers: {
     selectCourse: (state, action) => {
       const courseId = action.payload;
-      const course = state.courses.find(course => course.id === courseId);
-      if (course) {
-        course.isSelected = true;
-      }
+      const course = state.courses.find(c => c.id === courseId);
+      if (course) course.isSelected = true;
     },
     unSelectCourse: (state, action) => {
       const courseId = action.payload;
-      const course = state.courses.find(course => course.id === courseId);
-      if (course) {
-        course.isSelected = false;
-      }
-    }
+      const course = state.courses.find(c => c.id === courseId);
+      if (course) course.isSelected = false;
+    },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
       .addCase(fetchCourses.fulfilled, (state, action) => {
         state.courses = action.payload;

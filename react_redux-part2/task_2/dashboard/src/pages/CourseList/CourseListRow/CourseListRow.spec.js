@@ -5,8 +5,7 @@ import CourseListRow from './CourseListRow/CourseListRow';
 describe('CourseListRow', () => {
   test('renders header row with one cell', () => {
     render(<CourseListRow isHeader={true} textFirstCell="Available courses" />);
-    const cell = screen.getByText('Available courses');
-    expect(cell).toBeInTheDocument();
+    expect(screen.getByText('Available courses')).toBeInTheDocument();
   });
 
   test('renders header row with two cells', () => {
@@ -15,7 +14,7 @@ describe('CourseListRow', () => {
     expect(screen.getByText('Credit')).toBeInTheDocument();
   });
 
-  test('renders normal row with checkbox', () => {
+  test('renders normal row with checkbox and calls onChangeRow', () => {
     const onChangeRow = jest.fn();
     render(<CourseListRow id={1} textFirstCell="ES6" textSecondCell="60" onChangeRow={onChangeRow} />);
 
@@ -24,6 +23,7 @@ describe('CourseListRow', () => {
 
     const checkbox = screen.getByRole('checkbox');
     fireEvent.click(checkbox);
+
     expect(onChangeRow).toHaveBeenCalledWith(1, true);
   });
 });
