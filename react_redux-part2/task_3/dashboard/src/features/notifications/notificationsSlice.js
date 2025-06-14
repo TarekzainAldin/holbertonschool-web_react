@@ -11,16 +11,21 @@ const ENDPOINTS = {
   notifications: `${API_BASE_URL}/notifications.json`,
 };
 
-// thunk لجلب الإشعارات، مع ترشيح فقط غير المقروءة
 export const fetchNotifications = createAsyncThunk(
   "notifications/fetchNotifications",
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(ENDPOINTS.notifications);
-      // ترشيح الإشعارات غير المقروءة فقط، مع الحقول id, type, isRead, value
+      // فقط العناصر الغير مقروءة (isRead === false)
+      // ونحتفظ فقط بالحقول id, type, isRead, value
       const unreadNotifications = response.data.notifications
         .filter((notif) => notif.isRead === false)
-        .map(({ id, type, isRead, value }) => ({ id, type, isRead, value }));
+        .map(({ id, type, isRead, value }) => ({
+          id,
+          type,
+          isRead,
+          value,
+        }));
 
       return unreadNotifications;
     } catch (error) {
@@ -46,6 +51,7 @@ const notificationsSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
+        // تأكد أن الـ state.notifications يحتفظ فقط بالإشعارات الغير مقروءة
         state.notifications = action.payload;
         state.loading = false;
       })
