@@ -5,11 +5,11 @@ export default function Notifications() {
   const { notifications, loading } = useSelector((state) => state.notifications);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <div>Loading...</div>;
   }
 
   if (notifications.length === 0) {
-    return <p>No notifications</p>;
+    return <div>No notifications</div>;
   }
 
   return (
