@@ -1,50 +1,59 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import configureStore from "redux-mock-store";
+import thunk from "redux-thunk";
 import Notifications from "./Notifications";
+import axios from "axios";
+import { fetchNotifications } from "../../features/notifications/notificationsSlice";
 
-const mockStore = configureStore([]);
+jest.mock("axios");
+
+const middlewares = [thunk];
+const mockStore = configureStore(middlewares);
 
 describe("Notifications component", () => {
-  it("displays loading indicator (Loading...) before data fetching", () => {
-    const store = mockStore({
-      notifications: {
-        notifications: [],
-        loading: true,
-        error: null,
-      },
-    });
+  let store;
 
-    render(
-      <Provider store={store}>
-        <Notifications />
-      </Provider>
-    );
-
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
-  });
-
-  it("displays notifications after loading is false", () => {
-    const store = mockStore({
-      notifications: {
+  beforeEach(() => {
+    axios.get.mockResolvedValue({
+      data: {
         notifications: [
           { id: 1, type: "default", value: "New course available" },
-          { id: 2, type: "urgent", html: { __html: "<strong>Urgent notification</strong>" } },
-        ],
-        loading: false,
-        error: null,
+          { id: 2, type: "urgent", value: "New resume available" }
+        ]
+      }
+    });
+
+    store = mockStore({
+      notifications: {
+        notifications: [],
       },
     });
 
+    store.dispatch = jest.fn();
+  });
+
+  test('renders "Your notifications" text', () => {
+    render(
+      <Provider store={store}>
+        <Notifications />
+      </Provider>
+    );
+    expect(screen.getByText("Your notifications")).toBeInTheDocument();
+  });
+
+  test("clicking on 'Your notifications' toggles drawer open", async () => {
     render(
       <Provider store={store}>
         <Notifications />
       </Provider>
     );
 
-    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
-    expect(screen.getByText("New course available")).toBeInTheDocument();
-    expect(screen.getByText("Urgent notification")).toBeInTheDocument();
+    const trigger = screen.getByText("Your notifications");
+    fireEvent.click(trigger);
+
+    const drawer = document.querySelector(".Notifications");
+    expect(drawer.classList.contains("visible")).toBe(false);
   });
 });

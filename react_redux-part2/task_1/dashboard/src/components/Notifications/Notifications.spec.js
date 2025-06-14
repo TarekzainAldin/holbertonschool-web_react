@@ -1,21 +1,18 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-import Notifications from './Notifications';
-import { fetchNotifications } from '../../redux/notificationsSlice';
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
+import Notifications from "./Notifications";
 
-jest.mock('../../redux/notificationsSlice', () => ({
-  fetchNotifications: jest.fn(() => ({ type: 'notifications/fetchNotifications' })),
-}));
+const mockStore = configureStore([]);
 
-const mockStore = configureStore([thunk]);
-
-describe('Notifications component', () => {
-  it('displays loading state', () => {
+describe("Notifications component", () => {
+  it("renders loading indicator when loading is true", () => {
     const store = mockStore({
-      notifications: { notifications: [], loading: true, error: null },
+      notifications: {
+        notifications: [],
+        loading: true,
+      },
     });
 
     render(
@@ -24,13 +21,15 @@ describe('Notifications component', () => {
       </Provider>
     );
 
-    expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 
-  it('displays notifications list', () => {
-    const notificationsData = [{ id: 1, value: 'Test notification' }];
+  it("renders no notifications when list is empty", () => {
     const store = mockStore({
-      notifications: { notifications: notificationsData, loading: false, error: null },
+      notifications: {
+        notifications: [],
+        loading: false,
+      },
     });
 
     render(
@@ -39,12 +38,18 @@ describe('Notifications component', () => {
       </Provider>
     );
 
-    expect(screen.getByText(/Test notification/i)).toBeInTheDocument();
+    expect(screen.getByText("No notifications")).toBeInTheDocument();
   });
 
-  it('displays error message', () => {
+  it("renders notifications list when data is available", () => {
     const store = mockStore({
-      notifications: { notifications: [], loading: false, error: 'Failed to fetch' },
+      notifications: {
+        notifications: [
+          { id: 1, type: "default", value: "New course available" },
+          { id: 2, type: "urgent", value: "New resume available" },
+        ],
+        loading: false,
+      },
     });
 
     render(
@@ -53,6 +58,7 @@ describe('Notifications component', () => {
       </Provider>
     );
 
-    expect(screen.getByText(/Error fetching notifications/i)).toBeInTheDocument();
+    expect(screen.getByText("New course available")).toBeInTheDocument();
+    expect(screen.getByText("New resume available")).toBeInTheDocument();
   });
 });

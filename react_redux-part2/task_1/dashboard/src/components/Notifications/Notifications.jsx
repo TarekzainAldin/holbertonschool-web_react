@@ -1,37 +1,24 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchNotifications } from '../../redux/notificationsSlice';
+import React from "react";
+import { useSelector } from "react-redux";
 
 export default function Notifications() {
-  const dispatch = useDispatch();
-  const { notifications, loading, error } = useSelector((state) => state.notifications);
-
-  useEffect(() => {
-    dispatch(fetchNotifications());
-  }, [dispatch]);
+  const { notifications, loading } = useSelector((state) => state.notifications);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <p>Loading...</p>;
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (notifications.length === 0) {
+    return <div>No notifications</div>;
   }
 
   return (
-    <div>
-      <h2>Notifications</h2>
-      {notifications.length === 0 ? (
-        <p>No notifications</p>
-      ) : (
-        <ul>
-          {notifications.map((notif) => (
-            <li key={notif.id}>
-              {notif.value || (notif.html ? <span dangerouslySetInnerHTML={notif.html} /> : null)}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <ul>
+      {notifications.map(({ id, type, value, html }) => (
+        <li key={id} data-notification-type={type}>
+          {value ? value : <span dangerouslySetInnerHTML={html} />}
+        </li>
+      ))}
+    </ul>
   );
 }
