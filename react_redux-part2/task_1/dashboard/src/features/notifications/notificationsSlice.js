@@ -1,14 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5173';
-const NOTIFICATIONS_URL = `${API_BASE_URL}/notifications.json`;
-
-// Thunk to fetch notifications
 export const fetchNotifications = createAsyncThunk(
   'notifications/fetchNotifications',
   async () => {
-    const response = await axios.get(NOTIFICATIONS_URL);
+    const response = await axios.get('/notifications.json');
     return response.data.notifications;
   }
 );
@@ -17,10 +13,9 @@ const notificationsSlice = createSlice({
   name: 'notifications',
   initialState: {
     notifications: [],
-    loading: false,
+    loading: true, // <-- Start with loading true
     error: null,
   },
-  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchNotifications.pending, (state) => {
@@ -28,8 +23,8 @@ const notificationsSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
-        state.loading = false;
         state.notifications = action.payload;
+        state.loading = false;
       })
       .addCase(fetchNotifications.rejected, (state, action) => {
         state.loading = false;

@@ -11,15 +11,15 @@ export default function Notifications() {
   }, [dispatch]);
 
   if (loading) {
-    return <div className="notifications-loading">Loading...</div>;
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div className="notifications-error">Error fetching notifications: {error}</div>;
+    return <div>Error fetching notifications: {error}</div>;
   }
 
   return (
-    <div className="notifications">
+    <div>
       <h2>Notifications</h2>
       {notifications.length === 0 ? (
         <p>No notifications</p>
