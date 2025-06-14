@@ -1,9 +1,10 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import Notifications from './Notifications';
-
+import { fetchNotifications } from '../../redux/notificationsSlice';
 
 jest.mock('../../redux/notificationsSlice', () => ({
   fetchNotifications: jest.fn(() => ({ type: 'notifications/fetchNotifications' })),
@@ -12,7 +13,7 @@ jest.mock('../../redux/notificationsSlice', () => ({
 const mockStore = configureStore([thunk]);
 
 describe('Notifications component', () => {
-  it('renders loading state', () => {
+  it('displays loading state', () => {
     const store = mockStore({
       notifications: { notifications: [], loading: true, error: null },
     });
@@ -23,10 +24,10 @@ describe('Notifications component', () => {
       </Provider>
     );
 
-    expect(screen.getByText(/Loading/i)).toBeInTheDocument();
+    expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
   });
 
-  it('renders notifications list', () => {
+  it('displays notifications list', () => {
     const notificationsData = [{ id: 1, value: 'Test notification' }];
     const store = mockStore({
       notifications: { notifications: notificationsData, loading: false, error: null },
@@ -41,7 +42,7 @@ describe('Notifications component', () => {
     expect(screen.getByText(/Test notification/i)).toBeInTheDocument();
   });
 
-  it('renders error state', () => {
+  it('displays error message', () => {
     const store = mockStore({
       notifications: { notifications: [], loading: false, error: 'Failed to fetch' },
     });

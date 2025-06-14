@@ -1,4 +1,4 @@
-import  { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNotifications } from '../../redux/notificationsSlice';
 
@@ -11,22 +11,24 @@ export default function Notifications() {
   }, [dispatch]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <div className="notifications-loading">Loading...</div>;
   }
 
   if (error) {
-    return <p>Error fetching notifications: {error}</p>;
+    return <div className="notifications-error">Error fetching notifications: {error}</div>;
   }
 
   return (
-    <div>
+    <div className="notifications">
       <h2>Notifications</h2>
       {notifications.length === 0 ? (
         <p>No notifications</p>
       ) : (
         <ul>
           {notifications.map((notif) => (
-            <li key={notif.id}>{notif.value || notif.html?.__html}</li>
+            <li key={notif.id}>
+              {notif.value || (notif.html ? <span dangerouslySetInnerHTML={notif.html} /> : null)}
+            </li>
           ))}
         </ul>
       )}
