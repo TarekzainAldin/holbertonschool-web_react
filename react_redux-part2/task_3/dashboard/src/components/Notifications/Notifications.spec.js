@@ -1,11 +1,9 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import Notifications from "./Notifications";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import notificationsReducer, {
-  fetchNotifications,
-} from "../../features/notifications/notificationsSlice";
+import notificationsReducer, { fetchNotifications } from "../../features/notifications/notificationsSlice";
+import Notifications from "./Notifications";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 
@@ -17,7 +15,7 @@ const ENDPOINTS = {
 const mockNotifications = [
   { id: 1, type: "default", isRead: false, value: "New course available" },
   { id: 2, type: "urgent", isRead: false, value: "New resume available" },
-  { id: 3, type: "urgent", isRead: true, value: "This is read" },
+  { id: 3, type: "default", isRead: true, value: "Old notification" }, // Should be filtered out
 ];
 
 const renderWithRedux = (component) => {
@@ -33,50 +31,59 @@ const renderWithRedux = (component) => {
   };
 };
 
-describe("Notifications", () => {
+describe("Notifications component", () => {
   let mock;
 
   beforeEach(() => {
     mock = new MockAdapter(axios);
-    mock.onGet(ENDPOINTS.notifications).reply(200, {
-      notifications: mockNotifications,
-    });
+    mock.onGet(ENDPOINTS.notifications).reply(200, { notifications: mockNotifications });
   });
 
   afterEach(() => {
     mock.restore();
   });
 
-  test("renders loading text initially", () => {
+  test("renders loading state initially", () => {
     const { store } = renderWithRedux(<Notifications />);
-    expect(screen.getByText(/Loading/i)).toBeInTheDocument();
+    expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
 
-  test("renders notifications after fetch and filters urgent", async () => {
+  test("renders only unread notifications after fetch", async () => {
     const { store } = renderWithRedux(<Notifications />);
     await store.dispatch(fetchNotifications());
 
-    // اضغط زر urgent لفلترة
-    fireEvent.click(screen.getByText(/‼️ Urgent/i));
+    // Default filter "all"
+    expect(await screen.findByText("New course available")).toBeInTheDocument();
+    expect(screen.getByText("New resume available")).toBeInTheDocument();
+    expect(screen.queryByText("Old notification")).not.toBeInTheDocument();
+  });
+
+  test("filter urgent notifications", async () => {
+    const { store } = renderWithRedux(<Notifications />);
+    await store.dispatch(fetchNotifications());
+
+    fireEvent.click(screen.getByText("‼️ Urgent"));
     expect(screen.getByText("New resume available")).toBeInTheDocument();
     expect(screen.queryByText("New course available")).not.toBeInTheDocument();
   });
 
-  test("renders notifications after fetch and filters default", async () => {
+  test("filter default notifications", async () => {
     const { store } = renderWithRedux(<Notifications />);
     await store.dispatch(fetchNotifications());
 
-    fireEvent.click(screen.getByText(/🔔 Default/i));
+    fireEvent.click(screen.getByText("🔵 Default"));
     expect(screen.getByText("New course available")).toBeInTheDocument();
     expect(screen.queryByText("New resume available")).not.toBeInTheDocument();
   });
 
-  test("renders all notifications after fetch", async () => {
+  test("mark notification as read removes it from list", async () => {
     const { store } = renderWithRedux(<Notifications />);
     await store.dispatch(fetchNotifications());
 
-    fireEvent.click(screen.getByText(/All/i));
-    expect(screen.getByText("New course available")).toBeInTheDocument();
-    expect(screen.getByText("New resume available")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("New course available"));
+
+    await waitFor(() =>
+      expect(screen.queryByText("New course available")).not.toBeInTheDocument()
+    );
   });
 });

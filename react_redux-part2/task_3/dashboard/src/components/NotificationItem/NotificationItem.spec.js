@@ -1,44 +1,29 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import NotificationItem from "./NotificationItem";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import notificationsReducer, {
-  markNotificationAsRead,
-} from "../../features/notifications/notificationsSlice";
 
-const renderWithRedux = (component) => {
-  const store = configureStore({
-    reducer: {
-      notifications: notificationsReducer,
-    },
+describe("NotificationItem component", () => {
+  test("renders with correct text and color for default type", () => {
+    render(<NotificationItem id={1} type="default" value="Default notification" />);
+    const li = screen.getByText("Default notification");
+    expect(li).toBeInTheDocument();
+    expect(li).toHaveStyle("color: blue");
   });
 
-  return {
-    ...render(<Provider store={store}>{component}</Provider>),
-    store,
-  };
-};
-
-describe("NotificationItem", () => {
-  test("renders notification text and applies color based on type", () => {
-    renderWithRedux(
-      <NotificationItem id={1} type="urgent" value="Urgent notification" />
-    );
-    const item = screen.getByText("Urgent notification");
-    expect(item).toBeInTheDocument();
-    expect(item).toHaveStyle("color: red");
+  test("renders with correct text and color for urgent type", () => {
+    render(<NotificationItem id={2} type="urgent" value="Urgent notification" />);
+    const li = screen.getByText("Urgent notification");
+    expect(li).toBeInTheDocument();
+    expect(li).toHaveStyle("color: red");
   });
 
-  test("dispatches markNotificationAsRead on click", () => {
-    const { store } = renderWithRedux(
-      <NotificationItem id={2} type="default" value="Default notification" />
+  test("calls markAsRead on click", () => {
+    const mockMarkAsRead = jest.fn();
+    render(
+      <NotificationItem id={3} type="default" value="Clickable notification" markAsRead={mockMarkAsRead} />
     );
-
-    const item = screen.getByText("Default notification");
-    fireEvent.click(item);
-
-    const state = store.getState().notifications;
-    expect(state.notifications.find((n) => n.id === 2)).toBeUndefined();
+    const li = screen.getByText("Clickable notification");
+    fireEvent.click(li);
+    expect(mockMarkAsRead).toHaveBeenCalledWith(3);
   });
 });

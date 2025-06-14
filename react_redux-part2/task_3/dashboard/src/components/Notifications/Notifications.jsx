@@ -1,35 +1,50 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchNotifications, markNotificationAsRead } from "../../features/notifications/notificationsSlice";
 import { getFilteredNotifications } from "../../features/selectors/notificationsSelector";
 import NotificationItem from "../NotificationItem/NotificationItem";
 
 export default function Notifications() {
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.notifications);
   const [currentFilter, setCurrentFilter] = useState("all");
-
   const filteredNotifications = useSelector((state) =>
     getFilteredNotifications(state, currentFilter)
   );
 
-  const loading = useSelector((state) => state.notifications.loading);
+  React.useEffect(() => {
+    dispatch(fetchNotifications());
+  }, [dispatch]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  const handleSetFilterUrgent = () => setCurrentFilter("urgent");
+  const handleSetFilterDefault = () => setCurrentFilter("default");
+  const handleSetFilterAll = () => setCurrentFilter("all");
 
-  if (filteredNotifications.length === 0) {
-    return <div>No notifications</div>;
-  }
+  const handleMarkAsRead = (id) => {
+    dispatch(markNotificationAsRead(id));
+  };
+
+  if (loading) return <p>Loading...</p>;
+
+  if (filteredNotifications.length === 0)
+    return <p>No notifications to display</p>;
 
   return (
     <div>
       <div>
-        <button onClick={() => setCurrentFilter("all")}>All</button>
-        <button onClick={() => setCurrentFilter("urgent")}>‼️ Urgent</button>
-        <button onClick={() => setCurrentFilter("default")}>🔔 Default</button>
+        <button onClick={handleSetFilterAll}>All</button>
+        <button onClick={handleSetFilterUrgent}>‼️ Urgent</button>
+        <button onClick={handleSetFilterDefault}>🔵 Default</button>
       </div>
       <ul>
         {filteredNotifications.map(({ id, type, value }) => (
-          <NotificationItem key={id} id={id} type={type} value={value} />
+          <NotificationItem
+            key={id}
+            id={id}
+            type={type}
+            value={value}
+            markAsRead={handleMarkAsRead}
+          />
         ))}
       </ul>
     </div>

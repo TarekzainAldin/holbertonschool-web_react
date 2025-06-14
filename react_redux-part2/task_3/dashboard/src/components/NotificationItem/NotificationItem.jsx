@@ -1,23 +1,23 @@
-import { memo } from "react";
-import { useDispatch } from "react-redux";
-import { markNotificationAsRead } from "../../features/notifications/notificationsSlice";
+import React from "react";
 
-const NotificationItem = memo(function NotificationItem({ id, type, value }) {
-  const dispatch = useDispatch();
+export default function NotificationItem({ id, type, value, markAsRead }) {
+  const style = {
+    color: type === "urgent" ? "red" : "blue",
+    cursor: "pointer",
+  };
 
   const handleClick = () => {
-    dispatch(markNotificationAsRead(id));
+    if (markAsRead) markAsRead(id);
   };
 
   return (
     <li
-      style={{ color: type === "urgent" ? "red" : "blue" }}
       data-notification-type={type}
+      style={style}
       onClick={handleClick}
+      role="listitem"
     >
       {value}
     </li>
   );
-});
-
-export default NotificationItem;
+}
