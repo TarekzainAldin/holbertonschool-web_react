@@ -11,12 +11,16 @@ const initialState = {
   courses: [],
 };
 
-const fetchCourses = createAsyncThunk(
+export const fetchCourses = createAsyncThunk(
   "courses/fetchCourses",
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(ENDPOINTS.courses);
-      return response.data.courses;
+      // نضيف isSelected=false لكل كورس
+      return response.data.courses.map(course => ({
+        ...course,
+        isSelected: false,
+      }));
     } catch (error) {
       return thunkAPI.rejectWithValue("Error fetching courses");
     }
@@ -26,7 +30,22 @@ const fetchCourses = createAsyncThunk(
 const coursesSlice = createSlice({
   name: "courses",
   initialState,
-  reducers: {},
+  reducers: {
+    selectCourse: (state, action) => {
+      const courseId = action.payload;
+      const course = state.courses.find(course => course.id === courseId);
+      if (course) {
+        course.isSelected = true;
+      }
+    },
+    unSelectCourse: (state, action) => {
+      const courseId = action.payload;
+      const course = state.courses.find(course => course.id === courseId);
+      if (course) {
+        course.isSelected = false;
+      }
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCourses.fulfilled, (state, action) => {
@@ -36,5 +55,5 @@ const coursesSlice = createSlice({
   },
 });
 
-export { fetchCourses };
+export const { selectCourse, unSelectCourse } = coursesSlice.actions;
 export default coursesSlice.reducer;

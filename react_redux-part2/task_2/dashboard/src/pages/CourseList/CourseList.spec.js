@@ -1,46 +1,64 @@
-import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import CourseList from './CourseList';
-import { StyleSheetTestUtils } from "aphrodite";
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import coursesReducer, { fetchCourses } from '../../features/courses/coursesSlice';
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
 
-beforeEach(() => {
-  StyleSheetTestUtils.suppressStyleInjection();
-});
+const API_BASE_URL = "http://localhost:5173";
+const ENDPOINTS = {
+  courses: `${API_BASE_URL}/courses.json`,
+};
 
-afterEach(() => {
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-});
+const mockCourses = [
+  { id: 1, name: 'ES6', credit: 60 },
+  { id: 2, name: 'Webpack', credit: 20 },
+  { id: 3, name: 'React', credit: 40 },
+];
 
-test('Should render the CourseList component without crashing', () => {
-    const props = {
-        courses: [
-            { id: 1, name: 'ES6', credit: 60 },
-            { id: 2, name: 'Webpack', credit: 20 },
-            { id: 3, name: 'React', credit: 40 }
-        ]
-    }
-    render(<CourseList {...props} />)
-});
+const renderWithRedux = (component) => {
+  const store = configureStore({
+    reducer: {
+      courses: coursesReducer,
+    },
+  });
 
-test('Should render the CourseList component with 5 rows', () => {
-    const props = {
-        courses: [
-            { id: 1, name: 'ES6', credit: 60 },
-            { id: 2, name: 'Webpack', credit: 20 },
-            { id: 3, name: 'React', credit: 40 }
-        ]
-    }
-    render(<CourseList {...props} />)
+  return {
+    ...render(<Provider store={store}>{component}</Provider>),
+    store,
+  };
+};
 
-    const rowElements = screen.getAllByRole('row');
+describe('CourseList', () => {
+  let mock;
 
-    expect(rowElements).toHaveLength(5)
-});
+  beforeEach(() => {
+    mock = new MockAdapter(axios);
+    mock.onGet(ENDPOINTS.courses).reply(200, { courses: mockCourses });
+  });
 
-test('Should render the CourseList component with 1 rows', () => {
-    const props = {
-        courses: []
-    }
-    render(<CourseList {...props} />)
-    const rowElements = screen.getAllByRole('row');
-    expect(rowElements).toHaveLength(1)
+  afterEach(() => {
+    mock.restore();
+  });
+
+  test('renders courses after fetching', async () => {
+    const { store } = renderWithRedux(<CourseList />);
+    await store.dispatch(fetchCourses());
+    expect(await screen.findByText('ES6')).toBeInTheDocument();
+    expect(screen.getByText('Webpack')).toBeInTheDocument();
+    expect(screen.getByText('React')).toBeInTheDocument();
+  });
+
+  test('checkboxes toggle selection', async () => {
+    const { store } = renderWithRedux(<CourseList />);
+    await store.dispatch(fetchCourses());
+
+    const checkbox = await screen.findAllByRole('checkbox');
+    fireEvent.click(checkbox[0]);
+
+    const state = store.getState().courses.courses;
+    expect(state[0].isSelected).toBe(true);
+  });
 });
